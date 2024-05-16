@@ -1,0 +1,25 @@
+{
+  "name": "china-days",
+  "version": "1.0.0",
+  "description": "中国日期的TS库，含有节假日、调休日、24节气等。",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "中国日期",
+    "节假日",
+    "调休",
+    "24节气"
+  ],
+  "author": "Yaavi",
+  "license": "MIT",
+  "dependencies": {
+    "dayjs": "^1.11.11",
+    "serve": "^14.2.3",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11"
+  }
+}
