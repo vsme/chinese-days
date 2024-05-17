@@ -1,6 +1,7 @@
-import { arrangement } from "./arrangement"
+import Arrangement from "../src/holidays/arrangement.ts"
 
 const generate = () => {
+  const arrangement = new Arrangement()
   /**
    * 2024
    * https://www.gov.cn/zhengce/content/202310/content_6911527.htm
@@ -469,6 +470,18 @@ const generate = () => {
   * 2002: https://zh.wikisource.org/zh-hans/国务院办公厅关于2002年部分节假日休息安排的通知
   * 2001: https://zh.wikisource.org/zh-hans/国务院办公厅关于2001年春节、“五一”、“十一”放假安排的通知
   */
+
+  console.log({
+    holidays: arrangement.holidays,
+    workdays: arrangement.workdays,
+    inLieuDays: arrangement.inLieuDays,
+  })
+
+  return {
+    holidays: arrangement.holidays,
+    workdays: arrangement.workdays,
+    inLieuDays: arrangement.inLieuDays,
+  }
 }
 
-export default generate
+generate()

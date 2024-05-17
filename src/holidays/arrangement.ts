@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 export enum Holiday {
   NewYearsDay = "New Year's Day,元旦,1",
@@ -27,90 +27,110 @@ enum DayType {
   InLieu = 3,
 }
 
-const dayDetails: DayDetails = {};
+class Arrangement {
+  private dayDetails: DayDetails = {};
+  public holidays: Record<string, Holiday> = {};
+  public workdays: Record<string, Holiday> = {};
+  public inLieuDays: Record<string, Holiday> = {};
 
-const holidays: Record<string, Holiday> = {};
-const workdays: Record<string, Holiday> = {};
-const inLieuDays: Record<string, Holiday> = {};
+  yearAt(year: number) {
+    this.dayDetails.year = year;
+    return this;
+  }
 
-const yearAt = (year: number) => {
-  dayDetails.year = year;
-  return arrangement;
-}
+  mark(holiday: Holiday) {
+    this.dayDetails.holiday = holiday;
+    return this;
+  }
 
-const mark = (holiday: Holiday) => {
-  dayDetails.holiday = holiday;
-  return arrangement;
-}
-
-/* 存储 */
-const save = (month: number, day: number, dayType: DayType) => {
-  if (!dayDetails.year) {
-    throw new Error("should set year before saving holiday");
-  }
-  if (!dayDetails.holiday) {
-    throw new Error("should set holiday before saving holiday");
-  }
-  dayDetails.dayType = dayType;
-  const date = dayjs(`${dayDetails.year}-${month}-${day}`);
-  if (dayType === DayType.Holiday) {
-    holidays[date.format('YYYY-MM-DD')] = dayDetails.holiday;
-  } else if (dayType === DayType.Workday) {
-    workdays[date.format('YYYY-MM-DD')] = dayDetails.holiday;
-  } else if (dayType === DayType.InLieu) {
-    inLieuDays[date.format('YYYY-MM-DD')] = dayDetails.holiday;
-  }
-  dayDetails.month = month;
-  dayDetails.day = day;
-  return arrangement;
-}
-
-/* 添加日期 */
-const to = (month: number, day: number) => {
-  if (!dayDetails.year || !dayDetails.month || !dayDetails.day) {
-    throw new Error("should set year/month/day before saving holiday range");
-  }
-  const startDate = dayjs(`${dayDetails.year}-${dayDetails.month}-${dayDetails.day}`);
-  const endDate = dayjs(`${dayDetails.year}-${month}-${day}`);
-  if (endDate.isBefore(startDate) || endDate.isSame(startDate)) {
-    throw new Error("end date should be after start date");
-  }
-  const diffDays = endDate.diff(startDate, 'day');
-  for (let i = 1; i <= diffDays; i++) {
-    const theDate = startDate.add(i, 'day');
-    if (dayDetails.dayType === DayType.Holiday) {
-      holidays[theDate.format('YYYY-MM-DD')] = dayDetails.holiday as Holiday;
-    } else if (dayDetails.dayType === DayType.Workday) {
-      workdays[theDate.format('YYYY-MM-DD')] = dayDetails.holiday as Holiday;
-    } else if (dayDetails.dayType === DayType.InLieu) {
-      inLieuDays[theDate.format('YYYY-MM-DD')] = dayDetails.holiday as Holiday;
+  save(month: number, day: number, dayType: DayType) {
+    if (!this.dayDetails.year) {
+      throw new Error("should set year before saving holiday");
     }
+    if (!this.dayDetails.holiday) {
+      throw new Error("should set holiday before saving holiday");
+    }
+    this.dayDetails.dayType = dayType;
+    const date = dayjs(`${this.dayDetails.year}-${month}-${day}`);
+    if (dayType === DayType.Holiday) {
+      this.holidays[date.format("YYYY-MM-DD")] = this.dayDetails.holiday;
+    } else if (dayType === DayType.Workday) {
+      this.workdays[date.format("YYYY-MM-DD")] = this.dayDetails.holiday;
+    } else if (dayType === DayType.InLieu) {
+      this.inLieuDays[date.format("YYYY-MM-DD")] = this.dayDetails.holiday;
+    }
+    this.dayDetails.month = month;
+    this.dayDetails.day = day;
+    return this;
   }
-  return arrangement;
+
+  to(month: number, day: number) {
+    if (
+      !this.dayDetails.year ||
+      !this.dayDetails.month ||
+      !this.dayDetails.day
+    ) {
+      throw new Error("should set year/month/day before saving holiday range");
+    }
+    const startDate = dayjs(
+      `${this.dayDetails.year}-${this.dayDetails.month}-${this.dayDetails.day}`
+    );
+    const endDate = dayjs(`${this.dayDetails.year}-${month}-${day}`);
+    if (endDate.isBefore(startDate) || endDate.isSame(startDate)) {
+      throw new Error("end date should be after start date");
+    }
+    const diffDays = endDate.diff(startDate, "day");
+    for (let i = 1; i <= diffDays; i++) {
+      const theDate = startDate.add(i, "day");
+      if (this.dayDetails.dayType === DayType.Holiday) {
+        this.holidays[theDate.format("YYYY-MM-DD")] = this.dayDetails
+          .holiday as Holiday;
+      } else if (this.dayDetails.dayType === DayType.Workday) {
+        this.workdays[theDate.format("YYYY-MM-DD")] = this.dayDetails
+          .holiday as Holiday;
+      } else if (this.dayDetails.dayType === DayType.InLieu) {
+        this.inLieuDays[theDate.format("YYYY-MM-DD")] = this.dayDetails
+          .holiday as Holiday;
+      }
+    }
+    return this;
+  }
+
+  work(month: number, day: number) {
+    return this.save(month, day, DayType.Workday);
+  }
+  rest(month: number, day: number) {
+    return this.save(month, day, DayType.Holiday);
+  }
+  inLieu(month: number, day: number) {
+    return this.save(month, day, DayType.InLieu);
+  }
+
+  // Special holiday marker
+  nyd() {
+    return this.mark(Holiday.NewYearsDay);
+  }
+  sf() {
+    return this.mark(Holiday.SpringFestival);
+  }
+  tsd() {
+    return this.mark(Holiday.TombSweepingDay);
+  }
+  ld() {
+    return this.mark(Holiday.LabourDay);
+  }
+  dbf() {
+    return this.mark(Holiday.DragonBoatFestival);
+  }
+  nd() {
+    return this.mark(Holiday.NationalDay);
+  }
+  maf() {
+    return this.mark(Holiday.MidAutumnFestival);
+  }
+  afd() {
+    return this.mark(Holiday.AntiFascist70thDay);
+  }
 }
 
-const arrangement = {
-  yearAt,
-  to,
-
-  work: (month: number, day: number) => save(month, day, DayType.Workday),
-  rest: (month: number, day: number) => save(month, day, DayType.Holiday),
-  inLieu: (month: number, day: number) => save(month, day, DayType.InLieu),
-  
-  // Special holiday markers
-  nyd: () => mark(Holiday.NewYearsDay),
-  sf: () => mark(Holiday.SpringFestival),
-  tsd: () => mark(Holiday.TombSweepingDay),
-  ld: () => mark(Holiday.LabourDay),
-  dbf: () => mark(Holiday.DragonBoatFestival),
-  nd: () => mark(Holiday.NationalDay),
-  maf: () => mark(Holiday.MidAutumnFestival),
-  afd: () => mark(Holiday.AntiFascist70thDay),
-};
-
-export {
-  arrangement,
-  holidays,
-  workdays,
-  inLieuDays
-}
+export default Arrangement;

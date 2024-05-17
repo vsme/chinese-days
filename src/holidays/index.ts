@@ -1,36 +1,12 @@
 import dayjs, { Dayjs } from 'dayjs';
-import { holidays, workdays, inLieuDays } from './arrangement';
-import generate from './generate'
-
-generate()
-
-interface Holidays {
-  [key: string]: string;
-}
-
-interface DayDetails {
-  year: number | null;
-  month: number | null;
-  day: number | null;
-  holiday: string | null;
-  dayType: DayType | null;
-}
-
-enum DayType {
-  Holiday,
-  Workday,
-  InLieu
-}
-
-const _wrapDate = (date: dayjs.ConfigType): Dayjs => {
-  return dayjs(date);
-}
+import { wrapDate } from '../utils'
+import { holidays, workdays, inLieuDays } from './constants';
 
 const _validateDate = (...dates: dayjs.ConfigType[]): Dayjs | Dayjs[] => {
   if (dates.length !== 1) {
     return dates.map(date => _validateDate(date)) as Dayjs[];
   }
-  const date = _wrapDate(dates[0]);
+  const date = wrapDate(dates[0]);
   if (!date.isValid()) {
     throw new Error(`unsupported type ${typeof date}, expected type is Date or Dayjs`);
   }
@@ -86,8 +62,8 @@ const getDayDetail = (date: dayjs.ConfigType): { work: boolean, name: string } =
 }
 
 const getDates = (start: dayjs.ConfigType, end: dayjs.ConfigType): Dayjs[] => {
-  start = _wrapDate(start);
-  end = _wrapDate(end);
+  start = wrapDate(start);
+  end = wrapDate(end);
   const deltaDays = end.diff(start, 'day');
   return Array.from({ length: deltaDays + 1 }, (_, i) => start.add(i, 'day'));
 }
@@ -114,7 +90,7 @@ const getWorkdays = (start: dayjs.ConfigType, end: dayjs.ConfigType, includeWeek
 
 /* 查找从 date 开始 第 n 个工作日, 0 为当天 */
 const findWorkday = (deltaDays: number = 0, date: dayjs.ConfigType = dayjs()): Dayjs => {
-  date = _wrapDate(date);
+  date = wrapDate(date);
 
   if (deltaDays === 0) {
     if (isWorkday(date)) {
@@ -137,6 +113,8 @@ const findWorkday = (deltaDays: number = 0, date: dayjs.ConfigType = dayjs()): D
 }
 
 export default {
+  isHoliday,
+  isWorkday,
   isInLieu,
   getDayDetail,
   getDates,

@@ -58,7 +58,7 @@ export const SOLAR_TERMS_C_NUMS = {
 };
 
 /** 月份和节气对应关系 */
-export const SOLAR_TERMS_MONTH = {
+export const SOLAR_TERMS_MONTH: { [key: number]: SolarTermKey[] } = {
   1: ["lesser_cold", "greater_cold"],
   2: ["the_beginning_of_spring", "rain_water"],
   3: ["the_waking_of_insects", "the_spring_equinox"],

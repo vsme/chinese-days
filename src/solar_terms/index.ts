@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { wrapDate } from '../utils'
 import {
   SOLAR_TERMS_C_NUMS,
   SOLAR_TERMS_DELTA,
@@ -6,11 +7,6 @@ import {
   SOLAR_TERMS,
   type SolarTermKey,
 } from "./constants";
-
-// wrapDate to the start of the day
-const wrapDate = (date: dayjs.ConfigType): dayjs.Dayjs => {
-  return dayjs(date).startOf("day");
-};
 
 /* Get solar term date => 获取节气日期 */
 const getSolarTermDate = (
@@ -36,7 +32,7 @@ const getSolarTermDate = (
   }
 
   let day = Math.floor(Y * D + C) - L;
-  const delta = SOLAR_TERMS_DELTA[`${year}_${term}`];
+  const delta = SOLAR_TERMS_DELTA[`${year}_${term}` as keyof typeof SOLAR_TERMS_DELTA];
   if (delta) {
     day += delta;
   }
@@ -56,7 +52,7 @@ export interface SolarTerm {
  * @param end 不传只查当天
  * @returns Array of solar terms => 节气数组
  */
-export const getSolarTerms = (
+const getSolarTerms = (
   start: dayjs.ConfigType,
   end?: dayjs.ConfigType
 ): SolarTerm[] => {
@@ -90,3 +86,8 @@ export const getSolarTerms = (
 
   return result;
 };
+
+export default {
+  getSolarTermDate,
+  getSolarTerms,
+}
