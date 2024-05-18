@@ -8,6 +8,7 @@
     "strict": true,
     "noImplicitReturns": true,
     "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "baseUrl": "./",
     "declaration": true,
@@ -22,5 +23,11 @@
     "isolatedModules": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+
+  "ts-node": {
+    "compilerOptions": {
+      "module": "Commonjs"
+    },
+  }
 }

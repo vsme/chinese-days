@@ -1,6 +1,6 @@
 import Arrangement from "../src/holidays/arrangement.ts"
 
-const generate = () => {
+export default () => {
   const arrangement = new Arrangement()
   /**
    * 2024
@@ -471,17 +471,9 @@ const generate = () => {
   * 2001: https://zh.wikisource.org/zh-hans/国务院办公厅关于2001年春节、“五一”、“十一”放假安排的通知
   */
 
-  console.log({
-    holidays: arrangement.holidays,
-    workdays: arrangement.workdays,
-    inLieuDays: arrangement.inLieuDays,
-  })
-
   return {
     holidays: arrangement.holidays,
     workdays: arrangement.workdays,
     inLieuDays: arrangement.inLieuDays,
   }
 }
-
-generate()

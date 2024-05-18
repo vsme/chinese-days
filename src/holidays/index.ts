@@ -1,6 +1,7 @@
 import dayjs, { Dayjs } from 'dayjs';
 import { wrapDate } from '../utils'
 import { holidays, workdays, inLieuDays } from './constants';
+import Arrangement, { Holiday } from './arrangement';
 
 const _validateDate = (...dates: dayjs.ConfigType[]): Dayjs | Dayjs[] => {
   if (dates.length !== 1) {
@@ -112,7 +113,9 @@ const findWorkday = (deltaDays: number = 0, date: dayjs.ConfigType = dayjs()): D
   return date;
 }
 
-export default {
+export {
+  Holiday,
+  Arrangement,
   isHoliday,
   isWorkday,
   isInLieu,

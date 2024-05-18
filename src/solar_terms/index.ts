@@ -41,7 +41,7 @@ const getSolarTermDate = (
 };
 
 export interface SolarTerm {
-  date: Date;
+  date: string;
   term: SolarTermKey;
   name: string;
 };
@@ -71,7 +71,7 @@ const getSolarTerms = (
         (solarTermDate?.isAfter(current) || solarTermDate?.isSame(current))
       ) {
         result.push({
-          date: solarTermDate.toDate(),
+          date: solarTermDate.format("YYYY-MM-DD"),
           term,
           name: SOLAR_TERMS[term],
         });
@@ -87,7 +87,7 @@ const getSolarTerms = (
   return result;
 };
 
-export default {
+export {
   getSolarTermDate,
   getSolarTerms,
 }
