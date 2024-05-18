@@ -13,7 +13,7 @@ const getSolarTermDate = (
   year: number,
   month: number,
   term: SolarTermKey
-): dayjs.Dayjs => {
+): string => {
   const century = year >= 2000 ? 21 : 20;
   const Y = year % 100;
   const D = 0.2422;
@@ -37,7 +37,7 @@ const getSolarTermDate = (
     day += delta;
   }
 
-  return dayjs(`${year}-${month}-${day}`);
+  return dayjs(`${year}-${month}-${day}`).format('YYYY-MM-DD');
 };
 
 export interface SolarTerm {
@@ -65,7 +65,7 @@ const getSolarTerms = (
     const month = current.month() + 1;
 
     SOLAR_TERMS_MONTH[month].forEach((term: SolarTermKey) => {
-      const solarTermDate = getSolarTermDate(year, month, term);
+      const solarTermDate = dayjs(getSolarTermDate(year, month, term));
       if (
         (solarTermDate?.isBefore(endDate) || solarTermDate?.isSame(endDate)) &&
         (solarTermDate?.isAfter(current) || solarTermDate?.isSame(current))

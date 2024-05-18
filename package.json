@@ -2,13 +2,18 @@
   "name": "china-days",
   "version": "1.0.0",
   "description": "中国日期的TS库，含有节假日、调休日、24节气等。",
-  "main": "./src/index.ts",
-  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vsme/china-days"
+  },
   "scripts": {
     "dev": "vite",
     "generate": "ts-node scripts/init.ts",
     "build": "tsc && vite build",
-    "preview": "vite preview",
+    "demo": "serve",
     "test": "jest"
   },
   "keywords": [
@@ -19,6 +24,9 @@
   ],
   "author": "Yaavi",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vsme/china-days/issues"
+  },
   "dependencies": {
     "dayjs": "^1.11.11"
   },
@@ -29,6 +37,7 @@
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
-    "vite": "^5.2.11"
+    "vite": "^5.2.11",
+    "vite-plugin-dts": "^3.9.1"
   }
 }

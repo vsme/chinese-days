@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from 'dayjs';
-import { wrapDate } from '../utils'
+import { wrapDate, getDates } from '../utils'
 import { holidays, workdays, inLieuDays } from './constants';
 import Arrangement, { Holiday } from './arrangement';
 
@@ -66,40 +66,33 @@ const getDayDetail = (date: dayjs.ConfigType): { work: boolean, name: string, da
   }
 }
 
-const getDates = (start: dayjs.ConfigType, end: dayjs.ConfigType): Dayjs[] => {
-  start = wrapDate(start);
-  end = wrapDate(end);
-  const deltaDays = end.diff(start, 'day');
-  return Array.from({ length: deltaDays + 1 }, (_, i) => start.add(i, 'day'));
-}
-
 /** 获取节假日 */
-const getHolidays = (start: dayjs.ConfigType, end: dayjs.ConfigType, includeWeekends: boolean = true): Dayjs[] => {
+const getHolidays = (start: dayjs.ConfigType, end: dayjs.ConfigType, includeWeekends: boolean = true): string[] => {
   start = _validateDate(start) as Dayjs;
   end = _validateDate(end) as Dayjs;
   if (includeWeekends) {
-    return getDates(start, end).filter(isHoliday);
+    return getDates(start, end).filter(isHoliday).map(date => date.format('YYYY-MM-DD'));
   }
-  return getDates(start, end).filter(date => holidays[date.format('YYYY-MM-DD')]);
+  return getDates(start, end).filter(date => holidays[date.format('YYYY-MM-DD')]).map(date => date.format('YYYY-MM-DD'));
 }
 
 /** 获取工作日 */
-const getWorkdays = (start: dayjs.ConfigType, end: dayjs.ConfigType, includeWeekends: boolean = true): Dayjs[] => {
+const getWorkdays = (start: dayjs.ConfigType, end: dayjs.ConfigType, includeWeekends: boolean = true): string[] => {
   start = _validateDate(start) as Dayjs;
   end = _validateDate(end) as Dayjs;
   if (includeWeekends) {
-    return getDates(start, end).filter(isWorkday);
+    return getDates(start, end).filter(isWorkday).map(date => date.format('YYYY-MM-DD'));
   }
-  return getDates(start, end).filter(date => isWorkday(date) && date.day() >= 1 && date.day() <= 5);
+  return getDates(start, end).filter(date => isWorkday(date) && date.day() >= 1 && date.day() <= 5).map(date => date.format('YYYY-MM-DD'));
 }
 
 /* 查找从 date 开始 第 n 个工作日, 0 为当天 */
-const findWorkday = (deltaDays: number = 0, date: dayjs.ConfigType = dayjs()): Dayjs => {
+const findWorkday = (deltaDays: number = 0, date: dayjs.ConfigType = dayjs()): string => {
   date = wrapDate(date);
 
   if (deltaDays === 0) {
     if (isWorkday(date)) {
-      return date;
+      return date.format('YYYY-MM-DD');
     }
     deltaDays = 1;
   }
@@ -114,7 +107,7 @@ const findWorkday = (deltaDays: number = 0, date: dayjs.ConfigType = dayjs()): D
     }
   }
 
-  return date;
+  return date.format('YYYY-MM-DD');
 }
 
 export {
@@ -124,7 +117,6 @@ export {
   isWorkday,
   isInLieu,
   getDayDetail,
-  getDates,
   getHolidays,
   getWorkdays,
   findWorkday,

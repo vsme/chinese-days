@@ -12,19 +12,19 @@ describe("Solar Terms", () => {
     it("should correctly calculate the solar term date for 'lesser_cold' in 2024", () => {
       const term: SolarTermKey = "lesser_cold";
       const date = getSolarTermDate(2024, 1, term);
-      expect(date.format("YYYY-MM-DD")).toBe("2024-01-06");
+      expect(date).toBe("2024-01-06");
     });
 
     it("should correctly calculate the solar term date for 'rain_water' in 2026 with delta adjustment", () => {
       const term: SolarTermKey = "rain_water";
       const date = getSolarTermDate(2026, 2, term);
-      expect(date.format("YYYY-MM-DD")).toBe("2026-02-18");
+      expect(date).toBe("2026-02-18");
     });
 
     it("should handle the case where there is no delta adjustment", () => {
       const term: SolarTermKey = "the_beginning_of_spring";
       const date = getSolarTermDate(2024, 2, term);
-      expect(date.format("YYYY-MM-DD")).toBe("2024-02-04");
+      expect(date).toBe("2024-02-04");
     });
   });
 

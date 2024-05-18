@@ -45,13 +45,13 @@ console.log(isInLieu('2024-05-01')); // false
 // 示例用法
 
 // 正常工作日 周五
-console.log(getDayDetail('2024-02-02')); // {"work":true,"name":"Friday"}
+console.log(getDayDetail('2024-02-02')); // { "date": "2024-02-02", "work":true,"name":"Friday"}
 // 节假日 周末
-console.log(getDayDetail('2024-02-03')); // {"work":false,"name":"Saturday"}
+console.log(getDayDetail('2024-02-03')); // { "date": "2024-02-03", "work":false,"name":"Saturday"}
 // 调休需要上班
-console.log(getDayDetail('2024-02-04')); // {"work":true,"name":"Spring Festival,春节,3"}
+console.log(getDayDetail('2024-02-04')); // { "date": "2024-02-04", "work":true,"name":"Spring Festival,春节,3"}
 // 节假日 春节
-console.log(getDayDetail('2024-02-17')); // {"work":false,"name":"Spring Festival,春节,3"}
+console.log(getDayDetail('2024-02-17')); // { "date": "2024-02-17", "work":false,"name":"Spring Festival,春节,3"}
 ```
 
 ### `getHolidays` 获取指定日期范围内的所有节假日
@@ -146,6 +146,6 @@ console.log(solarTerms[0]);
 ## 贡献代码
 
 1. Fork + Clone 项目到本地
-2. 修改 [节假日定义][src/holidays/generate.ts]
+2. 修改 [节假日定义][scripts/generate.ts]
 3. 执行命令 `npm run generate` 自动生成 [常量文件][src/holidays/constants.ts]
 4. 提交PR

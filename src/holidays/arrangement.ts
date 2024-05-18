@@ -1,16 +1,16 @@
 import dayjs from "dayjs";
 
 export enum Holiday {
-  NewYearsDay = "New Year's Day,元旦,1",
-  SpringFestival = "Spring Festival,春节,3",
-  TombSweepingDay = "Tomb-sweeping Day,清明,1",
-  LabourDay = "Labour Day,劳动节,1",
-  DragonBoatFestival = "Dragon Boat Festival,端午,1",
-  NationalDay = "National Day,国庆节,3",
-  MidAutumnFestival = "Mid-autumn Festival,中秋,1",
+  NY = "New Year's Day,元旦,1",
+  S = "Spring Festival,春节,3",
+  T = "Tomb-sweeping Day,清明,1",
+  L = "Labour Day,劳动节,1",
+  D = "Dragon Boat Festival,端午,1",
+  N = "National Day,国庆节,3",
+  M = "Mid-autumn Festival,中秋,1",
 
   /** special holidays */
-  AntiFascist70thDay = "Anti-Fascist 70th Day,中国人民抗日战争暨世界反法西斯战争胜利70周年纪念日,1",
+  A = "Anti-Fascist 70th Day,中国人民抗日战争暨世界反法西斯战争胜利70周年纪念日,1",
 }
 
 interface DayDetails {
@@ -108,28 +108,28 @@ class Arrangement {
 
   // Special holiday marker
   nyd() {
-    return this.mark(Holiday.NewYearsDay);
+    return this.mark(Holiday.NY);
   }
   sf() {
-    return this.mark(Holiday.SpringFestival);
+    return this.mark(Holiday.S);
   }
   tsd() {
-    return this.mark(Holiday.TombSweepingDay);
+    return this.mark(Holiday.T);
   }
   ld() {
-    return this.mark(Holiday.LabourDay);
+    return this.mark(Holiday.L);
   }
   dbf() {
-    return this.mark(Holiday.DragonBoatFestival);
+    return this.mark(Holiday.D);
   }
   nd() {
-    return this.mark(Holiday.NationalDay);
+    return this.mark(Holiday.N);
   }
   maf() {
-    return this.mark(Holiday.MidAutumnFestival);
+    return this.mark(Holiday.M);
   }
   afd() {
-    return this.mark(Holiday.AntiFascist70thDay);
+    return this.mark(Holiday.A);
   }
 }
 
