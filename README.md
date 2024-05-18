@@ -67,11 +67,11 @@ const end = '2024-05-06';
 
 // 获取从 2024-05-01 到 2024-05-10 的所有节假日，包括周末
 const holidaysIncludingWeekends = getHolidays(start, end, true);
-console.log('Holidays including weekends:', holidaysIncludingWeekends.map(d => d.format('YYYY-MM-DD')));
+console.log('Holidays including weekends:', holidaysIncludingWeekends.map(d => getDayDetail(d)));
 
 // 获取从 2024-05-01 到 2024-05-10 的节假日，不包括周末
 const holidaysExcludingWeekends = getHolidays(start, end, false);
-console.log('Holidays excluding weekends:', holidaysExcludingWeekends.map(d => d.format('YYYY-MM-DD')));
+console.log('Holidays excluding weekends:', holidaysExcludingWeekends.map(d => getDayDetail(d)));
 ```
 
 

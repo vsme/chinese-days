@@ -41,21 +41,25 @@ const isInLieu = (date: dayjs.ConfigType): boolean => {
 }
 
 /** 获取工作日详情 */
-const getDayDetail = (date: dayjs.ConfigType): { work: boolean, name: string } => {
+const getDayDetail = (date: dayjs.ConfigType): { work: boolean, name: string, date: string } => {
   date = _validateDate(date) as Dayjs;
-  if (workdays[date.format('YYYY-MM-DD')]) {
+  const formattedDate = date.format('YYYY-MM-DD')
+  if (workdays[formattedDate]) {
     return {
+      date: formattedDate,
       work: true,
-      name: workdays[date.format('YYYY-MM-DD')]
+      name: workdays[formattedDate]
     }
-  } else if (holidays[date.format('YYYY-MM-DD')]) {
+  } else if (holidays[formattedDate]) {
     return {
+      date: formattedDate,
       work: false,
-      name: holidays[date.format('YYYY-MM-DD')]
+      name: holidays[formattedDate]
     }
   } else {
     const weekday = date.day();
     return {
+      date: formattedDate,
       work: weekday !== 0 && weekday !== 6,
       name: date.format('dddd')
     }
