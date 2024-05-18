@@ -9,17 +9,13 @@ const holidayMap: Record<string, keyof typeof Holiday> = Object.fromEntries(
   Object.entries(Holiday).map(([key, value]) => [value, key as keyof typeof Holiday])
 );
 
-// 映射函数
-type RecordStringHoliday = Record<string, Holiday>;
-type RecordStringName = Record<string, { name: string }>;
-
 const mapToEnum = (obj: Record<string, string>): Record<string, any> => {
   const result: Record<string, any> = {};
   for (const [key, value] of Object.entries(obj)) {
     if (holidayMap[value]) {
       result[key] = `Holiday.${holidayMap[value]}`;
     } else {
-      result[key] = `{ name: "${value}" }`;
+      result[key] = `${value}`;
     }
   }
   return result;
@@ -42,7 +38,7 @@ export const workdays: Record<string, Holiday> = ${formatObjectString(workdays)}
 export const inLieuDays: Record<string, Holiday> = ${formatObjectString(inLieuDays)};
 `;
 
-// 保存到 arrangement.ts 文件
+// 保存到 constants.ts 文件
 fs.writeFile('./src/holidays/constants.ts', tsContent, (err) => {
   if (err) throw err;
   console.log('The file has been saved!');
