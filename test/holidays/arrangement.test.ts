@@ -15,25 +15,25 @@ describe('Arrangement class', () => {
 
   it('should mark holiday correctly', () => {
     arrangement.nyd();
-    expect((arrangement as any).dayDetails.holiday).toBe(Holiday.NewYearsDay);
+    expect((arrangement as any).dayDetails.holiday).toBe(Holiday.NY);
   });
 
   it('should save holiday correctly', () => {
     arrangement.yearAt(2024).nyd().rest(1, 1);
     const date = dayjs('2024-01-01').format('YYYY-MM-DD');
-    expect(arrangement.holidays[date]).toBe(Holiday.NewYearsDay);
+    expect(arrangement.holidays[date]).toBe(Holiday.NY);
   });
 
   it('should save workday correctly', () => {
     arrangement.yearAt(2024).sf().work(2, 4);
     const date = dayjs('2024-02-04').format('YYYY-MM-DD');
-    expect(arrangement.workdays[date]).toBe(Holiday.SpringFestival);
+    expect(arrangement.workdays[date]).toBe(Holiday.S);
   });
 
   it('should save in-lieu day correctly', () => {
     arrangement.yearAt(2024).maf().inLieu(9, 16);
     const date = dayjs('2024-09-16').format('YYYY-MM-DD');
-    expect(arrangement.inLieuDays[date]).toBe(Holiday.MidAutumnFestival);
+    expect(arrangement.inLieuDays[date]).toBe(Holiday.M);
   });
 
   it('should save holiday range correctly', () => {
@@ -42,7 +42,7 @@ describe('Arrangement class', () => {
       dayjs(date).format('YYYY-MM-DD')
     );
     dates.forEach(date => {
-      expect(arrangement.holidays[date]).toBe(Holiday.SpringFestival);
+      expect(arrangement.holidays[date]).toBe(Holiday.S);
     });
   });
 
