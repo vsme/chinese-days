@@ -12,6 +12,11 @@ export default defineConfig(() => ({
       formats: ["umd", "es"],
       fileName: (format) => format == 'umd' ? 'index.min.js' : `index.${format}.js`,
     },
+    rollupOptions: {
+      output: {
+        exports: 'named'
+      }
+    },
   },
   plugins: [
     dts({
