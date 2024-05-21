@@ -1,7 +1,8 @@
 # 中国节假日
 
+![NPM Version](https://img.shields.io/npm/v/china-days)
 ![GitHub License](https://img.shields.io/github/license/vsme/china-days)
-
+[![README](https://img.shields.io/badge/README-English-brightgreen.svg)](https://github.com/vsme/china-days/blob/main/README.en.md)
 
 本项目提供了一系列用于管理和查询中国节假日、调休日、工作日及二十四节气的函数。通过使用这些函数，用户可以方便地检查指定日期的状态，获取日期范围内的节假日或工作日，并查找特定的工作日。此外，项目还支持查询二十四节气的日期，帮助用户了解中国传统节气的时间安排。
 
@@ -115,11 +116,11 @@ const end = '2024-05-06';
 
 // 获取从 2024-05-01 到 2024-05-10 的所有工作日，包括周末
 const workdaysIncludingWeekends = getWorkdays(start, end, true);
-console.log('Workdays including weekends:', workdaysIncludingWeekends.map(d => d.format('YYYY-MM-DD')));
+console.log('Workdays including weekends:', workdaysIncludingWeekends);
 
 // 获取从 2024-05-01 到 2024-05-10 的工作日，不包括周末
 const workdaysExcludingWeekends = getWorkdays(start, end, false);
-console.log('Workdays excluding weekends:', workdaysExcludingWeekends.map(d => d.format('YYYY-MM-DD')));
+console.log('Workdays excluding weekends:', workdaysExcludingWeekends);
 ```
 
 ### `findWorkday` 查找工作日
@@ -131,20 +132,20 @@ console.log('Workdays excluding weekends:', workdaysExcludingWeekends.map(d => d
 // 如果 deltaDays 为 0，首先检查当前日期是否为工作日。如果是，则直接返回当前日期。
 // 如果当前日期不是工作日，会查找下一个工作日。
 const currentWorkday = findWorkday(0);
-console.log(currentWorkday.format('YYYY-MM-DD'));
+console.log(currentWorkday);
 
 // 查找从今天开始未来的第一个工作日
 const nextWorkday = findWorkday(1);
-console.log(nextWorkday.format('YYYY-MM-DD'));
+console.log(nextWorkday);
 
 // 查找从今天开始之前的前一个工作日
 const previousWorkday = findWorkday(-1);
-console.log(previousWorkday.format('YYYY-MM-DD'));
+console.log(previousWorkday);
 
 // 可以传第二个参数 查找具体日期的上下工作日
 // 查找从 2024-05-18 开始，未来的第二个工作日
 const secondNextWorkday = findWorkday(2, '2024-05-18');
-console.log(secondNextWorkday.format('YYYY-MM-DD'));
+console.log(secondNextWorkday);
 ```
 
 ## 节气模块
@@ -157,20 +158,26 @@ import { getSolarTerms } from "china-days";
 /** 获取范围内 节气日期数组 */
 const solarTerms = getSolarTerms("2024-05-01", "2024-05-20");
 solarTerms.forEach(({ date, term, name }) => {
-  console.log(`${name}: ${dayjs(date).format("YYYY-MM-DD")}, ${term}`);
+  console.log(`${name}: ${date}, ${term}`);
 });
+// 立夏: 2024-05-05, the_beginning_of_summer
+// 小满: 2024-05-20, lesser_fullness_of_grain
 
-/* 获取当天 节气 */
-const solarTerms = getSolarTerms("2024-05-20");
-console.log(solarTerms[0]);
+// 没有节气 返回 []
+getSolarTerms("2024-05-21", "2024-05-25");
+// return []
+
+/* 不传 end 参数， 获取某天 节气 */
+getSolarTerms("2024-05-20");
+// return: [{date: '2024-05-20', term: 'lesser_fullness_of_grain', name: '小满'}]
 ```
 
 ## 贡献代码
 
-1. Fork + Clone 项目到本地
-2. 修改 [节假日定义][scripts/generate.ts]
-3. 执行命令 `npm run generate` 自动生成 [常量文件][src/holidays/constants.ts]
-4. 提交PR
+1. Fork + Clone 项目到本地；
+2. 修改 [节假日定义](scripts/generate.ts)；
+3. 执行命令 `npm run generate` 自动生成 [常量文件](src/holidays/constants.ts)；
+4. 提交PR。
 
 ## 致谢
 
