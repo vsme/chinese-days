@@ -1,7 +1,7 @@
 {
   "name": "china-days",
   "version": "0.1.1",
-  "description": "中国日期的TS库，含有节假日、调休日、24节气等。",
+  "description": "中国日期库，含有节假日、调休日、24节气，支持 TS、CommonJS、UMD 模块化使用。",
   "main": "dist/index.min.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
