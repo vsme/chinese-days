@@ -10,7 +10,7 @@ export default defineConfig(() => ({
       entry: "./src/index.ts",
       name: "chinaDays",
       formats: ["umd", "es"],
-      fileName: (format) => format === 'umd' ? "index.js" : `index.mjs`,
+      fileName: (format) => format == 'umd' ? 'index.min.js' : `index.${format}.js`,
     },
   },
   plugins: [

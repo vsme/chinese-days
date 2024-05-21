@@ -7,6 +7,35 @@
 
 支持 2004年 至 2024年，包括 2020年 的春节延长。
 
+## 快速开始
+
+直接浏览器引入
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/china-days/dist/index.min.js"></script>
+```
+
+安装
+
+```sh
+npm i china-days
+```
+
+使用 ESM 导入
+
+```ts
+import chinaDays from 'china-days'
+console.log(chinaDays)
+```
+
+在 Node 中使用
+
+```js
+const { isWorkday, isHoliday } = require('china-days');
+console.log(isWorkday('2020-01-01'));
+console.log(isHoliday('2020-01-01'));
+```
+
 ## 节假日模块
 
 ### `isWorkday` 检查某个日期是否为工作日
@@ -136,16 +165,13 @@ const solarTerms = getSolarTerms("2024-05-20");
 console.log(solarTerms[0]);
 ```
 
-## 辅助函数
-
-### `getDates` 获取两个日期之间的所有日期
-
-包括起始日期和结束日期，返回 Dayjs 对象数组。
-
-
 ## 贡献代码
 
 1. Fork + Clone 项目到本地
 2. 修改 [节假日定义][scripts/generate.ts]
 3. 执行命令 `npm run generate` 自动生成 [常量文件][src/holidays/constants.ts]
 4. 提交PR
+
+## 致谢
+
+本项目参考了 `Python` 版本的 [LKI/chinese-calendar](https://github.com/LKI/chinese-calendar) 开源项目。
