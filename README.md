@@ -1,8 +1,8 @@
 # 中国节假日
 
-![NPM Version](https://img.shields.io/npm/v/china-days)
-![GitHub License](https://img.shields.io/github/license/vsme/china-days)
-[![README](https://img.shields.io/badge/README-English-brightgreen.svg)](https://github.com/vsme/china-days/blob/main/README.en.md)
+![NPM Version](https://img.shields.io/npm/v/chinese-days)
+![GitHub License](https://img.shields.io/github/license/vsme/chinese-days)
+[![README](https://img.shields.io/badge/README-English-brightgreen.svg)](https://github.com/vsme/chinese-days/blob/main/README.en.md)
 
 本项目提供了一系列用于管理和查询中国节假日、调休日、工作日及二十四节气的函数。通过使用这些函数，用户可以方便地检查指定日期的状态，获取日期范围内的节假日或工作日，并查找特定的工作日。此外，项目还支持查询二十四节气的日期，帮助用户了解中国传统节气的时间安排。
 
@@ -15,26 +15,30 @@
 直接浏览器引入
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/china-days/dist/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chinese-days/dist/index.min.js"></script>
+<script>
+  const { isHoliday } = chineseDays
+  console.log(isHoliday('2024-01-01'))
+</script>
 ```
 
 安装
 
 ```sh
-npm i china-days
+npm i chinese-days
 ```
 
 使用 ESM 导入
 
 ```ts
-import chinaDays from 'china-days'
-console.log(chinaDays)
+import chineseDays from 'chinese-days'
+console.log(chineseDays)
 ```
 
 在 Node 中使用
 
 ```js
-const { isWorkday, isHoliday } = require('china-days');
+const { isWorkday, isHoliday } = require('chinese-days');
 console.log(isWorkday('2020-01-01'));
 console.log(isHoliday('2020-01-01'));
 ```
@@ -155,7 +159,7 @@ console.log(secondNextWorkday);
 ### 获取 24 节气的日期
 
 ```js
-import { getSolarTerms } from "china-days";
+import { getSolarTerms } from "chinese-days";
 
 /** 获取范围内 节气日期数组 */
 const solarTerms = getSolarTerms("2024-05-01", "2024-05-20");

@@ -1,5 +1,5 @@
 {
-  "name": "china-days",
+  "name": "chinese-days",
   "version": "0.2.0",
   "description": "中国节假日、调休日、工作日、24节气查询，农历阳历互转，支持 TS、CommonJS、UMD 模块化使用。",
   "main": "dist/index.min.js",
@@ -8,7 +8,7 @@
   "type": "commonjs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vsme/china-days"
+    "url": "https://github.com/vsme/chinese-days"
   },
   "files": [
     "dist/*",
@@ -37,7 +37,7 @@
   "author": "Yaavi",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vsme/china-days/issues"
+    "url": "https://github.com/vsme/chinese-days/issues"
   },
   "dependencies": {
     "dayjs": "^1.11.11"

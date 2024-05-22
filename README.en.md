@@ -1,8 +1,8 @@
-# China Days
+# Chinese Days
 
-![NPM Version](https://img.shields.io/npm/v/china-days)
-![GitHub License](https://img.shields.io/github/license/vsme/china-days)
-[![README](https://img.shields.io/badge/README-中文-brightgreen.svg)](https://github.com/vsme/china-days/blob/main/README.md)
+![NPM Version](https://img.shields.io/npm/v/chinese-days)
+![GitHub License](https://img.shields.io/github/license/vsme/chinese-days)
+[![README](https://img.shields.io/badge/README-中文-brightgreen.svg)](https://github.com/vsme/chinese-days/blob/main/README.md)
 
 > Translated by ChatGPT-4, PRs are welcome.
 
@@ -17,26 +17,30 @@ Description:
 Include directly in your browser:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/china-days/dist/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chinese-days/dist/index.min.js"></script>
+<script>
+  const { isHoliday } = chineseDays
+  console.log(isHoliday('2024-01-01'))
+</script>
 ```
 
 Installation:
 
 ```sh
-npm i china-days
+npm i chinese-days
 ```
 
 Using ESM import:
 
 ```ts
-import chinaDays from 'china-days'
-console.log(chinaDays)
+import chineseDays from 'chinese-days'
+console.log(chineseDays)
 ```
 
 Using in Node.js:
 
 ```js
-const { isWorkday, isHoliday } = require('china-days');
+const { isWorkday, isHoliday } = require('chinese-days');
 console.log(isWorkday('2020-01-01'));
 console.log(isHoliday('2020-01-01'));
 ```
@@ -57,7 +61,7 @@ console.log(isHoliday('2023-01-01')); // true
 
 ### `isInLieu` Check if a date is an in lieu day
 
-In China's holiday arrangement, an in lieu day is a workday or a rest day adjusted for consecutive holidays or make-up workdays. For example, if a public holiday is connected to a weekend, a weekend day might be adjusted to a workday, or a workday might be adjusted to a rest day for a longer consecutive holiday.
+On a Chinese holiday arrangement, an in lieu day is a workday or a rest day adjusted for consecutive holidays or make-up workdays. For example, if a public holiday is connected to a weekend, a weekend day might be adjusted to a workday, or a workday might be adjusted to a rest day for a longer consecutive holiday.
 
 ```js
 // Check if 2024-05-02 is an in lieu day. Returns `true` if it is.
@@ -155,7 +159,7 @@ console.log(secondNextWorkday);
 ### Get dates of the 24 solar terms
 
 ```js
-import { getSolarTerms } from "china-days";
+import { getSolarTerms } from "chinese-days";
 
 /** Get an array of solar term dates within a range */
 const solarTerms = getSolarTerms("2024-05-01", "2024-05-20");
