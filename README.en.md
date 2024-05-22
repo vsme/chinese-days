@@ -1,40 +1,46 @@
-# China Days
+# Chinese Days
 
-![NPM Version](https://img.shields.io/npm/v/china-days)
-![GitHub License](https://img.shields.io/github/license/vsme/china-days)
-[![README](https://img.shields.io/badge/README-中文-brightgreen.svg)](https://github.com/vsme/china-days/blob/main/README.md)
+![NPM Version](https://img.shields.io/npm/v/chinese-days)
+![GitHub License](https://img.shields.io/github/license/vsme/chinese-days)
+[![README](https://img.shields.io/badge/README-中文-brightgreen.svg)](https://github.com/vsme/chinese-days/blob/main/README.md)
 
 > Translated by ChatGPT-4, PRs are welcome.
 
 This project provides a set of functions for managing and querying Chinese holidays, adjusted workdays (in lieu days), regular workdays, and the 24 solar terms. By using these functions, users can easily check the status of a specified date, get holidays or workdays within a date range, and find specific workdays. Additionally, the project supports querying the dates of the 24 solar terms, helping users understand the timing of traditional Chinese solar terms.
 
-Supports the years 2004 to 2024, including the extended Spring Festival in 2020.
+Description:
+1. Holidays: Supports from 2004 to 2024, including the extended Spring Festival in 2020.
+2. Lunar Dates: Supports from 1900 to 2100.
 
 ## Quick Start
 
 Include directly in your browser:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/china-days/dist/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chinese-days/dist/index.min.js"></script>
+<script>
+  const { isHoliday } = chineseDays
+  console.log(isHoliday('2024-01-01'))
+</script>
 ```
 
 Installation:
 
 ```sh
-npm i china-days
+npm i chinese-days
 ```
 
 Using ESM import:
 
 ```ts
-import chinaDays from 'china-days'
-console.log(chinaDays)
+import chineseDays from 'chinese-days'
+console.log(chineseDays)
 ```
 
 Using in Node.js:
 
 ```js
-const { isWorkday, isHoliday } = require('china-days');
+const { isWorkday, isHoliday } = require('chinese-days');
 console.log(isWorkday('2020-01-01'));
 console.log(isHoliday('2020-01-01'));
 ```
@@ -55,7 +61,7 @@ console.log(isHoliday('2023-01-01')); // true
 
 ### `isInLieu` Check if a date is an in lieu day
 
-In China's holiday arrangement, an in lieu day is a workday or a rest day adjusted for consecutive holidays or make-up workdays. For example, if a public holiday is connected to a weekend, a weekend day might be adjusted to a workday, or a workday might be adjusted to a rest day for a longer consecutive holiday.
+On a Chinese holiday arrangement, an in lieu day is a workday or a rest day adjusted for consecutive holidays or make-up workdays. For example, if a public holiday is connected to a weekend, a weekend day might be adjusted to a workday, or a workday might be adjusted to a rest day for a longer consecutive holiday.
 
 ```js
 // Check if 2024-05-02 is an in lieu day. Returns `true` if it is.
@@ -153,7 +159,7 @@ console.log(secondNextWorkday);
 ### Get dates of the 24 solar terms
 
 ```js
-import { getSolarTerms } from "china-days";
+import { getSolarTerms } from "chinese-days";
 
 /** Get an array of solar term dates within a range */
 const solarTerms = getSolarTerms("2024-05-01", "2024-05-20");
@@ -219,10 +225,10 @@ When dealing with a leap month in the lunar calendar, one lunar date may corresp
 
 ```js
 console.log(getSolarDateFromLunar('2001-03-05'))
-// return {date: '2001-03-29', leapMonthDate: undefined}
+// Output: {date: '2001-03-29', leapMonthDate: undefined}
 
 console.log(getSolarDateFromLunar('2001-04-05'))
-// return {date: '2001-04-27', leapMonthDate: '2001-05-27'}
+// Output: {date: '2001-04-27', leapMonthDate: '2001-05-27'}
 ```
 
 ## Contributing
@@ -234,6 +240,7 @@ console.log(getSolarDateFromLunar('2001-04-05'))
 5. Run the command `npm run generate` to automatically generate the [holiday constants file](src/holidays/constants.ts);
 6. Submit a PR.
 
-## Acknowledgments
+## Acknowledgements
 
-This project references the `Python` version of the [LKI/chinese-calendar](https://github.com/LKI/chinese-calendar) open-source project.
+1. Lunar calendar data is sourced from the [Bigkoo/Android-PickerView](https://github.com/Bigkoo/Android-PickerView) project.
+2. Chinese holiday data generation references the `Python` version of the [LKI/chinese-calendar](https://github.com/LKI/chinese-calendar) project.
