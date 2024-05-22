@@ -84,7 +84,7 @@ console.log(getDayDetail('2024-02-04')); // { "date": "2024-02-04", "work":true,
 console.log(getDayDetail('2024-02-17')); // { "date": "2024-02-17", "work":false,"name":"Spring Festival,春节,3"}
 ```
 
-### `getHolidays` 获取指定日期范围内的所有节假日
+### `getHolidaysInRange` 获取指定日期范围内的所有节假日
 
 接收起始日期和结束日期，并可选地决定是否包括周末。如果包括周末，则函数会返回包括周末在内的所有节假日；否则，只返回工作日的节假日。
 
@@ -96,16 +96,16 @@ const start = '2024-04-26';
 const end = '2024-05-06';
 
 // 获取从 2024-05-01 到 2024-05-10 的所有节假日，包括周末
-const holidaysIncludingWeekends = getHolidays(start, end, true);
+const holidaysIncludingWeekends = getHolidaysInRange(start, end, true);
 console.log('Holidays including weekends:', holidaysIncludingWeekends.map(d => getDayDetail(d)));
 
 // 获取从 2024-05-01 到 2024-05-10 的节假日，不包括周末
-const holidaysExcludingWeekends = getHolidays(start, end, false);
+const holidaysExcludingWeekends = getHolidaysInRange(start, end, false);
 console.log('Holidays excluding weekends:', holidaysExcludingWeekends.map(d => getDayDetail(d)));
 ```
 
 
-### `getWorkdays` 取指定日期范围内的工作日列表
+### `getWorkdaysInRange` 取指定日期范围内的工作日列表
 
 接收起始日期和结束日期，并可选地决定是否包括周末。如果包括周末，则函数会返回包括周末在内的所有工作日；否则，只返回周一到周五的工作日。
 
@@ -115,11 +115,11 @@ const start = '2024-04-26';
 const end = '2024-05-06';
 
 // 获取从 2024-05-01 到 2024-05-10 的所有工作日，包括周末
-const workdaysIncludingWeekends = getWorkdays(start, end, true);
+const workdaysIncludingWeekends = getWorkdaysInRange(start, end, true);
 console.log('Workdays including weekends:', workdaysIncludingWeekends);
 
 // 获取从 2024-05-01 到 2024-05-10 的工作日，不包括周末
-const workdaysExcludingWeekends = getWorkdays(start, end, false);
+const workdaysExcludingWeekends = getWorkdaysInRange(start, end, false);
 console.log('Workdays excluding weekends:', workdaysExcludingWeekends);
 ```
 
@@ -172,12 +172,67 @@ getSolarTerms("2024-05-20");
 // return: [{date: '2024-05-20', term: 'lesser_fullness_of_grain', name: '小满'}]
 ```
 
+## 阳历农历互转
+
+特别说明，此库中：
+1. `2057-09-28` 为：农历丁丑(牛)年八月三十；
+2. `2097-08-07` 为：农历丁巳(蛇)年七月初一。
+
+### 阳历转换农历
+
+```js
+// 2097-8-7
+console.log(getLunarDate('2097-08-07'))
+
+// 2057-9-28
+console.log(getLunarDate('2057-09-28'))
+// 输出:
+// {
+//   date: "2057-09-28",
+//   lunarYear: 2057,
+//   lunarMon: 8,
+//   lunarDay: 30,
+//   isLeap: false,
+//   lunarDayCN: "三十",
+//   lunarMonCN: "八月",
+//   lunarYearCN: "二零五七",
+//   yearCyl: "丁丑",
+//   monCyl: "己酉",
+//   dayCyl: "戊子",
+//   zodiac: "牛"
+// }
+
+// 非闰月 和 闰月例子
+console.log(getLunarDate('2001-04-27'))
+console.log(getLunarDate('2001-05-27'))
+```
+
+### 根据阳历日期区间，批量获取农历日期
+
+```js
+console.log(getLunarDatesInRange('2001-05-21', '2001-05-26'))
+```
+
+### 农历转换阳历
+
+当为阴历闰月的时候，会出现一个农历日期对应两个阳历日期的情况，所以返回对象形式。
+
+```js
+console.log(getSolarDateFromLunar('2001-03-05'))
+// return {date: '2001-03-29', leapMonthDate: undefined}
+
+console.log(getSolarDateFromLunar('2001-04-05'))
+// return {date: '2001-04-27', leapMonthDate: '2001-05-27'}
+```
+
 ## 贡献代码
 
 1. Fork + Clone 项目到本地；
-2. 修改 [节假日定义](scripts/generate.ts)；
-3. 执行命令 `npm run generate` 自动生成 [常量文件](src/holidays/constants.ts)；
-4. 提交PR。
+2. 节假日: 修改 [节假日定义](scripts/generate.ts)；
+3. 农历定义: 修改 [农历定义](src/solar_lunar/constants.ts)；
+4. 其他修改需要自己查看源码；
+5. 执行命令 `npm run generate` 自动生成 [节假日常量文件](src/holidays/constants.ts)；
+6. 提交PR。
 
 ## 致谢
 

@@ -67,7 +67,7 @@ const getDayDetail = (date: dayjs.ConfigType): { work: boolean, name: string, da
 }
 
 /** 获取节假日 */
-const getHolidays = (start: dayjs.ConfigType, end: dayjs.ConfigType, includeWeekends: boolean = true): string[] => {
+const getHolidaysInRange = (start: dayjs.ConfigType, end: dayjs.ConfigType, includeWeekends: boolean = true): string[] => {
   start = _validateDate(start) as Dayjs;
   end = _validateDate(end) as Dayjs;
   if (includeWeekends) {
@@ -77,7 +77,7 @@ const getHolidays = (start: dayjs.ConfigType, end: dayjs.ConfigType, includeWeek
 }
 
 /** 获取工作日 */
-const getWorkdays = (start: dayjs.ConfigType, end: dayjs.ConfigType, includeWeekends: boolean = true): string[] => {
+const getWorkdaysInRange = (start: dayjs.ConfigType, end: dayjs.ConfigType, includeWeekends: boolean = true): string[] => {
   start = _validateDate(start) as Dayjs;
   end = _validateDate(end) as Dayjs;
   if (includeWeekends) {
@@ -117,7 +117,7 @@ export {
   isWorkday,
   isInLieu,
   getDayDetail,
-  getHolidays,
-  getWorkdays,
+  getHolidaysInRange,
+  getWorkdaysInRange,
   findWorkday,
 }

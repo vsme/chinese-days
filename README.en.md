@@ -85,7 +85,7 @@ console.log(getDayDetail('2024-02-04')); // { "date": "2024-02-04", "work":true,
 console.log(getDayDetail('2024-02-17')); // { "date": "2024-02-17", "work":false,"name":"Spring Festival,春节,3"}
 ```
 
-### `getHolidays` Get all holidays within a specified date range
+### `getHolidaysInRange` Get all holidays within a specified date range
 
 Receives start and end dates and optionally includes weekends. If weekends are included, the function returns all holidays including weekends; otherwise, only holidays on weekdays are returned.
 
@@ -97,15 +97,15 @@ const start = '2024-04-26';
 const end = '2024-05-06';
 
 // Get all holidays from 2024-05-01 to 2024-05-10, including weekends
-const holidaysIncludingWeekends = getHolidays(start, end, true);
+const holidaysIncludingWeekends = getHolidaysInRange(start, end, true);
 console.log('Holidays including weekends:', holidaysIncludingWeekends.map(d => getDayDetail(d)));
 
 // Get holidays from 2024-05-01 to 2024-05-10, excluding weekends
-const holidaysExcludingWeekends = getHolidays(start, end, false);
+const holidaysExcludingWeekends = getHolidaysInRange(start, end, false);
 console.log('Holidays excluding weekends:', holidaysExcludingWeekends.map(d => getDayDetail(d)));
 ```
 
-### `getWorkdays` Get a list of workdays within a specified date range
+### `getWorkdaysInRange` Get a list of workdays within a specified date range
 
 Receives start and end dates and optionally includes weekends. If weekends are included, the function returns all workdays including weekends; otherwise, only weekdays (Monday to Friday) workdays are returned.
 
@@ -115,11 +115,11 @@ const start = '2024-04-26';
 const end = '2024-05-06';
 
 // Get all workdays from 2024-05-01 to 2024-05-10, including weekends
-const workdaysIncludingWeekends = getWorkdays(start, end, true);
+const workdaysIncludingWeekends = getWorkdaysInRange(start, end, true);
 console.log('Workdays including weekends:', workdaysIncludingWeekends);
 
 // Get workdays from 2024-05-01 to 2024-05-10, excluding weekends
-const workdaysExcludingWeekends = getWorkdays(start, end, false);
+const workdaysExcludingWeekends = getWorkdaysInRange(start, end, false);
 console.log('Workdays excluding weekends:', workdaysExcludingWeekends);
 ```
 
@@ -172,12 +172,67 @@ getSolarTerms("2024-05-20");
 // return: [{date: '2024-05-20', term: 'lesser_fullness_of_grain', name: '小满'}]
 ```
 
+## Conversion Between Gregorian and Lunar Calendar
+
+Special notes for this library:
+1. `2057-09-28` is the lunar date: `丁丑` year, August 30th;
+2. `2097-08-07` is the lunar date: `丁巳` year, July 1st.
+
+### Convert Gregorian Date to Lunar Date
+
+```js
+// 2097-08-07
+console.log(getLunarDate('2097-08-07'))
+
+// 2057-09-28
+console.log(getLunarDate('2057-09-28'))
+// Output:
+// {
+//   date: "2057-09-28",
+//   lunarYear: 2057,
+//   lunarMon: 8,
+//   lunarDay: 30,
+//   isLeap: false,
+//   lunarDayCN: "三十",
+//   lunarMonCN: "八月",
+//   lunarYearCN: "二零五七",
+//   yearCyl: "丁丑",
+//   monCyl: "己酉",
+//   dayCyl: "戊子",
+//   zodiac: "牛"
+// }
+
+// Examples of non-leap and leap months
+console.log(getLunarDate('2001-04-27'))
+console.log(getLunarDate('2001-05-27'))
+```
+
+### Get Lunar Dates in a Range of Gregorian Dates
+
+```js
+console.log(getLunarDatesInRange('2001-05-21', '2001-05-26'))
+```
+
+### Convert Lunar Date to Gregorian Date
+
+When dealing with a leap month in the lunar calendar, one lunar date may correspond to two different Gregorian dates, hence the return is in object form.
+
+```js
+console.log(getSolarDateFromLunar('2001-03-05'))
+// return {date: '2001-03-29', leapMonthDate: undefined}
+
+console.log(getSolarDateFromLunar('2001-04-05'))
+// return {date: '2001-04-27', leapMonthDate: '2001-05-27'}
+```
+
 ## Contributing
 
-1. Fork + Clone the project locally;
-2. Modify [holiday definitions](scripts/generate.ts);
-3. Run `npm run generate` to automatically generate [constants file](src/holidays/constants.ts);
-4. Submit a PR.
+1. Fork + Clone the project to your local machine;
+2. Holidays: Modify the [holiday definitions](scripts/generate.ts);
+3. Lunar definitions: Modify the [lunar definitions](src/solar_lunar/constants.ts);
+4. For other modifications, refer to the source code yourself;
+5. Run the command `npm run generate` to automatically generate the [holiday constants file](src/holidays/constants.ts);
+6. Submit a PR.
 
 ## Acknowledgments
 

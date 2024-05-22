@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import { wrapDate, getDates } from '../../src/utils';
 import { holidays, workdays, inLieuDays } from '../../src/holidays/constants';
 import Arrangement, { Holiday } from '../../src/holidays/arrangement';
 import {
@@ -7,10 +6,10 @@ import {
   isWorkday,
   isInLieu,
   getDayDetail,
-  getHolidays,
-  getWorkdays,
+  getHolidaysInRange,
+  getWorkdaysInRange,
   findWorkday,
-} from '../../src/holidays';
+} from '../../src';
 
 describe('Holiday Functions', () => {
   test('isHoliday should return correct boolean values', () => {
@@ -48,18 +47,18 @@ describe('Holiday Functions', () => {
     });
   });
 
-  test('getHolidays should return correct holidays within a range', () => {
+  test('getHolidaysInRange should return correct holidays within a range', () => {
     const start = '2024-05-01';
     const end = '2024-05-31';
-    const holidaysInRange = getHolidays(start, end, true);
+    const holidaysInRange = getHolidaysInRange(start, end, true);
 
     expect(holidaysInRange).toContain('2024-05-01');
   });
 
-  test('getWorkdays should return correct workdays within a range', () => {
+  test('getWorkdaysInRange should return correct workdays within a range', () => {
     const start = '2024-05-01';
     const end = '2024-05-31';
-    const workdaysInRange = getWorkdays(start, end, true);
+    const workdaysInRange = getWorkdaysInRange(start, end, true);
 
     expect(workdaysInRange).toContain('2024-05-06');
   });

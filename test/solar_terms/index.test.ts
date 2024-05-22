@@ -3,7 +3,7 @@ import {
   getSolarTermDate,
   getSolarTerms,
   type SolarTerm,
-} from "../../src/solar_terms";
+} from "../../src";
 
 import type { SolarTermKey } from "../../src/solar_terms/constants";
 
