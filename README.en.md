@@ -8,7 +8,9 @@
 
 This project provides a set of functions for managing and querying Chinese holidays, adjusted workdays (in lieu days), regular workdays, and the 24 solar terms. By using these functions, users can easily check the status of a specified date, get holidays or workdays within a date range, and find specific workdays. Additionally, the project supports querying the dates of the 24 solar terms, helping users understand the timing of traditional Chinese solar terms.
 
-Supports the years 2004 to 2024, including the extended Spring Festival in 2020.
+Description:
+1. Holidays: Supports from 2004 to 2024, including the extended Spring Festival in 2020.
+2. Lunar Dates: Supports from 1900 to 2100.
 
 ## Quick Start
 
@@ -219,10 +221,10 @@ When dealing with a leap month in the lunar calendar, one lunar date may corresp
 
 ```js
 console.log(getSolarDateFromLunar('2001-03-05'))
-// return {date: '2001-03-29', leapMonthDate: undefined}
+// Output: {date: '2001-03-29', leapMonthDate: undefined}
 
 console.log(getSolarDateFromLunar('2001-04-05'))
-// return {date: '2001-04-27', leapMonthDate: '2001-05-27'}
+// Output: {date: '2001-04-27', leapMonthDate: '2001-05-27'}
 ```
 
 ## Contributing
@@ -234,6 +236,7 @@ console.log(getSolarDateFromLunar('2001-04-05'))
 5. Run the command `npm run generate` to automatically generate the [holiday constants file](src/holidays/constants.ts);
 6. Submit a PR.
 
-## Acknowledgments
+## Acknowledgements
 
-This project references the `Python` version of the [LKI/chinese-calendar](https://github.com/LKI/chinese-calendar) open-source project.
+1. Lunar calendar data is sourced from the [Bigkoo/Android-PickerView](https://github.com/Bigkoo/Android-PickerView) project.
+2. Chinese holiday data generation references the `Python` version of the [LKI/chinese-calendar](https://github.com/LKI/chinese-calendar) project.

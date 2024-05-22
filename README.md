@@ -6,7 +6,9 @@
 
 本项目提供了一系列用于管理和查询中国节假日、调休日、工作日及二十四节气的函数。通过使用这些函数，用户可以方便地检查指定日期的状态，获取日期范围内的节假日或工作日，并查找特定的工作日。此外，项目还支持查询二十四节气的日期，帮助用户了解中国传统节气的时间安排。
 
-支持 2004年 至 2024年，包括 2020年 的春节延长。
+说明：
+1. 节假日：支持 2004年 至 2024年，包括 2020年 的春节延长。
+2. 农历日：支持 1900年 至 2100年。
 
 ## 快速开始
 
@@ -186,7 +188,6 @@ console.log(getLunarDate('2097-08-07'))
 
 // 2057-9-28
 console.log(getLunarDate('2057-09-28'))
-// 输出:
 // {
 //   date: "2057-09-28",
 //   lunarYear: 2057,
@@ -219,10 +220,10 @@ console.log(getLunarDatesInRange('2001-05-21', '2001-05-26'))
 
 ```js
 console.log(getSolarDateFromLunar('2001-03-05'))
-// return {date: '2001-03-29', leapMonthDate: undefined}
+// {date: '2001-03-29', leapMonthDate: undefined}
 
 console.log(getSolarDateFromLunar('2001-04-05'))
-// return {date: '2001-04-27', leapMonthDate: '2001-05-27'}
+// {date: '2001-04-27', leapMonthDate: '2001-05-27'}
 ```
 
 ## 贡献代码
@@ -236,4 +237,5 @@ console.log(getSolarDateFromLunar('2001-04-05'))
 
 ## 致谢
 
-本项目参考了 `Python` 版本的 [LKI/chinese-calendar](https://github.com/LKI/chinese-calendar) 开源项目。
+1. 农历数据来自于 [Bigkoo/Android-PickerView](https://github.com/Bigkoo/Android-PickerView) 项目。
+2. 中国节假日数据生成参考了 `Python` 版本的 [LKI/chinese-calendar](https://github.com/LKI/chinese-calendar) 项目。
