@@ -2,11 +2,8 @@ name: Node.js Package
 
 on:
   push:
-    branches:
-      - release
-  pull_request:
-    branches:
-      - release
+    tags:
+      - "v*"
 
 jobs:
   release:
@@ -20,8 +17,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
         run: npm install
@@ -31,6 +28,19 @@ jobs:
 
       - name: Run test script
         run: npm run test
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: |
+            Please refer to [CHANGELOG.md](https://github.com/vsme/chinese-days/blob/main/CHANGELOG.md) for details.
+          draft: false
+          prerelease: false
 
     #   - name: Publish package
     #     run: npm publish
