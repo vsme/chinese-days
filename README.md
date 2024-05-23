@@ -4,7 +4,7 @@
 ![GitHub License](https://img.shields.io/github/license/vsme/chinese-days)
 [![README](https://img.shields.io/badge/README-English-brightgreen.svg)](https://github.com/vsme/chinese-days/blob/main/README.en.md)
 
-本项目提供了一系列用于管理和查询中国节假日、调休日、工作日及二十四节气的函数。通过使用这些函数，用户可以方便地检查指定日期的状态，获取日期范围内的节假日或工作日，并查找特定的工作日。此外，项目还支持查询二十四节气的日期，帮助用户了解中国传统节气的时间安排。
+本项目提供了一系列用于查询中国节假日、调休日、工作日、24节气查询，农历阳历互转的函数。通过使用这些函数，用户可以方便地检查指定日期的状态，获取日期范围内的节假日或工作日，并查找特定的工作日。此外，项目还支持查询二十四节气的日期，帮助用户了解中国传统节气的时间安排。
 
 说明：
 1. 节假日：支持 2004年 至 2024年，包括 2020年 的春节延长。

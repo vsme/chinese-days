@@ -1,9 +1,24 @@
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs, { Dayjs, type ConfigType } from "../utils/dayjs";
 import { wrapDate, getDates } from '../utils'
-import { holidays, workdays, inLieuDays } from './constants';
-import Arrangement, { Holiday } from './arrangement';
+import { holidays as compressedHolidays, workdays as compressedWorkdays, inLieuDays as compressedInLieuDays } from './constants';
+import { Holiday } from './arrangement';
 
-const _validateDate = (...dates: dayjs.ConfigType[]): Dayjs | Dayjs[] => {
+const getOriginal = (dates: Record<string, number[]>) => {
+  const dateMap: Map<string, Holiday> = new Map();
+  Object.keys(dates).forEach((key) => {
+    const days = dates[key];
+    days.forEach(n => {
+      dateMap.set(dayjs('2000-01-01').add(n, 'day').format('YYYY-MM-DD'), Holiday[key as keyof typeof Holiday]);
+    })
+  });
+  return Object.fromEntries(dateMap);
+}
+
+const holidays = getOriginal(compressedHolidays);
+const workdays = getOriginal(compressedWorkdays);
+const inLieuDays = getOriginal(compressedInLieuDays);
+
+const _validateDate = (...dates: ConfigType[]): Dayjs | Dayjs[] => {
   if (dates.length !== 1) {
     return dates.map(date => _validateDate(date)) as Dayjs[];
   }
@@ -21,12 +36,12 @@ const _validateDate = (...dates: dayjs.ConfigType[]): Dayjs | Dayjs[] => {
 }
 
 /** 是否节假日 */
-const isHoliday = (date: dayjs.ConfigType): boolean => {
+const isHoliday = (date: ConfigType): boolean => {
   return !isWorkday(date);
 }
 
 /** 是否工作日 */
-const isWorkday = (date: dayjs.ConfigType): boolean => {
+const isWorkday = (date: ConfigType): boolean => {
   const validDate = _validateDate(date) as Dayjs;
   const weekday = validDate.day();
   const formattedDate = validDate.format('YYYY-MM-DD');
@@ -35,13 +50,13 @@ const isWorkday = (date: dayjs.ConfigType): boolean => {
 }
 
 /** 是否调休日 - 是节假日，但后续有需要补班 */
-const isInLieu = (date: dayjs.ConfigType): boolean => {
+const isInLieu = (date: ConfigType): boolean => {
   date = _validateDate(date) as Dayjs;
   return !!inLieuDays[date.format('YYYY-MM-DD')];
 }
 
 /** 获取工作日详情 */
-const getDayDetail = (date: dayjs.ConfigType): { work: boolean, name: string, date: string } => {
+const getDayDetail = (date: ConfigType): { work: boolean, name: string, date: string } => {
   date = _validateDate(date) as Dayjs;
   const formattedDate = date.format('YYYY-MM-DD')
   if (workdays[formattedDate]) {
@@ -67,7 +82,7 @@ const getDayDetail = (date: dayjs.ConfigType): { work: boolean, name: string, da
 }
 
 /** 获取节假日 */
-const getHolidaysInRange = (start: dayjs.ConfigType, end: dayjs.ConfigType, includeWeekends: boolean = true): string[] => {
+const getHolidaysInRange = (start: ConfigType, end: ConfigType, includeWeekends: boolean = true): string[] => {
   start = _validateDate(start) as Dayjs;
   end = _validateDate(end) as Dayjs;
   if (includeWeekends) {
@@ -77,7 +92,7 @@ const getHolidaysInRange = (start: dayjs.ConfigType, end: dayjs.ConfigType, incl
 }
 
 /** 获取工作日 */
-const getWorkdaysInRange = (start: dayjs.ConfigType, end: dayjs.ConfigType, includeWeekends: boolean = true): string[] => {
+const getWorkdaysInRange = (start: ConfigType, end: ConfigType, includeWeekends: boolean = true): string[] => {
   start = _validateDate(start) as Dayjs;
   end = _validateDate(end) as Dayjs;
   if (includeWeekends) {
@@ -87,7 +102,7 @@ const getWorkdaysInRange = (start: dayjs.ConfigType, end: dayjs.ConfigType, incl
 }
 
 /* 查找从 date 开始 第 n 个工作日, 0 为当天 */
-const findWorkday = (deltaDays: number = 0, date: dayjs.ConfigType = dayjs()): string => {
+const findWorkday = (deltaDays: number = 0, date: ConfigType = dayjs()): string => {
   date = wrapDate(date);
 
   if (deltaDays === 0) {
@@ -112,7 +127,6 @@ const findWorkday = (deltaDays: number = 0, date: dayjs.ConfigType = dayjs()): s
 
 export {
   Holiday,
-  Arrangement,
   isHoliday,
   isWorkday,
   isInLieu,

@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs, { Dayjs, type ConfigType } from "../utils/dayjs";
 import { wrapDate } from '../utils'
 import {
   SOLAR_TERMS_C_NUMS,
@@ -53,8 +53,8 @@ export interface SolarTerm {
  * @returns Array of solar terms => 节气数组
  */
 const getSolarTerms = (
-  start: dayjs.ConfigType,
-  end?: dayjs.ConfigType
+  start: ConfigType,
+  end?: ConfigType
 ): SolarTerm[] => {
   const result: SolarTerm[] = [];
   let current = wrapDate(start);
