@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs, { type ConfigType } from "../utils/dayjs";
 import { type LunarDateDetail, LUNAR_INFO, CHINESE_NUMBER, NUMBER_MONTH, NUMBER_1, NUMBER_2, ZODIACS } from './constants'
 
 /**
@@ -116,7 +116,7 @@ const getYearLeapMonth = (year: number) => {
  * @param date 指定日期
  * @returns 农历信息
  */
-export const getLunarDate = (date: dayjs.ConfigType): LunarDateDetail => {
+export const getLunarDate = (date: ConfigType): LunarDateDetail => {
   const lunarDate: number[] = new Array(7).fill(0);
   let temp = 0;
   let leap = 0;
@@ -199,7 +199,7 @@ export const getLunarDate = (date: dayjs.ConfigType): LunarDateDetail => {
  * @param endDate 结束日期
  * @returns 范围内所有日期的农历信息
  */
-export const getLunarDatesInRange = (startDate: dayjs.ConfigType, endDate: dayjs.ConfigType): LunarDateDetail[] => {
+export const getLunarDatesInRange = (startDate: ConfigType, endDate: ConfigType): LunarDateDetail[] => {
   const start = dayjs(startDate);
   const end = dayjs(endDate);
   const lunarDates: LunarDateDetail[] = [];
@@ -217,7 +217,7 @@ export const getLunarDatesInRange = (startDate: dayjs.ConfigType, endDate: dayjs
  * @param isLeapMonth 是否闰月
  * @returns 阳历日期
  */
-export const getSolarDateFromLunar = (lunarDate: dayjs.ConfigType): {
+export const getSolarDateFromLunar = (lunarDate: ConfigType): {
   date: string;
   leapMonthDate?: string;
 } => {

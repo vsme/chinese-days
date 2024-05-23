@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from "../utils/dayjs";
 
 export enum Holiday {
   NY = "New Year's Day,元旦,1",

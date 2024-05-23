@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from "../../src/utils/dayjs";
 import {
   getSolarTermDate,
   getSolarTerms,

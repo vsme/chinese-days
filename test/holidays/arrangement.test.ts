@@ -1,5 +1,5 @@
-import dayjs from 'dayjs';
-import { Arrangement, Holiday } from '../../src';
+import dayjs from '../../src/utils/dayjs';
+import Arrangement, { Holiday} from '../../src/holidays/arrangement';
 
 describe('Arrangement class', () => {
   let arrangement: Arrangement;

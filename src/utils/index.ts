@@ -1,12 +1,12 @@
-import dayjs, { type Dayjs } from "dayjs";
+import dayjs, { type Dayjs, type ConfigType } from "../utils/dayjs";
 
 // wrapDate to the start of the day
-export const wrapDate = (date: dayjs.ConfigType): dayjs.Dayjs => {
+export const wrapDate = (date: ConfigType): Dayjs => {
   return dayjs(date).startOf("day");
 };
 
 
-export const getDates = (start: dayjs.ConfigType, end: dayjs.ConfigType): Dayjs[] => {
+export const getDates = (start: ConfigType, end: ConfigType): Dayjs[] => {
   start = wrapDate(start);
   end = wrapDate(end);
   const deltaDays = end.diff(start, 'day');

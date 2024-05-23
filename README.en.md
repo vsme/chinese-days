@@ -6,7 +6,7 @@
 
 > Translated by ChatGPT-4, PRs are welcome.
 
-This project provides a set of functions for managing and querying Chinese holidays, adjusted workdays (in lieu days), regular workdays, and the 24 solar terms. By using these functions, users can easily check the status of a specified date, get holidays or workdays within a date range, and find specific workdays. Additionally, the project supports querying the dates of the 24 solar terms, helping users understand the timing of traditional Chinese solar terms.
+This project provides a series of functions for querying Chinese holidays, compensatory holidays, working days, and 24 solar terms, as well as for the conversion between the lunar and solar calendars. By using these functions, users can easily check the status of a specified date, get holidays or workdays within a date range, and find specific workdays. Additionally, the project supports querying the dates of the 24 solar terms, helping users understand the timing of traditional Chinese solar terms.
 
 Description:
 1. Holidays: Supports from 2004 to 2024, including the extended Spring Festival in 2020.

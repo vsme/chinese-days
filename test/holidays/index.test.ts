@@ -1,5 +1,3 @@
-import dayjs from 'dayjs';
-import { holidays, workdays, inLieuDays } from '../../src/holidays/constants';
 import Arrangement, { Holiday } from '../../src/holidays/arrangement';
 import {
   isHoliday,
@@ -43,7 +41,7 @@ describe('Holiday Functions', () => {
     expect(detail).toEqual({
       date: '2024-05-01',
       work: false,
-      name: holidays['2024-05-01'],
+      name: Holiday.L,
     });
   });
 
