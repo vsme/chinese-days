@@ -4,15 +4,19 @@
 ![GitHub License](https://img.shields.io/github/license/vsme/chinese-days)
 [![README](https://img.shields.io/badge/README-English-brightgreen.svg)](https://github.com/vsme/chinese-days/blob/main/README.en.md)
 
-本项目提供了一系列用于查询中国节假日、调休日、工作日、24节气查询，农历阳历互转的函数。通过使用这些函数，用户可以方便地检查指定日期的状态，获取日期范围内的节假日或工作日，并查找特定的工作日。此外，项目还支持查询二十四节气的日期，帮助用户了解中国传统节气的时间安排。
+本项目提供了一系列用于查询中国节假日、调休日、工作日、24节气、以及农历阳历互转的函数，中国节假日会跟随国务院发布进行更新。
 
-说明：
-1. 节假日：支持 2004年 至 2024年，包括 2020年 的春节延长。
-2. 农历日：支持 1900年 至 2100年。
++ **节假日**：支持 2004年 至 2024年，包括 2020年 的春节延长
++ **24节气**：支持 1900年 至 2100年。
++ **农历日**：支持 1900年 至 2100年。
+
+## 非 `JS` 语言
+
+提供了中国节假日的 `JSON` 文件，通过链接 [chinese-days.json](https://cdn.jsdelivr.net/npm/chinese-days/dist/chinese-days.json) 可以直接引用。
 
 ## 快速开始
 
-直接浏览器引入
+推荐方式：直接浏览器引入，会跟随国务院发布更新。
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/chinese-days/dist/index.min.js"></script>
@@ -22,7 +26,7 @@
 </script>
 ```
 
-安装
+其他方式安装
 
 ```sh
 npm i chinese-days

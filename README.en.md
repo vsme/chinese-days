@@ -6,15 +6,23 @@
 
 > Translated by ChatGPT-4, PRs are welcome.
 
-This project provides a series of functions for querying Chinese holidays, compensatory holidays, working days, and 24 solar terms, as well as for the conversion between the lunar and solar calendars. By using these functions, users can easily check the status of a specified date, get holidays or workdays within a date range, and find specific workdays. Additionally, the project supports querying the dates of the 24 solar terms, helping users understand the timing of traditional Chinese solar terms.
+This project provides a set of functions for querying Chinese holidays, adjustment days, workdays, the 24 solar terms, and conversions between the lunar and solar calendars. Chinese holidays will be updated according to the releases from the State Council.
 
-Description:
-1. Holidays: Supports from 2004 to 2024, including the extended Spring Festival in 2020.
-2. Lunar Dates: Supports from 1900 to 2100.
++ **Holidays**: Supports the years 2004 to 2024, including the extended Spring Festival of 2020.
++ **24 Solar Terms**: Supports the years 1900 to 2100.
++ **Lunar Days**: Supports the years 1900 to 2100.
+
+## For non-JS projects, you can use the JSON file
+
+A `JSON` file of Chinese holidays is provided and can be directly referenced through this link: [chinese-days.json](https://cdn.jsdelivr.net/npm/chinese-days/dist/chinese-days.json).
 
 ## Quick Start
 
-Include directly in your browser:
+Recommended method: Directly include it in your browser, which will update according to the releases from the State Council.
+
+---
+
+This translation captures the key details and instructions for using the project while ensuring clarity and accuracy.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/chinese-days/dist/index.min.js"></script>
