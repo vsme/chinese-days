@@ -38,8 +38,8 @@ npm i chinese-days
 Using ESM import:
 
 ```ts
-import chineseDays from 'chinese-days'
-console.log(chineseDays)
+import chineseDays from 'chinese-days';
+console.log(chineseDays);
 ```
 
 Using in Node.js:
@@ -193,10 +193,10 @@ Special notes for this library:
 
 ```js
 // 2097-08-07
-console.log(getLunarDate('2097-08-07'))
+console.log(getLunarDate('2097-08-07'));
 
 // 2057-09-28
-console.log(getLunarDate('2057-09-28'))
+console.log(getLunarDate('2057-09-28'));
 // Output:
 // {
 //   date: "2057-09-28",
@@ -214,14 +214,14 @@ console.log(getLunarDate('2057-09-28'))
 // }
 
 // Examples of non-leap and leap months
-console.log(getLunarDate('2001-04-27'))
-console.log(getLunarDate('2001-05-27'))
+console.log(getLunarDate('2001-04-27'));
+console.log(getLunarDate('2001-05-27'));
 ```
 
 ### Get Lunar Dates in a Range of Gregorian Dates
 
 ```js
-console.log(getLunarDatesInRange('2001-05-21', '2001-05-26'))
+console.log(getLunarDatesInRange('2001-05-21', '2001-05-26'));
 ```
 
 ### Convert Lunar Date to Gregorian Date
@@ -229,10 +229,10 @@ console.log(getLunarDatesInRange('2001-05-21', '2001-05-26'))
 When dealing with a leap month in the lunar calendar, one lunar date may correspond to two different Gregorian dates, hence the return is in object form.
 
 ```js
-console.log(getSolarDateFromLunar('2001-03-05'))
+console.log(getSolarDateFromLunar('2001-03-05'));
 // Output: {date: '2001-03-29', leapMonthDate: undefined}
 
-console.log(getSolarDateFromLunar('2001-04-05'))
+console.log(getSolarDateFromLunar('2001-04-05'));
 // Output: {date: '2001-04-27', leapMonthDate: '2001-05-27'}
 ```
 

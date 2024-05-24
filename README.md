@@ -24,7 +24,7 @@
   chineseDays.isHoliday('2024-01-01');
   // 或者解构使用
   const { isHoliday } = chineseDays;
-  </script>
+</script>
 ```
 
 其他方式安装
@@ -36,8 +36,8 @@ npm i chinese-days
 使用 ESM 导入
 
 ```ts
-import chineseDays from 'chinese-days'
-console.log(chineseDays)
+import chineseDays from 'chinese-days';
+console.log(chineseDays);
 ```
 
 在 Node 中使用
@@ -193,10 +193,10 @@ getSolarTerms("2024-05-20");
 
 ```js
 // 2097-8-7
-console.log(getLunarDate('2097-08-07'))
+console.log(getLunarDate('2097-08-07'));
 
 // 2057-9-28
-console.log(getLunarDate('2057-09-28'))
+console.log(getLunarDate('2057-09-28'));
 // {
 //   date: "2057-09-28",
 //   lunarYear: 2057,
@@ -213,14 +213,14 @@ console.log(getLunarDate('2057-09-28'))
 // }
 
 // 非闰月 和 闰月例子
-console.log(getLunarDate('2001-04-27'))
-console.log(getLunarDate('2001-05-27'))
+console.log(getLunarDate('2001-04-27'));
+console.log(getLunarDate('2001-05-27'));
 ```
 
 ### 根据阳历日期区间，批量获取农历日期
 
 ```js
-console.log(getLunarDatesInRange('2001-05-21', '2001-05-26'))
+console.log(getLunarDatesInRange('2001-05-21', '2001-05-26'));
 ```
 
 ### 农历转换阳历
@@ -228,10 +228,10 @@ console.log(getLunarDatesInRange('2001-05-21', '2001-05-26'))
 当为阴历闰月的时候，会出现一个农历日期对应两个阳历日期的情况，所以返回对象形式。
 
 ```js
-console.log(getSolarDateFromLunar('2001-03-05'))
+console.log(getSolarDateFromLunar('2001-03-05'));
 // {date: '2001-03-29', leapMonthDate: undefined}
 
-console.log(getSolarDateFromLunar('2001-04-05'))
+console.log(getSolarDateFromLunar('2001-04-05'));
 // {date: '2001-04-27', leapMonthDate: '2001-05-27'}
 ```
 
