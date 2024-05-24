@@ -18,17 +18,14 @@ A `JSON` file of Chinese holidays is provided and can be directly referenced thr
 
 ## Quick Start
 
-Recommended method: Directly include it in your browser, which will update according to the releases from the State Council.
-
----
-
-This translation captures the key details and instructions for using the project while ensuring clarity and accuracy.
+Recommended approach: Direct browser import for more timely updates
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/chinese-days/dist/index.min.js"></script>
 <script>
-  const { isHoliday } = chineseDays
-  console.log(isHoliday('2024-01-01'))
+  chineseDays.isHoliday('2024-01-01');
+  // Or use destructuring
+  const { isHoliday } = chineseDays;
 </script>
 ```
 

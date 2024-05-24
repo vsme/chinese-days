@@ -16,14 +16,15 @@
 
 ## 快速开始
 
-推荐方式：直接浏览器引入，会跟随国务院发布更新。
+推荐方式：直接浏览器引入，更新较为及时
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/chinese-days/dist/index.min.js"></script>
 <script>
-  const { isHoliday } = chineseDays
-  console.log(isHoliday('2024-01-01'))
-</script>
+  chineseDays.isHoliday('2024-01-01');
+  // 或者解构使用
+  const { isHoliday } = chineseDays;
+  </script>
 ```
 
 其他方式安装
