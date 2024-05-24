@@ -1,22 +1,8 @@
 import dayjs, { Dayjs, type ConfigType } from "../utils/dayjs";
 import { wrapDate, getDates } from '../utils'
-import { holidays as compressedHolidays, workdays as compressedWorkdays, inLieuDays as compressedInLieuDays } from './constants';
-import { Holiday } from './arrangement';
+import generate from './generate';
 
-const getOriginal = (dates: Record<string, number[]>) => {
-  const dateMap: Map<string, Holiday> = new Map();
-  Object.keys(dates).forEach((key) => {
-    const days = dates[key];
-    days.forEach(n => {
-      dateMap.set(dayjs('2000-01-01').add(n, 'day').format('YYYY-MM-DD'), Holiday[key as keyof typeof Holiday]);
-    })
-  });
-  return Object.fromEntries(dateMap);
-}
-
-const holidays = getOriginal(compressedHolidays);
-const workdays = getOriginal(compressedWorkdays);
-const inLieuDays = getOriginal(compressedInLieuDays);
+const { holidays, workdays, inLieuDays } = generate()
 
 const _validateDate = (...dates: ConfigType[]): Dayjs | Dayjs[] => {
   if (dates.length !== 1) {
@@ -126,7 +112,6 @@ const findWorkday = (deltaDays: number = 0, date: ConfigType = dayjs()): string 
 }
 
 export {
-  Holiday,
   isHoliday,
   isWorkday,
   isInLieu,

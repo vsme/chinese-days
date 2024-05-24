@@ -237,11 +237,10 @@ console.log(getSolarDateFromLunar('2001-04-05'))
 ## 贡献代码
 
 1. Fork + Clone 项目到本地；
-2. 节假日: 修改 [节假日定义](scripts/generate.ts)；
+2. 节假日: 修改 [节假日定义](src/holidays/generate.ts)；
 3. 农历定义: 修改 [农历定义](src/solar_lunar/constants.ts)；
 4. 其他修改需要自己查看源码；
-5. 执行命令 `npm run generate` 自动生成 [节假日常量文件](src/holidays/constants.ts)；
-6. 提交PR。
+5. 提交PR。
 
 ## 致谢
 

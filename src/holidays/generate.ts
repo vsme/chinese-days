@@ -1,4 +1,4 @@
-import Arrangement from "../src/holidays/arrangement.ts"
+import Arrangement from "./arrangement.ts"
 
 export default () => {
   const arrangement = new Arrangement()

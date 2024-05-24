@@ -242,11 +242,10 @@ console.log(getSolarDateFromLunar('2001-04-05'))
 ## Contributing
 
 1. Fork + Clone the project to your local machine;
-2. Holidays: Modify the [holiday definitions](scripts/generate.ts);
+2. Holidays: Modify the [holiday definitions](src/holidays/generate.ts);
 3. Lunar definitions: Modify the [lunar definitions](src/solar_lunar/constants.ts);
 4. For other modifications, refer to the source code yourself;
-5. Run the command `npm run generate` to automatically generate the [holiday constants file](src/holidays/constants.ts);
-6. Submit a PR.
+5. Submit a PR.
 
 ## Acknowledgements
 
