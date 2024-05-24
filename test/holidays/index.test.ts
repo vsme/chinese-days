@@ -77,14 +77,14 @@ describe('Arrangement Class', () => {
   });
 
   test('should correctly handle 2023 holidays', () => {
-    arrangement.yearAt(2024)
-    .nyd().rest(1, 1)
-    .sf().rest(2, 10).to(2, 17).work(2, 4).work(2, 18).inLieu(2, 15).to(2, 16)
-    .tsd().rest(4, 4).to(4, 6).work(4, 7).inLieu(4, 5)
-    .ld().rest(5, 1).to(5, 5).work(4, 28).work(5, 11).inLieu(5, 2).to(5, 3)
-    .dbf().rest(6, 10)
-    .maf().rest(9, 15).to(9, 17).work(9, 14).inLieu(9, 16)
-    .nd().rest(10, 1).to(10, 7).work(9, 29).work(10, 12).inLieu(10, 4).inLieu(10, 7)
+    arrangement.y(2024)
+    .ny().r(1, 1)
+    .s().r(2, 10).to(2, 17).w(2, 4).w(2, 18).i(2, 15).to(2, 16)
+    .t().r(4, 4).to(4, 6).w(4, 7).i(4, 5)
+    .l().r(5, 1).to(5, 5).w(4, 28).w(5, 11).i(5, 2).to(5, 3)
+    .d().r(6, 10)
+    .m().r(9, 15).to(9, 17).w(9, 14).i(9, 16)
+    .n().r(10, 1).to(10, 7).w(9, 29).w(10, 12).i(10, 4).i(10, 7)
 
     expect(arrangement.holidays).toHaveProperty('2024-05-01');
     expect(arrangement.holidays).toHaveProperty('2024-05-02');

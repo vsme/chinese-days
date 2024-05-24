@@ -33,7 +33,8 @@ class Arrangement {
   public workdays: Record<string, Holiday> = {};
   public inLieuDays: Record<string, Holiday> = {};
 
-  yearAt(year: number) {
+  /** year at */
+  y(year: number) {
     this.dayDetails.year = year;
     return this;
   }
@@ -96,39 +97,50 @@ class Arrangement {
     return this;
   }
 
-  work(month: number, day: number) {
+  /** work day */
+  w(month: number, day: number) {
     return this.save(month, day, DayType.Workday);
   }
-  rest(month: number, day: number) {
+  /** rest */
+  r(month: number, day: number) {
     return this.save(month, day, DayType.Holiday);
   }
-  inLieu(month: number, day: number) {
+  /** in-lieu */
+  i(month: number, day: number) {
     return this.save(month, day, DayType.InLieu);
   }
 
-  // Special holiday marker
-  nyd() {
+  /** New Year's Day 元旦 */
+  ny() {
     return this.mark(Holiday.NY);
   }
-  sf() {
+  /** Spring Festival 春节 */
+  s() {
     return this.mark(Holiday.S);
   }
-  tsd() {
+  /** Tomb-sweeping Day 清明 */
+  t() {
     return this.mark(Holiday.T);
   }
-  ld() {
+  
+  /** Labour Day 五一 */
+  l() {
     return this.mark(Holiday.L);
   }
-  dbf() {
+  /** Dragon Boat Festival 端午 */
+  d() {
     return this.mark(Holiday.D);
   }
-  nd() {
+  /** National Day 国庆节 */
+  n() {
     return this.mark(Holiday.N);
   }
-  maf() {
+  /** Mid-autumn Festival 中秋 */
+  m() {
     return this.mark(Holiday.M);
   }
-  afd() {
+  /** Anti-Fascist 70th Day 中国人民抗日战争暨世界反法西斯战争胜利70周年纪念日 */
+  a() {
     return this.mark(Holiday.A);
   }
 }

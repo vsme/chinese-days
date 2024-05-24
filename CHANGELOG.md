@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [1.2.1](https://github.com/vsme/chinese-days) (2024-05-23)
+
+- 优化代码
+- 将导出内容作为命名导出
+
 ## [1.2.0](https://github.com/vsme/chinese-days) (2024-05-23)
 
 ### 特性
