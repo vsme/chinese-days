@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.2.2](https://github.com/vsme/chinese-days) (2024-05-29)
+
+- 增加 `getSolarTermsInRange` 获取日期范围内节气
+
 ## [1.2.1](https://github.com/vsme/chinese-days) (2024-05-23)
 
 - 优化代码
