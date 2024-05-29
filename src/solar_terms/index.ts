@@ -44,16 +44,17 @@ export interface SolarTerm {
   date: string;
   term: SolarTermKey;
   name: string;
+  index?: number;
 };
 
 /**
- * Get solar terms => 获取范围日期内的节气
+ * Get solar terms => 获取范围日期内的节气 开始的日期
  * @param start 开始日期
  * @param end 不传只查当天
- * @returns Array of solar terms => 节气数组
+ * @returns Array of solar terms => 节气开始日数组
  */
 const getSolarTerms = (
-  start: ConfigType,
+  start?: ConfigType,
   end?: ConfigType
 ): SolarTerm[] => {
   const result: SolarTerm[] = [];
@@ -74,6 +75,7 @@ const getSolarTerms = (
           date: solarTermDate.format("YYYY-MM-DD"),
           term,
           name: SOLAR_TERMS[term],
+          index: 1,
         });
       }
     });
@@ -87,7 +89,54 @@ const getSolarTerms = (
   return result;
 };
 
+/**
+ * Get solar terms => 获取范围日期内的节气
+ * @param start 开始日期
+ * @param end 不传只查当天
+ * @returns Array of solar terms => 节气日数组
+ */
+const getSolarTermsInRange = (
+  start?: ConfigType,
+  end?: ConfigType
+): SolarTerm[] => {
+  // 从开始日减一个月 - 结束日下一个月 计算所有节气
+  let current = wrapDate(start).subtract(1, 'month');
+  const endDate = wrapDate(end || start).add(1, 'month');
+  const allTerms: { term: SolarTermKey, date: Dayjs }[] = []
+  while (current.isBefore(endDate) || current.isSame(endDate)) {
+    const year = current.year();
+    const month = current.month() + 1;
+    SOLAR_TERMS_MONTH[month].forEach((term: SolarTermKey) => {
+      const solarTermDate = dayjs(getSolarTermDate(year, month, term));
+      allTerms.push({ term, date: solarTermDate });
+    });
+    if (current.month() === 11) {
+      current = current.add(1, 'year').startOf('year');
+    } else {
+      current = current.add(1, 'month').startOf('month');
+    }
+  }
+
+  // 计算中间的所有日期
+  const deltaDays: (Omit<SolarTerm, 'date'> & {day: Dayjs})[] = []
+  allTerms.forEach((term, index) => {
+    for (let date = term.date; allTerms[index + 1] && date.isBefore(allTerms[index + 1].date); date = date.add(1, 'day')) {
+      deltaDays.push({ day: date, term: term.term, name: SOLAR_TERMS[term.term], index: date.diff(term.date, 'day') + 1 })
+    }
+  })
+
+  if (!end) end = start
+  return deltaDays.filter(trem => trem.day.isBetween(start, end, 'day')).map(trem => ({
+    date: trem.day.format('YYYY-MM-DD'),
+    term: trem.term,
+    name: trem.name,
+    index: trem.index
+  }));
+};
+
+
 export {
   getSolarTermDate,
   getSolarTerms,
+  getSolarTermsInRange,
 }

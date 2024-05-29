@@ -53,7 +53,7 @@ export class Dayjs {
     }
   }
 
-  startOf(unit: "year" | "month" | "day"): Dayjs {
+  startOf(unit?: "year" | "month" | "day"): Dayjs {
     const newDate = new Date(this._date);
     switch (unit) {
       case "year":
@@ -67,6 +67,25 @@ export class Dayjs {
         break;
       case "day":
         newDate.setHours(0, 0, 0, 0);
+        break;
+    }
+    return new Dayjs(newDate);
+  }
+
+  endOf(unit?: "year" | "month" | "day"): Dayjs {
+    const newDate = new Date(this._date);
+    switch (unit) {
+      case "year":
+        newDate.setMonth(11);
+        newDate.setDate(31);
+        newDate.setHours(23, 59, 59, 999);
+        break;
+      case "month":
+        newDate.setDate(new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0).getDate());
+        newDate.setHours(23, 59, 59, 999);
+        break;
+      case "day":
+        newDate.setHours(23, 59, 59, 999);
         break;
     }
     return new Dayjs(newDate);
@@ -86,6 +105,10 @@ export class Dayjs {
         break;
     }
     return new Dayjs(newDate);
+  }
+
+  subtract(value: number, unit: "year" | "month" | "day"): Dayjs {
+    return this.add(-value, unit);
   }
 
   format(formatStr: string): string {
@@ -176,6 +199,16 @@ export class Dayjs {
           this._date.getDate() === targetDate.getDate()
         );
     }
+  }
+
+  isBetween(
+    startDate: string | number | Date | Dayjs | null | undefined,
+    endDate: string | number | Date | Dayjs | null | undefined,
+    unit?: "year" | "month" | "day"
+  ): boolean {
+    const start = new Dayjs(startDate).startOf(unit);
+    const end = new Dayjs(endDate).endOf(unit);
+    return this.isAfter(start) && this.isBefore(end) || this.isSame(start) || this.isSame(end);
   }
 }
 
