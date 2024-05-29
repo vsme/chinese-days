@@ -1,9 +1,5 @@
 import dayjs from "../../src/utils/dayjs";
-import {
-  getSolarTermDate,
-  getSolarTerms,
-  type SolarTerm,
-} from "../../src";
+import { getSolarTermDate, getSolarTerms, type SolarTerm } from "../../src";
 
 import type { SolarTermKey } from "../../src/solar_terms/constants";
 
@@ -34,10 +30,15 @@ describe("Solar Terms", () => {
       const end = dayjs("2024-02-29");
       const terms = getSolarTerms(start, end);
       const expected: SolarTerm[] = [
-        { date: "2024-01-06", term: "lesser_cold", name: "小寒" },
-        { date: "2024-01-20", term: "greater_cold", name: "大寒" },
-        { date: "2024-02-04", term: "the_beginning_of_spring", name: "立春" },
-        { date: "2024-02-19", term: "rain_water", name: "雨水" },
+        { date: "2024-01-06", term: "lesser_cold", name: "小寒", index: 1 },
+        { date: "2024-01-20", term: "greater_cold", name: "大寒", index: 1 },
+        {
+          date: "2024-02-04",
+          term: "the_beginning_of_spring",
+          name: "立春",
+          index: 1,
+        },
+        { date: "2024-02-19", term: "rain_water", name: "雨水", index: 1 },
       ];
       expect(terms).toEqual(expected);
     });
@@ -51,11 +52,13 @@ describe("Solar Terms", () => {
           date: "2024-03-05",
           name: "惊蛰",
           term: "the_waking_of_insects",
+          index: 1,
         },
         {
           date: "2024-03-20",
           name: "春分",
           term: "the_spring_equinox",
+          index: 1,
         },
       ]);
     });
@@ -64,7 +67,7 @@ describe("Solar Terms", () => {
       const date = dayjs("2024-01-06");
       const terms = getSolarTerms(date, date);
       const expected: SolarTerm[] = [
-        { date: "2024-01-06", term: "lesser_cold", name: "小寒" },
+        { date: "2024-01-06", term: "lesser_cold", name: "小寒", index: 1 },
       ];
       expect(terms).toEqual(expected);
     });
