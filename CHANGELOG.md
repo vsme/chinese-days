@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.2.3](https://github.com/vsme/chinese-days) (2024-05-30)
+
+- 不在节假日范围内的日期不再抛出异常
+
 ## [1.2.2](https://github.com/vsme/chinese-days) (2024-05-29)
 
 - 增加 `getSolarTermsInRange` 获取日期范围内节气

@@ -12,12 +12,6 @@ const _validateDate = (...dates: ConfigType[]): Dayjs | Dayjs[] => {
   if (!date.isValid()) {
     throw new Error(`unsupported type ${typeof date}, expected type is Date or Dayjs`);
   }
-  const allHolidays = Object.keys(holidays).sort()
-  const minYear = dayjs(allHolidays[0]).year();
-  const maxYear = dayjs(allHolidays.slice(-1)[0]).year();
-  if (!(minYear <= date.year() && date.year() <= maxYear)) {
-    throw new Error(`no available data for year ${date.year()}, only year between [${minYear}, ${maxYear}] supported`);
-  }
   return date;
 }
 
