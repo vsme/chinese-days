@@ -1,7 +1,7 @@
 # Chinese Days
 
-![NPM Version](https://img.shields.io/npm/v/chinese-days)
-![GitHub License](https://img.shields.io/github/license/vsme/chinese-days)
+[![NPM Version](https://img.shields.io/npm/v/chinese-days)](https://www.npmjs.com/package/chinese-days)
+[![GitHub License](https://img.shields.io/github/license/vsme/chinese-days)](https://github.com/vsme/chinese-days/blob/main/LICENSE)
 [![README](https://img.shields.io/badge/README-中文-brightgreen.svg)](https://github.com/vsme/chinese-days/blob/main/README.md)
 
 > Translated by ChatGPT-4, PRs are welcome.
@@ -161,12 +161,47 @@ console.log(secondNextWorkday);
 
 ## Solar Terms Module
 
-### Get dates of the 24 solar terms
+### Get Dates for the 24 Solar Terms
+
+The 24 solar terms in China are part of a traditional agricultural calendar, marking different **time periods** throughout the year. Each term typically has a specific start date, but this date does not represent the entire duration of the term. In fact, each solar term lasts about 15 days.
+
+For example, the term "Lesser Fullness of Grain" (小满) typically starts around May 20th in the Gregorian calendar, but it doesn't end on that day. Instead, it lasts until the next solar term begins. Specifically, "Lesser Fullness of Grain" lasts until around June 5th, when the "Grain in Ear" (芒种) term begins. Therefore, the time period for the "Lesser Fullness of Grain" solar term is from approximately May 20th to June 5th.
+
+#### Get an Array of Solar Terms Dates within a Range
+
+```js
+import { getSolarTermsInRange } from "chinese-days";
+
+// No parameters, queries the current day
+console.log(getSolarTermsInRange())
+// [{date: '2024-05-29', term: 'lesser_fullness_of_grain', name: '小满', index: 10}]
+// index: indicates the day within the current term, starting from 1
+
+// No end parameter, queries for a specific date
+console.log(getSolarTermsInRange('2024-05-01'))
+// [{date: '2024-05-01', term: 'grain_rain', name: '谷雨', index: 13}]
+
+// Query solar terms within a specified range
+console.log(getSolarTermsInRange('2024-05-01', '2024-05-06'))
+/**
+ * =>
+ * [
+ *   {"date":"2024-05-01","term":"grain_rain","name":"谷雨","index":13},
+ *   {"date":"2024-05-02","term":"grain_rain","name":"谷雨","index":14},
+ *   {"date":"2024-05-03","term":"grain_rain","name":"谷雨","index":15},
+ *   {"date":"2024-05-04","term":"grain_rain","name":"谷雨","index":16},
+ *   {"date":"2024-05-05","term":"the_beginning_of_summer","name":"立夏","index":1},
+ *   {"date":"2024-05-06","term":"the_beginning_of_summer","name":"立夏","index":2}
+ * ]
+ **/
+```
+
+#### If You Only Want to Get an Array of Solar Term Start Dates
 
 ```js
 import { getSolarTerms } from "chinese-days";
 
-/** Get an array of solar term dates within a range */
+/** Get an array of solar term start dates within a range */
 const solarTerms = getSolarTerms("2024-05-01", "2024-05-20");
 solarTerms.forEach(({ date, term, name }) => {
   console.log(`${name}: ${date}, ${term}`);
@@ -174,11 +209,11 @@ solarTerms.forEach(({ date, term, name }) => {
 // 立夏: 2024-05-05, the_beginning_of_summer
 // 小满: 2024-05-20, lesser_fullness_of_grain
 
-// No solar terms, return []
+// No solar terms found, returns []
 getSolarTerms("2024-05-21", "2024-05-25");
 // return []
 
-/* If end parameter is not provided, get the solar term for a specific day */
+/* No end parameter, get the solar term for a specific day */
 getSolarTerms("2024-05-20");
 // return: [{date: '2024-05-20', term: 'lesser_fullness_of_grain', name: '小满'}]
 ```
@@ -239,8 +274,8 @@ console.log(getSolarDateFromLunar('2001-04-05'));
 ## Contributing
 
 1. Fork + Clone the project to your local machine;
-2. Holidays: Modify the [holiday definitions](src/holidays/generate.ts);
-3. Lunar definitions: Modify the [lunar definitions](src/solar_lunar/constants.ts);
+2. Holidays: Modify the [holiday definitions](https://github.com/vsme/chinese-days/blob/main/src/holidays/generate.ts);
+3. Lunar definitions: Modify the [lunar definitions](https://github.com/vsme/chinese-days/blob/main/src/solar_lunar/constants.ts);
 4. For other modifications, refer to the source code yourself;
 5. Submit a PR.
 

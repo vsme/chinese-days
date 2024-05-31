@@ -1,7 +1,7 @@
 # 中国节假日
 
-![NPM Version](https://img.shields.io/npm/v/chinese-days)
-![GitHub License](https://img.shields.io/github/license/vsme/chinese-days)
+[![NPM Version](https://img.shields.io/npm/v/chinese-days)](https://www.npmjs.com/package/chinese-days)
+[![GitHub License](https://img.shields.io/github/license/vsme/chinese-days)](https://github.com/vsme/chinese-days/blob/main/LICENSE)
 [![README](https://img.shields.io/badge/README-English-brightgreen.svg)](https://github.com/vsme/chinese-days/blob/main/README.en.md)
 
 本项目提供了一系列用于查询中国节假日、调休日、工作日、24节气、以及农历阳历互转的函数，中国节假日会跟随国务院发布进行更新。
@@ -273,8 +273,8 @@ console.log(getSolarDateFromLunar('2001-04-05'));
 ## 贡献代码
 
 1. Fork + Clone 项目到本地；
-2. 节假日: 修改 [节假日定义](src/holidays/generate.ts)；
-3. 农历定义: 修改 [农历定义](src/solar_lunar/constants.ts)；
+2. 节假日: 修改 [节假日定义](https://github.com/vsme/chinese-days/blob/main/src/holidays/generate.ts)；
+3. 农历定义: 修改 [农历定义](https://github.com/vsme/chinese-days/blob/main/src/solar_lunar/constants.ts)；
 4. 其他修改需要自己查看源码；
 5. 提交PR。
 
