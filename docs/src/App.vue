@@ -9,7 +9,7 @@ let lang = ref<'zh' | 'en'>('zh');
 <template>
   <!-- <button @click="lang = lang === 'zh' ? 'en' : 'zh'">{{ lang === 'zh' ? 'en' : 'zh' }}</button> -->
   <div class="demo-title">
-    <span>Chinese Days</span>
+    <span>Chinese Days - Demo</span>
     <a href="https://github.com/vsme/chinese-days" target="_blank" rel="noopener noreferrer">
       GitHub
       <svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24">
