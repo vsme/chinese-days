@@ -182,7 +182,7 @@ const selectDate = (date: any) => {
           holiday: day.holidayName,
           inlieu: day.isInLieu,
           work: day.holidayName && day.work,
-          solar: day.solarTerm.index == 1,
+          solar: day.solarTerm?.index == 1,
           selected: isSelected(day.date)
         }"
       >
@@ -191,7 +191,7 @@ const selectDate = (date: any) => {
           day.work ? '班' : day.isInLieu ? '调' : '休'
         }}</span>
         <span class="day">{{ day.date.getDate() }}</span>
-        <span class="desc">{{ day.solarTerm.index == 1 ? day.solarTerm?.name : day.holidayName || day.lunarDayCN }}</span>
+        <span class="desc">{{ day.solarTerm?.index == 1 ? day.solarTerm?.name : day.holidayName || day.lunarDayCN }}</span>
       </div>
     </div>
   </div>
@@ -209,7 +209,7 @@ const selectDate = (date: any) => {
       </p>
     </div>
     <div class="right">
-      <p>{{ selectedDate.isToday ? '今天是' : '此日是' }} <span>{{ selectedDate.solarTerm.name }}</span> 节气的第 <span>{{selectedDate.solarTerm.index}}</span> 天。</p>
+      <p>{{ selectedDate.isToday ? '今天是' : '此日是' }} <span>{{ selectedDate.solarTerm?.name }}</span> 节气的第 <span>{{selectedDate.solarTerm?.index}}</span> 天。</p>
       <p>{{ selectedDate.work ? '又是需要工作的一天！😥' : selectedDate.isInLieu ? '虽然调休，但要补班还回来的！🤬' : '休息啦~😃' }}</p>
     </div>
   </div>
