@@ -20,6 +20,9 @@ export class Dayjs {
       this._date = new Date(date);
     } else if (typeof date === "string" || typeof date === "number") {
       this._date = new Date(date);
+      if (typeof date === "string" && isNaN(this._date.getTime())) {
+        this._date = new Date(date.replace(/-/g, "/"));
+      }
     } else {
       this._date = new Date();
     }
@@ -206,9 +209,11 @@ export class Dayjs {
     endDate: string | number | Date | Dayjs | null | undefined,
     unit?: "year" | "month" | "day"
   ): boolean {
-    const start = new Dayjs(startDate).startOf(unit);
-    const end = new Dayjs(endDate).endOf(unit);
-    return this.isAfter(start) && this.isBefore(end) || this.isSame(start) || this.isSame(end);
+    const start = new Dayjs(startDate).startOf(unit).toDate();
+    const end = new Dayjs(endDate).endOf(unit).toDate();
+    const current = this.toDate();
+
+    return current >= start && current <= end;
   }
 }
 
