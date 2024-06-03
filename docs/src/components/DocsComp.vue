@@ -32,7 +32,7 @@ fetch('//cdn.jsdelivr.net/npm/chinese-days/README.md')
   })
   .then((data) => {
     html.value = md.render(data) as string
-    console.log(data)
+    // console.log(data)
   })
   .catch((error) => {
     console.error('There has been a problem with your fetch operation:', error)
