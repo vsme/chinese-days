@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.2.4](https://github.com/vsme/chinese-days) (2024-06-03)
+
+- 兼容 Safari 日期格式
+
 ## [1.2.3](https://github.com/vsme/chinese-days) (2024-05-30)
 
 - 不在节假日范围内的日期不再抛出异常
