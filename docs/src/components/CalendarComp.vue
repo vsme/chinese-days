@@ -268,7 +268,7 @@ body {
         width: 22px;
         height: 22px;
         &.r {
-          rotate: 180deg;
+          transform: rotate(180deg);
         }
       }
     }
