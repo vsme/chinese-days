@@ -106,7 +106,7 @@ const main = async () => {
   if (result && result.length > 0) {
     console.log(result)
     const outputPath = process.env.GITHUB_OUTPUT;
-    const holidaysFile = path.join(__dirname, 'holidays.txt');
+    const holidaysFile = path.join(process.cwd(), 'holidays.txt');
     fs.writeFileSync(holidaysFile, result);
     if (outputPath) {
       fs.appendFileSync(outputPath, `holidays=${holidaysFile}\n`);
