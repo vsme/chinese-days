@@ -24,7 +24,11 @@ jobs:
 
     - name: Run script
       id: run-script
-      run: npm run fetch 2024  # 假设你的脚本文件名为 your-script.js，且需要传入一个年份参数
+      run: npm run fetch 2024
+
+    - name: Debug secrets
+        run: echo "SECRET_TEST=${{ secrets.SECRET_TEST }}"
+        shell: bash
 
     - name: Send notification if holidays has value
       if: ${{ steps.run-script.outputs.holidays != '' }}
