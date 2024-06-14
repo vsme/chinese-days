@@ -101,12 +101,13 @@ const main = async () => {
   const year = args.year;
   console.log(`Fetching holiday for ${year}...`);
 
-  const result = await fetchHoliday(year);
+  let result = await fetchHoliday(year);
 
   if (result && result.length > 0) {
     console.log(result)
+    result = result.split('\n').map(line => `<p>${line}</p>`).join('')
     const outputPath = process.env.GITHUB_OUTPUT;
-    const holidaysFile = path.join(process.cwd(), 'holidays.txt');
+    const holidaysFile = path.join(process.cwd(), 'holidays.html');
     fs.writeFileSync(holidaysFile, result);
     if (outputPath) {
       fs.appendFileSync(outputPath, `holidays=${holidaysFile}\n`);

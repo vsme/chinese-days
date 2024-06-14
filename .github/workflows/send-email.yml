@@ -29,9 +29,9 @@ jobs:
     - name: Read holidays file
       id: read-holidays
       run: |
-        echo "HOLIDAYS_CONTENT=$(cat holidays.txt)" >> $GITHUB_ENV
+        echo "HOLIDAYS_CONTENT=$(cat holidays.html)" >> $GITHUB_ENV
       env:
-        HOLIDAYS_CONTENT: $(cat holidays.txt)
+        HOLIDAYS_CONTENT: $(cat holidays.html)
 
     - name: Send notification if holidays has value
       if: ${{ steps.run-script.outputs.holidays != '' }}
@@ -43,7 +43,5 @@ jobs:
         password: ${{ secrets.EMAIL_PASSWORD }}
         subject: "2024 Holidays Result has value - GitHub Actions"
         to: hi@yaavi.me
-        from: Github
-        body: |
-          Result has value: 
-          ${{ env.HOLIDAYS_CONTENT }}
+        from: Holidays Update
+        html_body: ${{ env.HOLIDAYS_CONTENT }}
