@@ -87,7 +87,7 @@ const buildHolidays = (
         cal.createEvent({
           start: startDate.toDate(),
           end: endDate.add(1, "day").toDate(),
-          description: chineseName,
+          description: `${chineseName}放假: 共${mark === '(休)' ? '休息' : '需补班'} ${dates.length} 天`,
           status: ICalEventStatus.CONFIRMED,
           summary: `${chineseName}${mark}`,
           transparency: ICalEventTransparency.TRANSPARENT,
@@ -105,7 +105,7 @@ const buildHolidays = (
     cal.createEvent({
       start: startDate.toDate(),
       end: endDate.add(1, "day").toDate(),
-      description: chineseName,
+      description: `${chineseName}放假: 共${mark === '(休)' ? '休息' : '需补班'} ${dates.length} 天`,
       status: ICalEventStatus.CONFIRMED,
       summary: `${chineseName}${mark}`,
       transparency: ICalEventTransparency.TRANSPARENT,
