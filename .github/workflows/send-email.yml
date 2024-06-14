@@ -36,6 +36,6 @@ jobs:
         password: ${{ secrets.EMAIL_PASSWORD }}
         subject: "2024 Holidays Result has value - GitHub Actions"
         to: hi@yaavi.me
-        from: ${{ secrets.EMAIL_USERNAME }}
+        from: Github
         body: |
           Result has value: $(cat holidays.txt)
