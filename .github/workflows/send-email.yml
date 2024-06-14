@@ -3,7 +3,7 @@ name: Notify on Result
 on:
   push:
     branches:
-      - main  # 或者你想要的其他分支
+      - main
 
 jobs:
   notify:
@@ -26,9 +26,12 @@ jobs:
       id: run-script
       run: npm run fetch 2024
 
-    - name: Debug secrets
-      run: echo "SECRET_TEST=${{ secrets.SECRET_TEST }}"
-      shell: bash
+    - name: Read holidays file
+      id: read-holidays
+      run: |
+        echo "HOLIDAYS_CONTENT=$(cat holidays.txt)" >> $GITHUB_ENV
+      env:
+        HOLIDAYS_CONTENT: $(cat holidays.txt)
 
     - name: Send notification if holidays has value
       if: ${{ steps.run-script.outputs.holidays != '' }}
@@ -42,4 +45,5 @@ jobs:
         to: hi@yaavi.me
         from: Github
         body: |
-          Result has value: $(cat holidays.txt)
+          Result has value: 
+          ${{ env.HOLIDAYS_CONTENT }}
