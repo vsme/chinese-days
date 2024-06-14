@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from 'path';
 import axios from "axios";
 import cheerio from "cheerio";
 import { ArgumentParser } from "argparse";
@@ -100,7 +102,18 @@ const main = async () => {
   console.log(`Fetching holiday for ${year}...`);
 
   const result = await fetchHoliday(year);
-  console.log(result, result.length);
+
+  if (result && result.length > 0) {
+    console.log(result)
+    const outputPath = process.env.GITHUB_OUTPUT;
+    const holidaysFile = path.join(__dirname, 'holidays.txt');
+    fs.writeFileSync(holidaysFile, result);
+    if (outputPath) {
+      fs.appendFileSync(outputPath, `holidays=${holidaysFile}\n`);
+    }
+  } else {
+    console.log('No holidays found.');
+  }
 };
 
 main().catch((error) => {
