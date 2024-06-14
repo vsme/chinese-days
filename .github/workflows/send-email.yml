@@ -27,8 +27,8 @@ jobs:
       run: npm run fetch 2024
 
     - name: Debug secrets
-        run: echo "SECRET_TEST=${{ secrets.SECRET_TEST }}"
-        shell: bash
+      run: echo "SECRET_TEST=${{ secrets.SECRET_TEST }}"
+      shell: bash
 
     - name: Send notification if holidays has value
       if: ${{ steps.run-script.outputs.holidays != '' }}
