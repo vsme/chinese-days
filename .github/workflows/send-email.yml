@@ -38,5 +38,4 @@ jobs:
         to: hi@yaavi.me
         from: ${{ secrets.EMAIL_USERNAME }}
         body: |
-          Result has value:
-          $(cat holidays.txt)
+          Result has value: $(cat holidays.txt)
