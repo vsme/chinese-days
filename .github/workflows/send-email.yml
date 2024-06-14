@@ -1,0 +1,42 @@
+name: Notify on Result
+
+on:
+  push:
+    branches:
+      - main  # 或者你想要的其他分支
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+        registry-url: "https://registry.npmjs.org"
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run script
+      id: run-script
+      run: npm run fetch 2024  # 假设你的脚本文件名为 your-script.js，且需要传入一个年份参数
+
+    - name: Send notification if holidays has value
+      if: ${{ steps.run-script.outputs.holidays != '' }}
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: "2024 Holidays Result has value - GitHub Actions"
+        to: hi@yaavi.me
+        from: ${{ secrets.EMAIL_USERNAME }}
+        body: |
+          Result has value:
+          $(cat holidays.txt)
