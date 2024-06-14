@@ -1,9 +1,9 @@
 name: Notify on Result
 
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    # 从 00:00 到 12:00 UTC，每 2 小时运行一次（对应北京时间 08:00 到 20:00）
+    - cron: '0 0-12/2 * * *'
 
 jobs:
   notify:
@@ -41,7 +41,7 @@ jobs:
         server_port: 587
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: "2024 Holidays Result has value - GitHub Actions"
+        subject: "2024 Holidays Update"
         to: hi@yaavi.me
         from: Holidays Update
         html_body: ${{ env.HOLIDAYS_CONTENT }}
