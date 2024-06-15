@@ -6,11 +6,17 @@
 
 > Translated by ChatGPT-4, PRs are welcome.
 
-This project provides a set of functions for querying Chinese holidays, adjustment days, workdays, the 24 solar terms, and conversions between the lunar and solar calendars. Chinese holidays will be updated according to the releases from the State Council.
+This project provides a series of functions for querying Chinese holidays, adjusted working days, working days, 24 solar terms, and converting between lunar and solar calendars. Additionally, it supports ics file subscription for holidays, which can be subscribed to by Google Calendar, Apple Calendar, Microsoft Outlook, and other clients. The holiday information will be updated according to the announcements from the State Council.
 
 + **Holidays**: Supports the years 2004 to 2024, including the extended Spring Festival of 2020.
 + **24 Solar Terms**: Supports the years 1900 to 2100.
 + **Lunar Days**: Supports the years 1900 to 2100.
+
+## Subscribe to Calendar
+
+The subscribed calendar includes holidays and adjusted working days for the past three years (2022-2024).
+
+Subscription URL: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics)
 
 ## For non-JS projects, you can use the JSON file
 
@@ -18,7 +24,9 @@ A `JSON` file of Chinese holidays is provided and can be directly referenced thr
 
 ## Quick Start
 
-Recommended approach: Direct browser import for more timely updates
+### Recommended approach
+
+Direct browser import for more timely updates
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/chinese-days/dist/index.min.js"></script>
@@ -29,7 +37,16 @@ Recommended approach: Direct browser import for more timely updates
 </script>
 ```
 
-Installation:
+OR
+
+```html
+<script type="module">
+  import chineseDays from 'https://cdn.jsdelivr.net/npm/chinese-days/dist/index.es.js'
+  chineseDays.isHoliday('2024-01-01');
+</script>
+```
+
+### Installation:
 
 ```sh
 npm i chinese-days
