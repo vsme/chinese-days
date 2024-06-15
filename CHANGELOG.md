@@ -1,8 +1,12 @@
 # CHANGELOG
 
+## [1.3.1](https://github.com/vsme/chinese-days) (2024-06-15)
+
+- 增加 `iCal` 英文版本订阅
+
 ## [1.3.0](https://github.com/vsme/chinese-days) (2024-06-15)
 
-- 支持 `ics` 文件订阅节假日，可供 Google Calendar、Apple Calendar、Microsoft Outlook 等客户端订阅
+- 支持 `iCal` 文件订阅节假日，可供 Google Calendar、Apple Calendar、Microsoft Outlook 等客户端订阅
 
 ## [1.2.4](https://github.com/vsme/chinese-days) (2024-06-03)
 

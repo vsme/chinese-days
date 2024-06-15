@@ -16,7 +16,9 @@ This project provides a series of functions for querying Chinese holidays, adjus
 
 The subscribed calendar includes holidays and adjusted working days for the past three years (2022-2024).
 
-Subscription URL: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics)
+Subscription URL: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics) (default language is Chinese)
+
+For English: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics)
 
 ## For non-JS projects, you can use the JSON file
 
