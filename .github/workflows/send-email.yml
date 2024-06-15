@@ -1,4 +1,4 @@
-name: Notify on Result
+name: Send Email on Holidays Update
 
 on:
   schedule:
@@ -24,7 +24,7 @@ jobs:
 
     - name: Run script
       id: run-script
-      run: npm run fetch 2024
+      run: npm run fetch ${{ vars.HOLIDAYS_YEAR }}
 
     - name: Read holidays file
       id: read-holidays
@@ -41,7 +41,7 @@ jobs:
         server_port: 587
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: "2024 Holidays Update"
+        subject: "${{ vars.HOLIDAYS_YEAR }} Holidays Update"
         to: hi@yaavi.me
         from: Holidays Update
         html_body: ${{ env.HOLIDAYS_CONTENT }}
