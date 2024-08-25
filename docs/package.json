@@ -1,39 +1,35 @@
 {
   "name": "demo",
+  "type": "module",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "chinese-days": "^1.2.4",
-    "highlight.js": "^11.9.0",
+    "chinese-days": "^1.3.1",
+    "highlight.js": "^11.10.0",
     "markdown-it": "^14.1.0",
-    "vue": "^3.4.21"
+    "vue": "^3.4.38"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.8.0",
+    "@antfu/eslint-config": "^2.27.1",
     "@tsconfig/node20": "^20.1.4",
-    "@types/markdown-it": "^14.1.1",
-    "@types/node": "^20.12.5",
-    "@vitejs/plugin-vue": "^5.0.4",
-    "@vue/eslint-config-prettier": "^9.0.0",
-    "@vue/eslint-config-typescript": "^13.0.0",
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^22.5.0",
+    "@vitejs/plugin-vue": "^5.1.2",
     "@vue/tsconfig": "^0.5.1",
-    "eslint": "^8.57.0",
-    "eslint-plugin-vue": "^9.23.0",
-    "npm-run-all2": "^6.1.2",
-    "prettier": "^3.2.5",
-    "typescript": "~5.4.0",
-    "vite": "^5.2.8",
-    "vite-plugin-vue-devtools": "^7.0.25",
-    "vue-tsc": "^2.0.11"
+    "eslint": "^9.9.1",
+    "npm-run-all2": "^6.2.2",
+    "typescript": "~5.5.4",
+    "vite": "^5.4.2",
+    "vite-plugin-vue-devtools": "^7.3.9",
+    "vue-tsc": "^2.0.29"
   }
 }

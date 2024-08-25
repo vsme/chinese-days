@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-import Calendar from './components/CalendarComp.vue';
-import Docs from './components/DocsComp.vue';
+import { ref } from 'vue'
+import Calendar from './components/CalendarComp.vue'
+import Docs from './components/DocsComp.vue'
 
-let lang = ref<'zh' | 'en'>('zh');
+const lang = ref<'zh' | 'en'>('zh')
 </script>
 
 <template>

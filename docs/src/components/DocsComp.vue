@@ -5,28 +5,27 @@ import hljs from 'highlight.js'
 import 'highlight.js/styles/atom-one-light.css'
 
 const md: markdownit = markdownit({
-  highlight: function (str: string, lang: string) {
+  highlight(str: string, lang: string) {
     if (lang && hljs.getLanguage(lang)) {
       try {
-        return (
-          '<pre><code class="hljs">' +
-          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
-          '</code></pre>'
-        )
-      } catch (__) {
+        return `<pre><code class="hljs">${
+          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value
+        }</code></pre>`
+      }
+      catch {
         // do nothing
       }
     }
 
-    return '<pre><code class="hljs">' + md.utils.escapeHtml(str) + '</code></pre>'
-  }
+    return `<pre><code class="hljs">${md.utils.escapeHtml(str)}</code></pre>`
+  },
 })
 
 const html = ref('')
 fetch('//cdn.jsdelivr.net/npm/chinese-days/README.md')
   .then((response) => {
     if (!response.ok) {
-      throw new Error('Network response was not ok ' + response.statusText)
+      throw new Error(`Network response was not ok ${response.statusText}`)
     }
     return response.text()
   })
@@ -40,7 +39,7 @@ fetch('//cdn.jsdelivr.net/npm/chinese-days/README.md')
 </script>
 
 <template>
-  <div class="markdown-body" v-html="html"></div>
+  <div class="markdown-body" v-html="html" />
 </template>
 
 <style>
@@ -78,7 +77,8 @@ fetch('//cdn.jsdelivr.net/npm/chinese-days/README.md')
     text-decoration: underline;
     display: inline;
   }
-  ol, ul {
+  ol,
+  ul {
     padding-left: 20px;
   }
   li {

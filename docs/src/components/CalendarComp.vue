@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
-import { getLunarDate, getDayDetail, isInLieu, getSolarTermsInRange } from 'chinese-days'
+import { computed, ref } from 'vue'
+import { getDayDetail, getLunarDate, getSolarTermsInRange, isInLieu } from 'chinese-days'
 
 const props = withDefaults(
   defineProps<{
@@ -9,17 +9,17 @@ const props = withDefaults(
   }>(),
   {
     lang: 'en',
-    startOfWeek: 1
-  }
+    startOfWeek: 1,
+  },
 )
 
 const currentDate = ref(new Date())
 const currentMonth = ref(currentDate.value.getMonth())
 const currentYear = ref(currentDate.value.getFullYear())
 const daysOfWeek = computed(() =>
-  props.lang == 'zh'
+  props.lang === 'zh'
     ? ['日', '一', '二', '三', '四', '五', '六']
-    : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 )
 const monthNames = [
   'January',
@@ -33,7 +33,7 @@ const monthNames = [
   'September',
   'October',
   'November',
-  'December'
+  'December',
 ]
 
 const daysInMonth = computed(() => {
@@ -67,62 +67,64 @@ const daysInMonth = computed(() => {
   return days
 })
 
-const prevMonth = () => {
+function prevMonth() {
   if (currentMonth.value === 0) {
     currentMonth.value = 11
     currentYear.value--
-  } else {
+  }
+  else {
     currentMonth.value--
   }
 }
 
-const nextMonth = () => {
+function nextMonth() {
   if (currentMonth.value === 11) {
     currentMonth.value = 0
     currentYear.value++
-  } else {
+  }
+  else {
     currentMonth.value++
   }
 }
 
-const isToday = (date: Date) => {
+function isToday(date: Date) {
   const today = new Date()
   return (
-    date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear()
+    date.getDate() === today.getDate()
+    && date.getMonth() === today.getMonth()
+    && date.getFullYear() === today.getFullYear()
   )
 }
 
-const isSelected = (date: Date) => {
-  return (
-    date.getDate() === selectedDate.value?.date.getDate() &&
-    date.getMonth() === selectedDate.value?.date.getMonth() &&
-    date.getFullYear() === selectedDate.value?.date.getFullYear()
-  )
-}
-
-const getDayInfo = (date: Date) => {
+function getDayInfo(date: Date) {
   const dayDetail = getDayDetail(date)
   const holidayName = dayDetail.name.split(',')[1]
   return {
-    disable: currentMonth.value != date.getMonth(),
+    disable: currentMonth.value !== date.getMonth(),
     isToday: isToday(date),
     isInLieu: isInLieu(date),
     solarTerm: getSolarTermsInRange(date)[0],
     ...getLunarDate(date),
     ...dayDetail,
     holidayName,
-    date
+    date,
   }
 }
 
-const daysInfo = computed(() => daysInMonth.value.map((date: Date) => getDayInfo(date)))
-
 const selectedDate = ref(getDayInfo(new Date()))
-const selectDate = (date: any) => {
+function selectDate(date: any) {
   selectedDate.value = date
 }
+
+function isSelected(date: Date) {
+  return (
+    date.getDate() === selectedDate.value?.date.getDate()
+    && date.getMonth() === selectedDate.value?.date.getMonth()
+    && date.getFullYear() === selectedDate.value?.date.getFullYear()
+  )
+}
+
+const daysInfo = computed(() => daysInMonth.value.map((date: Date) => getDayInfo(date)))
 </script>
 
 <template>
@@ -139,18 +141,26 @@ const selectDate = (date: any) => {
           <path
             d="M684.29 799.276L393.929 513.019 684.29 226.762c37.685-37.153 38.003-97.625 0.707-134.384-37.297-36.758-98.646-36.435-136.331 0.718l-357.43 352.378c-0.155 0.153-0.297 0.314-0.451 0.468-0.084 0.082-0.172 0.157-0.256 0.239-18.357 18.092-27.581 41.929-27.743 65.902-0.004 0.311-0.017 0.623-0.018 0.934 0.001 0.316 0.014 0.632 0.018 0.948 0.165 23.97 9.389 47.803 27.743 65.892 0.083 0.082 0.171 0.157 0.255 0.239 0.154 0.154 0.296 0.315 0.452 0.468l357.43 352.378c37.685 37.153 99.034 37.476 136.331 0.718 37.297-36.758 36.979-97.231-0.707-134.384z"
             fill="currentColor"
-          ></path>
+          />
         </svg>
       </button>
-      <h2 v-if="lang == 'zh'">
+      <h2 v-if="lang === 'zh'">
         <select v-model="currentYear">
-          <option v-for="(y, index) in 201" :key="index" :value="1900 + index">{{ 1900 + index }}</option>
-        </select> 年 
+          <option v-for="(y, index) in 201" :key="index" :value="1900 + index">
+            {{ 1900 + index }}
+          </option>
+        </select>
+        年
         <select v-model="currentMonth">
-          <option v-for="(month, index) in 12" :key="index" :value="index">{{ month < 10 ? `0${month}` : month }}</option>
-        </select> 月
+          <option v-for="(month, index) in 12" :key="index" :value="index">
+            {{ month < 10 ? `0${month}` : month }}
+          </option>
+        </select>
+        月
       </h2>
-      <h2 v-else>{{ monthNames[currentMonth] }} {{ currentYear }}</h2>
+      <h2 v-else>
+        {{ monthNames[currentMonth] }} {{ currentYear }}
+      </h2>
       <button @click="nextMonth">
         <svg
           class="r"
@@ -163,35 +173,37 @@ const selectDate = (date: any) => {
           <path
             d="M684.29 799.276L393.929 513.019 684.29 226.762c37.685-37.153 38.003-97.625 0.707-134.384-37.297-36.758-98.646-36.435-136.331 0.718l-357.43 352.378c-0.155 0.153-0.297 0.314-0.451 0.468-0.084 0.082-0.172 0.157-0.256 0.239-18.357 18.092-27.581 41.929-27.743 65.902-0.004 0.311-0.017 0.623-0.018 0.934 0.001 0.316 0.014 0.632 0.018 0.948 0.165 23.97 9.389 47.803 27.743 65.892 0.083 0.082 0.171 0.157 0.255 0.239 0.154 0.154 0.296 0.315 0.452 0.468l357.43 352.378c37.685 37.153 99.034 37.476 136.331 0.718 37.297-36.758 36.979-97.231-0.707-134.384z"
             fill="currentColor"
-          ></path>
+          />
         </svg>
       </button>
     </header>
     <div class="calendar-grid">
-      <div class="calendar-day" v-for="(day, i) in 7" :key="day">
+      <div v-for="(day, i) in 7" :key="day" class="calendar-day">
         {{ daysOfWeek[daysInfo[i].date.getDay()] }}
       </div>
       <div
-        class="calendar-cell"
-        @click="selectDate(day)"
         v-for="(day, index) in daysInfo"
         :key="index"
+        class="calendar-cell"
         :class="{
           today: day.isToday,
           disable: day.disable,
           holiday: day.holidayName,
           inlieu: day.isInLieu,
           work: day.holidayName && day.work,
-          solar: day.solarTerm?.index == 1,
-          selected: isSelected(day.date)
+          solar: day.solarTerm?.index === 1,
+          selected: isSelected(day.date),
         }"
+        @click="selectDate(day)"
       >
-        <span v-if="day.isToday" class="today-dot">{{ lang == 'en' ? 'Today' : '今' }}</span>
+        <span v-if="day.isToday" class="today-dot">{{ lang === 'en' ? 'Today' : '今' }}</span>
         <span v-if="day.holidayName" class="holiday-dot">{{
           day.work ? '班' : day.isInLieu ? '调' : '休'
         }}</span>
         <span class="day">{{ day.date.getDate() }}</span>
-        <span class="desc">{{ day.solarTerm?.index == 1 ? day.solarTerm?.name : day.holidayName || day.lunarDayCN }}</span>
+        <span class="desc">{{
+          day.solarTerm?.index === 1 ? day.solarTerm?.name : day.holidayName || day.lunarDayCN
+        }}</span>
       </div>
     </div>
   </div>
@@ -203,14 +215,25 @@ const selectDate = (date: any) => {
         {{ selectedDate.lunarMonCN }}{{ selectedDate.lunarDayCN }}
       </p>
       <p>
-        {{ selectedDate.yearCyl }}{{ selectedDate.zodiac }}年
-        {{ selectedDate.monCyl }}月
+        {{ selectedDate.yearCyl }}{{ selectedDate.zodiac }}年 {{ selectedDate.monCyl }}月
         {{ selectedDate.dayCyl }}日
       </p>
     </div>
     <div class="right">
-      <p>{{ selectedDate.isToday ? '今天是' : '此日是' }} <span>{{ selectedDate.solarTerm?.name }}</span> 节气的第 <span>{{selectedDate.solarTerm?.index}}</span> 天。</p>
-      <p>{{ selectedDate.work ? '又是需要工作的一天！😥' : selectedDate.isInLieu ? '虽然调休，但要补班还回来的！🤬' : '休息啦~😃' }}</p>
+      <p>
+        {{ selectedDate.isToday ? '今天是' : '此日是' }}
+        <span>{{ selectedDate.solarTerm?.name }}</span> 节气的第
+        <span>{{ selectedDate.solarTerm?.index }}</span> 天。
+      </p>
+      <p>
+        {{
+          selectedDate.work
+            ? '又是需要工作的一天！😥'
+            : selectedDate.isInLieu
+              ? '虽然调休，但要补班还回来的！🤬'
+              : '休息啦~😃'
+        }}
+      </p>
     </div>
   </div>
 </template>
@@ -250,7 +273,7 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: calc(20px + var(--calendar-padding));
-  
+
     button {
       display: flex;
       flex-flow: column nowrap;
@@ -465,7 +488,8 @@ body {
   }
 
   @media screen and (max-width: 560px) {
-    .left, .right {
+    .left,
+    .right {
       p {
         font-size: 12px;
         &:first-child {
