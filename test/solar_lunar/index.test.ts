@@ -6,7 +6,24 @@ import {
 
 describe("solar_lunar", () => {
   test("getLunarDate should return correct lunar date for a given solar date", () => {
-    let result = getLunarDate("2057-09-28");
+    // 闰月第一天
+    let result = getLunarDate("2014-10-24");
+    expect(result).toEqual({
+      date: '2014-10-24',
+      lunarYear: 2014,
+      lunarMon: 9,
+      lunarDay: 1,
+      isLeap: true,
+      zodiac: '马',
+      yearCyl: '甲午',
+      monCyl: '甲戌',
+      dayCyl: '戊辰',
+      lunarYearCN: '二零一四',
+      lunarMonCN: '九月',
+      lunarDayCN: '初一'
+    })
+
+    result = getLunarDate("2057-09-28");
     expect(result).toEqual({
       date: "2057-09-28",
       lunarYear: 2057,
@@ -87,15 +104,15 @@ describe("solar_lunar", () => {
       {
         date: "2001-05-23",
         lunarYear: 2001,
-        lunarMon: 5,
+        lunarMon: 4,
         lunarDay: 1,
-        isLeap: false,
+        isLeap: true,
         zodiac: "蛇",
         yearCyl: "辛巳",
-        monCyl: "甲午",
+        monCyl: "癸巳",
         dayCyl: "丙戌",
         lunarYearCN: "二零零一",
-        lunarMonCN: "五月",
+        lunarMonCN: "四月",
         lunarDayCN: "初一",
       },
       {

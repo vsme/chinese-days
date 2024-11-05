@@ -146,7 +146,7 @@ export const getLunarDate = (date: ConfigType): LunarDateDetail => {
   leap = yearLeapMonth(i); // 闰哪个月
   lunarDate[6] = 0; // 闰月标记，初始为0
 
-  for (let j = 1; j < 13 && offset > 0; j++) {
+  for (let j = 1; j < 13 && offset >= 0; j++) {
     if (leap > 0 && j === (leap + 1) && lunarDate[6] === 0) {
       --j;
       lunarDate[6] = 1;
