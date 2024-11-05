@@ -8,7 +8,7 @@
   "type": "commonjs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vsme/chinese-days"
+    "url": "git+https://github.com/vsme/chinese-days.git"
   },
   "files": [
     "dist/*",

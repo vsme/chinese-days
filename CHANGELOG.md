@@ -1,4 +1,8 @@
-# CHANGELOG
+# CHANGELOG\
+
+## [1.3.2](https://github.com/vsme/chinese-days) (2024-11-05)
+
+- 修复 `getLunarDate` 阴历闰月的第一天月份错误
 
 ## [1.3.1](https://github.com/vsme/chinese-days) (2024-06-15)
 
