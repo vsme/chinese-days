@@ -1,4 +1,8 @@
-# CHANGELOG\
+# CHANGELOG
+
+## [1.3.3](https://github.com/vsme/chinese-days) (2024-11-12)
+
+- 增加 2025 年节假日
 
 ## [1.3.2](https://github.com/vsme/chinese-days) (2024-11-05)
 
