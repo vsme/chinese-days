@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.3.4](https://github.com/vsme/chinese-days) (2024-11-13)
+
+- 修正中秋节展示问题
+
 ## [1.3.3](https://github.com/vsme/chinese-days) (2024-11-12)
 
 - 增加 2025 年节假日
