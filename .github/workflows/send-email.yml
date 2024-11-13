@@ -5,6 +5,9 @@ on:
     # 从 00:00 到 10:00 UTC，每 2 小时运行一次（对应北京时间 08:00 到 06:00）
     - cron: '0 0-10/2 * * *'
 
+  # Allows you to run this workflow manually from the Actions tab on GitHub.
+  workflow_dispatch:
+
 jobs:
   notify:
     runs-on: ubuntu-latest
