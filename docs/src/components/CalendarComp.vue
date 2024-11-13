@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
-import { getDayDetail, getLunarDate, getSolarTermsInRange, isInLieu } from 'chinese-days'
+
+const { getDayDetail, getLunarDate, getSolarTermsInRange, isInLieu } = chineseDays
 
 const props = withDefaults(
   defineProps<{
