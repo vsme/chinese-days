@@ -2,9 +2,9 @@ import dayjs from "../utils/dayjs";
 
 export enum Holiday {
   NY = "New Year's Day,元旦,1",
-  S = "Spring Festival,春节,3",
+  S = "Spring Festival,春节,4",
   T = "Tomb-sweeping Day,清明,1",
-  L = "Labour Day,劳动节,1",
+  L = "Labour Day,劳动节,2",
   D = "Dragon Boat Festival,端午,1",
   N = "National Day,国庆节,3",
   M = "Mid-autumn Festival,中秋,1",
