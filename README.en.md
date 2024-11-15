@@ -24,7 +24,7 @@ For English: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics](ht
 
 A `JSON` file of Chinese holidays is provided and can be directly referenced through this link: [chinese-days.json](https://cdn.jsdelivr.net/npm/chinese-days/dist/chinese-days.json).
 
-- Java：[Warnier-zhang/chinese-days](https://github.com/Warnier-zhang/chinese-days), just for querying Chinese holidays, adjusted working days, working days;
+- Java：[Warnier-zhang/java-chinese-days](https://github.com/Warnier-zhang/java-chinese-days), just for querying Chinese holidays, adjusted working days, working days;
 
 ## Quick Start
 
