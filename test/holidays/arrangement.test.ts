@@ -26,19 +26,19 @@ describe('Arrangement class', () => {
   it('should save holiday correctly', () => {
     arrangement.y(2024).ny().r(1, 1);
     const date = dayjs('2024-01-01').format('YYYY-MM-DD');
-    expect(arrangement.holidays[date]).toBe(Holiday.NY);
+    expect(arrangement.holidays[date]).toBe("New Year's Day,元旦,1");
   });
 
   it('should save workday correctly', () => {
     arrangement.y(2024).s().w(2, 4);
     const date = dayjs('2024-02-04').format('YYYY-MM-DD');
-    expect(arrangement.workdays[date]).toBe(Holiday.S);
+    expect(arrangement.workdays[date]).toBe("Spring Festival,春节,3");
   });
 
   it('should save in-lieu day correctly', () => {
     arrangement.y(2024).m().i(9, 16);
     const date = dayjs('2024-09-16').format('YYYY-MM-DD');
-    expect(arrangement.inLieuDays[date]).toBe(Holiday.M);
+    expect(arrangement.inLieuDays[date]).toBe("Mid-autumn Festival,中秋,1");
   });
 
   it('should save holiday range correctly', () => {
@@ -47,7 +47,7 @@ describe('Arrangement class', () => {
       dayjs(date).format('YYYY-MM-DD')
     );
     dates.forEach(date => {
-      expect(arrangement.holidays[date]).toBe(Holiday.S);
+      expect(arrangement.holidays[date]).toBe("Spring Festival,春节,3");
     });
   });
 

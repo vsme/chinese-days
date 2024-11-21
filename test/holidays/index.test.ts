@@ -41,7 +41,18 @@ describe('Holiday Functions', () => {
     expect(detail).toEqual({
       date: '2024-05-01',
       work: false,
-      name: Holiday.L,
+      name: "Labour Day,劳动节,1",
+    });
+  });
+
+  test('getDayDetail should return correct details', () => {
+    const date = '2025-05-01';
+    const detail = getDayDetail(date);
+
+    expect(detail).toEqual({
+      date: '2025-05-01',
+      work: false,
+      name: "Labour Day,劳动节,2",
     });
   });
 
