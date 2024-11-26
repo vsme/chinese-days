@@ -10,6 +10,12 @@ import {
 } from '../../src';
 
 describe('Holiday Functions', () => {
+  test('should throw an error for invalid date', () => {
+    expect(() => isHoliday('invalid-date')).toThrow(
+      'unsupported type object, expected type is Date or Dayjs'
+    );
+  });
+
   test('isHoliday should return correct boolean values', () => {
     const date1 = '2024-05-01';
     const date2 = '2024-05-06';
@@ -32,6 +38,28 @@ describe('Holiday Functions', () => {
 
     expect(isInLieu(date1)).toBe(false);
     expect(isInLieu(date2)).toBe(true);
+  });
+
+  test('getDayDetail should return correct details', () => {
+    const date = '2024-04-29';
+    const detail = getDayDetail(date);
+
+    expect(detail).toEqual({
+      date: '2024-04-29',
+      work: true,
+      name: "Monday",
+    });
+  });
+
+  test('getDayDetail should return correct details', () => {
+    const date = '2025-01-26';
+    const detail = getDayDetail(date);
+
+    expect(detail).toEqual({
+      date: '2025-01-26',
+      work: true,
+      name: "Spring Festival,春节,4",
+    });
   });
 
   test('getDayDetail should return correct details', () => {
@@ -59,9 +87,25 @@ describe('Holiday Functions', () => {
   test('getHolidaysInRange should return correct holidays within a range', () => {
     const start = '2024-05-01';
     const end = '2024-05-31';
-    const holidaysInRange = getHolidaysInRange(start, end, true);
+    const holidaysInRange = getHolidaysInRange(start, end, false);
 
     expect(holidaysInRange).toContain('2024-05-01');
+  });
+
+  test('getHolidaysInRange should return correct holidays within a range', () => {
+    const start = '2024-05-01';
+    const end = '2024-05-31';
+    const holidaysInRange = getHolidaysInRange(start, end, true);
+
+    expect(holidaysInRange).toContain('2024-05-12');
+  });
+
+  test('getWorkdaysInRange should return correct workdays within a range', () => {
+    const start = '2024-05-01';
+    const end = '2024-05-31';
+    const workdaysInRange = getWorkdaysInRange(start, end, false);
+
+    expect(workdaysInRange).toContain('2024-05-06');
   });
 
   test('getWorkdaysInRange should return correct workdays within a range', () => {
@@ -69,7 +113,7 @@ describe('Holiday Functions', () => {
     const end = '2024-05-31';
     const workdaysInRange = getWorkdaysInRange(start, end, true);
 
-    expect(workdaysInRange).toContain('2024-05-06');
+    expect(workdaysInRange).toContain('2024-05-11');
   });
 
   test('findWorkday should return correct workday', () => {
@@ -77,6 +121,20 @@ describe('Holiday Functions', () => {
     const nextWorkday = findWorkday(1, date);
 
     expect(nextWorkday).toBe('2024-05-06');
+  });
+
+  test('findWorkday should return correct workday', () => {
+    const date = '2024-05-11';
+    const nextWorkday = findWorkday(0, date);
+
+    expect(nextWorkday).toBe('2024-05-11');
+  });
+
+  test('findWorkday should return correct workday', () => {
+    const date = '2024-05-12';
+    const nextWorkday = findWorkday(0, date);
+
+    expect(nextWorkday).toBe('2024-05-13');
   });
 });
 

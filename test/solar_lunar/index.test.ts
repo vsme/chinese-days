@@ -1,4 +1,6 @@
 import {
+  getLunarYears,
+  getYearLeapMonth,
   getLunarDate,
   getLunarDatesInRange,
   getSolarDateFromLunar,
@@ -68,6 +70,23 @@ describe("solar_lunar", () => {
 
     result = getSolarDateFromLunar("2001-04-05");
     expect(result).toEqual({ date: "2001-04-27", leapMonthDate: "2001-05-27" });
+  });
+
+  test("getLunarYears should return correct", () => {
+    let result = getLunarYears(2001, 2003);
+    expect(result).toEqual([
+      {"lunarYear": "辛巳年", "lunarYearCN": "二零零一", "year": 2001},
+      {"lunarYear": "壬午年", "lunarYearCN": "二零零二", "year": 2002},
+      {"lunarYear": "癸未年", "lunarYearCN": "二零零三", "year": 2003}
+    ]);
+  });
+
+  test("getYearLeapMonth should return correct", () => {
+    let result = getYearLeapMonth(2022);
+    expect(result).toEqual({"days": 0, "leapMonth": undefined, "leapMonthCN": undefined, "year": 2022});
+
+    result = getYearLeapMonth(2023);
+    expect(result).toEqual({"days": 29, "leapMonth": 2, "leapMonthCN": "闰二月", "year": 2023});
   });
 
   test("getLunarDatesInRange should return correct lunar dates for a given solar date range", () => {
