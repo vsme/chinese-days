@@ -3,7 +3,10 @@ import simpleDayjs from "../../src/utils/dayjs";
 
 describe("SimpleDayjs", () => {
   it("should return true for a valid date", () => {
-    const date = simpleDayjs("2024-02-10");
+    let date = simpleDayjs();
+    expect(date.isValid()).toBe(true);
+
+    date = simpleDayjs("2024-02-10");
     expect(date.isValid()).toBe(true);
   });
 
@@ -12,15 +15,24 @@ describe("SimpleDayjs", () => {
     expect(date.isValid()).toBe(false);
   });
 
-  it("should calculate the difference in days", () => {
+  it("should calculate the difference", () => {
     const date1 = simpleDayjs("2024-02-10");
     const date2 = simpleDayjs("2000-01-01");
+    expect(date1.diff(date2, "year")).toBe(24);
+    expect(date1.diff(date2, "month")).toBe(289);
     expect(date1.diff(date2, "day")).toBe(8806);
   });
 
   it("should format the start of the year", () => {
     const date = simpleDayjs("2024-02-10");
     expect(date.startOf("year").format("YYYY-MM-DD")).toBe("2024-01-01");
+  });
+
+  it("should format the end of the ...", () => {
+    const date = simpleDayjs("2024-02-10");
+    expect(date.endOf("year").format("YYYY-MM-DD HH:mm:ss")).toBe("2024-12-31 23:59:59");
+    expect(date.endOf("month").format("YYYY-MM-DD HH:mm:ss")).toBe("2024-02-29 23:59:59");
+    expect(date.endOf("day").format("YYYY-MM-DD HH:mm:ss")).toBe("2024-02-10 23:59:59");
   });
 
   it("should add one month to the date", () => {
