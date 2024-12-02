@@ -1,10 +1,16 @@
 import dayjs from "../../src/utils/dayjs";
-import { getSolarTermDate, getSolarTerms, type SolarTerm } from "../../src";
+import { getSolarTermDate, getSolarTerms, getSolarTermsInRange, type SolarTerm } from "../../src";
 
 import type { SolarTermKey } from "../../src/solar_terms/constants";
 
 describe("Solar Terms", () => {
   describe("getSolarTermDate", () => {
+    it("should correctly calculate the solar term date for 'lesser_cold' in 1998", () => {
+      const term: SolarTermKey = "lesser_cold";
+      const date = getSolarTermDate(1998, 1, term);
+      expect(date).toBe("1998-01-05");
+    });
+
     it("should correctly calculate the solar term date for 'lesser_cold' in 2024", () => {
       const term: SolarTermKey = "lesser_cold";
       const date = getSolarTermDate(2024, 1, term);
@@ -70,6 +76,82 @@ describe("Solar Terms", () => {
         { date: "2024-01-06", term: "lesser_cold", name: "小寒", index: 1 },
       ];
       expect(terms).toEqual(expected);
+    });
+
+    it("should handle a single day range", () => {
+      const date = dayjs("2024-01-06");
+      const terms = getSolarTerms(date);
+      const expected: SolarTerm[] = [
+        { date: "2024-01-06", term: "lesser_cold", name: "小寒", index: 1 },
+      ];
+      expect(terms).toEqual(expected);
+    });
+  });
+
+  describe('getSolarTermsInRange', () => {
+    test('should get solar terms within the specified date range', () => {
+      const start = dayjs('2024-01-04');
+      const end = dayjs('2024-01-07');
+  
+      const result = getSolarTermsInRange(start, end);
+      expect(result).toEqual([
+        {
+          date: '2024-01-04',
+          term: 'the_winter_solstice',
+          name: '冬至',
+          index: 14
+        },
+        {
+          date: '2024-01-05',
+          term: 'the_winter_solstice',
+          name: '冬至',
+          index: 15
+        },
+        { date: '2024-01-06', term: 'lesser_cold', name: '小寒', index: 1 },
+        { date: '2024-01-07', term: 'lesser_cold', name: '小寒', index: 2 }
+      ]);
+    });
+  
+    test('should get solar terms for the current day when end date is not provided', () => {
+      const start = dayjs('2024-01-20');
+  
+      const result = getSolarTermsInRange(start);
+  
+      expect(result).toEqual([{ date: '2024-01-20', term: 'greater_cold', name: '大寒', index: 1 }]);
+    });
+  
+    test('should handle date range spanning across the year boundary', () => {
+      const start = dayjs('2024-12-30');
+      const end = dayjs('2025-01-02');
+  
+      const result = getSolarTermsInRange(start, end);
+  
+      expect(result).toEqual([
+        {
+          date: '2024-12-30',
+          term: 'the_winter_solstice',
+          name: '冬至',
+          index: 10
+        },
+        {
+          date: '2024-12-31',
+          term: 'the_winter_solstice',
+          name: '冬至',
+          index: 11
+        },
+        {
+          date: '2025-01-01',
+          term: 'the_winter_solstice',
+          name: '冬至',
+          index: 12
+        },
+        {
+          date: '2025-01-02',
+          term: 'the_winter_solstice',
+          name: '冬至',
+          index: 13
+        }
+      ]);
     });
   });
 });

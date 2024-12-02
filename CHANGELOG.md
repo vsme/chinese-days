@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## [1.4.0](https://github.com/vsme/chinese-days) (2024-11-21)
+
+- 完善法定节假日的放假天数，比如 `2007-05-01` 法定节假日为 `Labour Day,劳动节,3`，`2024-05-01` 法定节假日为 `Labour Day,劳动节,1`，而 `2025-05-01` 为 `Labour Day,劳动节,2`，最后一个数字 `3`、`1`、`2` 对应每年法定节假日的精准放假天数。
+
+## [1.3.4](https://github.com/vsme/chinese-days) (2024-11-13)
+
+- 修正中秋节展示问题
+
+## [1.3.3](https://github.com/vsme/chinese-days) (2024-11-12)
+
+- 增加 2025 年节假日
+
+## [1.3.2](https://github.com/vsme/chinese-days) (2024-11-05)
+
+- 修复 `getLunarDate` 阴历闰月的第一天月份错误
+
 ## [1.3.1](https://github.com/vsme/chinese-days) (2024-06-15)
 
 - 增加 `iCal` 英文版本订阅

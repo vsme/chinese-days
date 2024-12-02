@@ -4,17 +4,15 @@
 [![GitHub License](https://img.shields.io/github/license/vsme/chinese-days)](https://github.com/vsme/chinese-days/blob/main/LICENSE)
 [![README](https://img.shields.io/badge/README-中文-brightgreen.svg)](https://github.com/vsme/chinese-days/blob/main/README.md)
 
-> Translated by ChatGPT-4, PRs are welcome.
-
 This project provides a series of functions for querying Chinese holidays, adjusted working days, working days, 24 solar terms, and converting between lunar and solar calendars. Additionally, it supports ics file subscription for holidays, which can be subscribed to by Google Calendar, Apple Calendar, Microsoft Outlook, and other clients. The holiday information will be updated according to the announcements from the State Council.
 
-+ **Holidays**: Supports the years 2004 to 2024, including the extended Spring Festival of 2020.
++ **Holidays**: Supports the years 2004 to 2025, including the extended Spring Festival of 2020.
 + **24 Solar Terms**: Supports the years 1900 to 2100.
 + **Lunar Days**: Supports the years 1900 to 2100.
 
 ## Subscribe to Calendar
 
-The subscribed calendar includes holidays and adjusted working days for the past three years (2022-2024).
+The subscribed calendar includes holidays and adjusted working days for the past three years (2023-2025).
 
 Subscription URL: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics) (default language is Chinese)
 
@@ -23,6 +21,8 @@ For English: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics](ht
 ## For non-JS projects, you can use the JSON file
 
 A `JSON` file of Chinese holidays is provided and can be directly referenced through this link: [chinese-days.json](https://cdn.jsdelivr.net/npm/chinese-days/dist/chinese-days.json).
+
+For example, in `Java`, you can refer to [Warnier-zhang/java-chinese-days](https://github.com/Warnier-zhang/java-chinese-days), which is only for querying Chinese holidays, in-lieu days, and regular workdays.
 
 ## Quick Start
 

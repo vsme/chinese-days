@@ -84,7 +84,7 @@ const getLunarYearText = (lunarYear: number): string => {
  * @param endYear 结束农历年份
  * @returns 农历年份列表
  */
-const getLunarYears = (startYear: number, endYear: number) => {
+export const getLunarYears = (startYear: number, endYear: number) => {
   const years = [];
   for (let i = startYear; i <= endYear; i++) {
     years.push({
@@ -101,7 +101,7 @@ const getLunarYears = (startYear: number, endYear: number) => {
  * @param year 年份
  * @returns 农历闰月月份
  */
-const getYearLeapMonth = (year: number) => {
+export const getYearLeapMonth = (year: number) => {
   const leap = yearLeapMonth(year)
   return {
     year,
@@ -146,7 +146,7 @@ export const getLunarDate = (date: ConfigType): LunarDateDetail => {
   leap = yearLeapMonth(i); // 闰哪个月
   lunarDate[6] = 0; // 闰月标记，初始为0
 
-  for (let j = 1; j < 13 && offset > 0; j++) {
+  for (let j = 1; j < 13 && offset >= 0; j++) {
     if (leap > 0 && j === (leap + 1) && lunarDate[6] === 0) {
       --j;
       lunarDate[6] = 1;
@@ -262,6 +262,8 @@ export const getSolarDateFromLunar = (lunarDate: ConfigType): {
 }
 
 export default {
+  getLunarYears,
+  getYearLeapMonth,
   getLunarDate,
   getLunarDatesInRange,
   getSolarDateFromLunar,

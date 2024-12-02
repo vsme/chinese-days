@@ -8,7 +8,7 @@
 
 每日会执行 `Action` 自动抓取数据，节假日变化时发送邮件提醒，信息会跟随国务院发布进行更新。
 
-+ **节假日**：支持 2004年 至 2024年，包括 2020年 的春节延长
++ **节假日**：支持 2004年 至 2025年，包括 2020年 的春节延长
 + **24节气**：支持 1900年 至 2100年。
 + **农历日**：支持 1900年 至 2100年。
 
@@ -16,13 +16,15 @@
 
 如果你不使用 `JS` 或 `TS` 开发项目，本项目提供了中国节假日的 `JSON` 文件，通过链接 [chinese-days.json](https://cdn.jsdelivr.net/npm/chinese-days/dist/chinese-days.json) 可以直接引用。
 
+比如在 `Java` 中使用，可以参考 [Warnier-zhang/java-chinese-days](https://github.com/Warnier-zhang/java-chinese-days)，仅用于查询中国节假日、调休日、工作日；
+
 ## 日历订阅
 
 在 Google Calendar、Apple Calendar、Microsoft Outlook 等客户端中，可以设置订阅地址：[https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics) 来获取日历订阅。
 
 For English: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics)
 
-订阅的日历包含近三年（2022-2024年）的节假日和调休日。
+订阅的日历包含近三年（2023-2025年）的节假日和调休日。
 
 ## 快速开始
 

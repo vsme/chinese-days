@@ -6,7 +6,6 @@ import ical, {
 } from "ical-generator";
 import generate from "../src/holidays/generate";
 import dayjs, { Dayjs } from "../src/utils/dayjs";
-import { Holiday } from "../src/holidays/arrangement";
 import { createHash } from 'crypto';
 
 enum DayType {
@@ -95,7 +94,7 @@ END:VTIMEZONE`,
 
   const buildHolidays = (
     years: number[],
-    days: Record<string, Holiday>,
+    days: Record<string, string>,
     mark: DayType
   ) => {
     // 合并相同节日的日期
