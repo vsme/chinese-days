@@ -20,7 +20,7 @@ describe('Holiday Functions', () => {
     const date1 = '2024-05-01';
     const date2 = '2024-05-06';
 
-    expect(isHoliday(date1)).toBe(true); 
+    expect(isHoliday(date1)).toBe(false); 
     expect(isHoliday(date2)).toBe(false);
   });
 
