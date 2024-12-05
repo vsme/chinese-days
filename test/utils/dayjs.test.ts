@@ -21,6 +21,7 @@ describe("SimpleDayjs", () => {
     expect(date1.diff(date2, "year")).toBe(24);
     expect(date1.diff(date2, "month")).toBe(289);
     expect(date1.diff(date2, "day")).toBe(8806);
+    expect(date1.diff(date2)).toBe(8806);
   });
 
   it("should format the start of the year", () => {
