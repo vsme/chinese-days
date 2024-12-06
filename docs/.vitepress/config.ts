@@ -6,6 +6,10 @@ import { zh } from './zh'
 export default defineConfig({
   title: "Chinese Days",
 
+  head: [
+    ['link', { rel: 'icon', type: 'image/png', href: '/icon.png' }],
+  ],
+
   rewrites: {
     'zh/:rest*': ':rest*'
   },
@@ -17,5 +21,5 @@ export default defineConfig({
   locales: {
     root: { label: '简体中文', ...zh },
     en: { label: 'English', ...en },
-  }
+  },
 })

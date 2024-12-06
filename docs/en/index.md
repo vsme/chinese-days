@@ -9,10 +9,10 @@ hero:
   actions:
     - theme: brand
       text: Quickstart
-      link: /getting-started
+      link: /en/guide/getting-started
     - theme: alt
       text: View Calendar
-      link: /calendar
+      link: /en/demo/calendar
     - theme: alt
       text: GitHub
       link: https://github.com/vsme/chinese-days
