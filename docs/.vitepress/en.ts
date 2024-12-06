@@ -10,8 +10,8 @@ export const en = defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: 'Guide', link: '/en/guide/getting-started' },
-      { text: 'Calendar', link: '/en/demo/calendar' },
+      { text: 'Guide', link: '/en/guide/what-is-chinese-days' },
+      { text: 'Demo', link: '/en/demo/calendar' },
       {
         text: pkg.version,
         link: 'https://github.com/vsme/chinese-days/blob/main/CHANGELOG.md'
@@ -68,10 +68,11 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
         { text: 'Lunar to Solar', link: 'from-lunar' }
       ]
     },
-    { text: 'Contributing',
+    { text: 'Else',
       collapsed: false,
       items: [
-        { text: 'Improve together', link: 'contributing' }
+        { text: 'Contributing', link: 'contributing' },
+        { text: 'Thank', link: 'thank' }
       ]
     }
   ]

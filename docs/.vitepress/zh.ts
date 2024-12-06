@@ -10,8 +10,8 @@ export const zh = defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: '指南', link: '/guide/getting-started' },
-      { text: '日历', link: '/demo/calendar' },
+      { text: '指南', link: '/guide/what-is-chinese-days' },
+      { text: '示例', link: '/demo/calendar' },
       {
         text: pkg.version,
         link: 'https://github.com/vsme/chinese-days/blob/main/CHANGELOG.md'
@@ -92,10 +92,11 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
         { text: '农历转阳历', link: 'from-lunar' }
       ]
     },
-    { text: '贡献指南',
+    { text: '其他',
       collapsed: false,
       items: [
-        { text: '一起来完善', link: 'contributing' }
+        { text: '贡献指南', link: 'contributing' },
+        { text: '致谢', link: 'thank' }
       ]
     }
   ]
