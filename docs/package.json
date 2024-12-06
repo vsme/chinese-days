@@ -1,34 +1,20 @@
 {
-  "name": "demo",
+  "name": "docs",
   "type": "module",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
-    "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build --force",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "vitepress": "^1.5.0"
   },
   "dependencies": {
-    "highlight.js": "^11.10.0",
-    "markdown-it": "^14.1.0",
-    "vue": "^3.4.38"
-  },
-  "devDependencies": {
-    "@antfu/eslint-config": "^2.27.1",
-    "@tsconfig/node20": "^20.1.4",
-    "@types/markdown-it": "^14.1.2",
-    "@types/node": "^22.5.0",
-    "@vitejs/plugin-vue": "^5.1.2",
-    "@vue/tsconfig": "^0.5.1",
-    "eslint": "^9.9.1",
-    "npm-run-all2": "^6.2.2",
-    "typescript": "~5.5.4",
-    "vite": "^5.4.2",
-    "vite-plugin-vue-devtools": "^7.3.9",
-    "vue-tsc": "^2.0.29"
+    "chinese-days": "^1.4.0"
   }
 }

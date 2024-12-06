@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
+import chineseDays from "chinese-days"
 
 const { getDayDetail, getLunarDate, getSolarTermsInRange, isInLieu } = chineseDays
 
@@ -9,7 +10,7 @@ const props = withDefaults(
     startOfWeek?: 1 | 2 | 3 | 4 | 5 | 6 | 0
   }>(),
   {
-    lang: 'en',
+    lang: 'zh',
     startOfWeek: 1,
   },
 )
@@ -146,7 +147,7 @@ const daysInfo = computed(() => daysInMonth.value.map((date: Date) => getDayInfo
         </svg>
       </button>
       <h2 v-if="lang === 'zh'">
-        <select v-model="currentYear">
+        <select v-model="currentYear" style="width: 130px;">
           <option v-for="(y, index) in 201" :key="index" :value="1900 + index">
             {{ 1900 + index }}
           </option>
@@ -159,8 +160,18 @@ const daysInfo = computed(() => daysInMonth.value.map((date: Date) => getDayInfo
         </select>
         月
       </h2>
-      <h2 v-else>
-        {{ monthNames[currentMonth] }} {{ currentYear }}
+      <h2 v-else>        
+        <select v-model="currentMonth" style="width: 160px;">
+          <option v-for="(month, index) in 12" :key="index" :value="index">
+            {{ monthNames[month - 1] }}
+          </option>
+        </select>
+        
+        <select v-model="currentYear">
+          <option v-for="(y, index) in 201" :key="index" :value="1900 + index">
+            {{ 1900 + index }}
+          </option>
+        </select>
       </h2>
       <button @click="nextMonth">
         <svg
@@ -263,11 +274,27 @@ body {
   max-width: var(--calendar-max-width);
   margin: 0 auto;
   padding: var(--calendar-padding);
-  border: var(--calendar-border-width) solid #ddd;
+  border: var(--calendar-border-width) solid var(--vp-c-gray-2);
   border-radius: var(--calendar-border-radius);
   position: relative;
-  background: #fff;
+  background: var(--vp-c-bg);
   z-index: 1;
+
+  h2, p {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  select {
+    font-size: 24px;
+    width: 100px;
+    margin: 0 15px;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid var(--vp-c-default-3);
+    border-radius: 6px;
+  }
 
   .calendar-header {
     display: flex;
@@ -339,7 +366,7 @@ body {
       border-radius: var(--calendar-border-radius);
       position: relative;
       transition: all 0.2s ease;
-      color: #333;
+      color: var(--vp-c-text-1);
 
       &:nth-child(7n + 6),
       &:nth-child(7n + 7) {
@@ -395,8 +422,8 @@ body {
       }
 
       &:hover {
-        background: rgba(78, 110, 242, 0.1);
-        color: #333;
+        background: rgba(118, 142, 240, 0.2);
+        color: var(--vp-c-text-1);
       }
 
       &.solar {
@@ -447,8 +474,8 @@ body {
   max-width: var(--calendar-max-width);
   margin: 0 auto;
   padding: 50px 20px 30px;
-  background: #f2f2f2;
-  border: var(--calendar-border-width) solid #f2f2f2;
+  background: var(--vp-c-gray-3);
+  border: var(--calendar-border-width) solid var(--vp-c-gray-3);
   border-radius: var(--calendar-border-radius);
   position: relative;
   top: -20px;
@@ -465,6 +492,7 @@ body {
     p {
       font-weight: bold;
       font-size: 14px;
+      margin: 0;
       &:first-child {
         font-size: 22px;
       }
@@ -476,9 +504,10 @@ body {
     flex-flow: column nowrap;
     align-items: flex-start;
     padding-left: var(--calendar-padding);
-    border-left: 1px solid #ddd;
+    border-left: 1px solid var(--vp-c-gray-2);
     p {
       font-size: 14px;
+      margin: 0;
       span {
         font-weight: bold;
       }

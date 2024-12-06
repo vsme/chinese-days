@@ -1,5 +1,6 @@
-node_modules/
-dist/
-coverage/
+node_modules
+dist
+cache
+coverage
 
 .DS_Store

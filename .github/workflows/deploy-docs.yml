@@ -9,6 +9,9 @@ on:
     tags:
       - "v*"
 
+  # Allows you to run this workflow manually from the Actions tab on GitHub.
+  workflow_dispatch:
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -40,4 +43,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/dist
+          publish_dir: ./docs/.vitepress/dist
