@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a}from"./chunks/framework.Ct9Y1XYN.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"en/guide/working-days.md","filePath":"en/guide/working-days.md"}'),n={name:"en/guide/working-days.md"};function r(o,s,i,d,c,p){return a(),t("div")}const f=e(n,[["render",r]]);export{m as __pageData,f as default};

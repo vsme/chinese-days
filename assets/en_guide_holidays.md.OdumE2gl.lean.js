@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a}from"./chunks/framework.Ct9Y1XYN.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"en/guide/holidays.md","filePath":"en/guide/holidays.md"}'),o={name:"en/guide/holidays.md"};function s(n,r,d,i,c,l){return a(),t("div")}const m=e(o,[["render",s]]);export{_ as __pageData,m as default};
