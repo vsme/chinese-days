@@ -64,7 +64,8 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
       text: '简介',
       collapsed: false,
       items: [
-        { text: 'Chinese Days', link: 'what-is-chinese-days' },
+        { text: '关于本项目', link: 'what-is-chinese-days' },
+        { text: '日历订阅', link: 'ical-subscription' },
         { text: '快速开始', link: 'getting-started' },
       ]
     },
