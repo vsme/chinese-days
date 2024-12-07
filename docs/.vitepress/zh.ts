@@ -86,7 +86,7 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
       ]
     },
     {
-      text: '阴历/农历',
+      text: '农历（阴历）',
       collapsed: false,
       items: [
         { text: '阳历转农历', link: 'to-lunar' },

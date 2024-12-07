@@ -2,7 +2,7 @@
 
 ## 介绍
 
-本项目提供了一系列用于查询中国节假日、调休日、工作日、24节气、以及农历阳历互转的函数，此外还支持 `iCal` 文件订阅节假日，可供 Google Calendar、Apple Calendar、Microsoft Outlook 等客户端订阅。
+本项目提供了一系列用于查询中国节假日、调休日、工作日、24节气、以及农历与阳历互转的函数，此外还支持 `iCal` 文件订阅节假日，可供 Google Calendar、Apple Calendar、Microsoft Outlook 等客户端订阅。
 
 每日会定时执行 `Github Action` 自动抓取数据，节假日变化时发送邮件提醒，信息会跟随国务院发布进行更新。
 
