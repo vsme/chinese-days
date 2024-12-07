@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as r}from"./chunks/framework.BI-rd6Wj.js";const l=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"en/guide/24-solar-terms.md","filePath":"en/guide/24-solar-terms.md"}'),a={name:"en/guide/24-solar-terms.md"};function s(o,n,c,d,i,m){return r(),t("div")}const p=e(a,[["render",s]]);export{l as __pageData,p as default};
