@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This project provides a collection of functions for querying Chinese holidays, adjusted working days, regular workdays, the 24 solar terms, and converting between the lunar and solar calendars. Additionally, it supports subscribing to holiday calendars in `iCal` format, which can be integrated with clients such as Google Calendar, Apple Calendar, and Microsoft Outlook.
+This project provides a collection of functions for querying Chinese holidays, in lieu days, working days, the 24 solar terms, and converting between the lunar and solar calendars. Additionally, it supports subscribing to holiday calendars in `iCal` format, which can be integrated with clients such as Google Calendar, Apple Calendar, and Microsoft Outlook.
 
 Data is automatically fetched daily through `GitHub Actions`. Notifications are sent via email when there are changes to holiday schedules, and information is updated based on announcements from the State Council.
 
