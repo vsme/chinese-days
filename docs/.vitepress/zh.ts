@@ -90,7 +90,8 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
       collapsed: false,
       items: [
         { text: '阳历转农历', link: 'to-lunar' },
-        { text: '农历转阳历', link: 'from-lunar' }
+        { text: '农历转阳历', link: 'from-lunar' },
+        { text: '民俗节日与纪念日', link: 'lunar-folk-festival' },
       ]
     },
     { text: '其他',

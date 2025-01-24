@@ -66,7 +66,8 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
       collapsed: false,
       items: [
         { text: 'Solar to Lunar', link: 'to-lunar' },
-        { text: 'Lunar to Solar', link: 'from-lunar' }
+        { text: 'Lunar to Solar', link: 'from-lunar' },
+        { text: 'Lunar Folk Festival', link: 'lunar-folk-festival' },
       ]
     },
     { text: 'Else',

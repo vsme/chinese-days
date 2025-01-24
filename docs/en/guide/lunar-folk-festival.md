@@ -1,5 +1,3 @@
-# Lunar Folk Festival
-
 ### 农历民俗节日与纪念日
 
 #### 正月
