@@ -1,3 +1,15 @@
+# Lunar Folk Festival
+
+```js
+/**
+ * Retrieve lunar festivals (includes fixed festivals and specially calculated festivals)
+ * @param [start] Start date (default: current day)
+ * @param [end] End date (when omitted, only queries the start date)
+ */
+getLunarFestivals('2025-01-28');
+getLunarFestivals('2025-01-28', '2025-01-30');
+```
+
 ### 农历民俗节日与纪念日
 
 #### 正月
