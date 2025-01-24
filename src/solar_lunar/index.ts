@@ -41,7 +41,7 @@ const cyclicalm = (num: number): string => NUMBER_1[num % 10] + NUMBER_2[num % 1
  * @param m 农历月份
  * @returns 月份天数
  */
-const monthDays = (y: number, m: number): number => (LUNAR_INFO[y - 1900] & (0x10000 >> m)) === 0 ? 29 : 30;
+export const monthDays = (y: number, m: number): number => (LUNAR_INFO[y - 1900] & (0x10000 >> m)) === 0 ? 29 : 30;
 
 /**
  * 获取指定年份的生肖
