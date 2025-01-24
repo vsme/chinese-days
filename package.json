@@ -1,6 +1,6 @@
 {
   "name": "chinese-days",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "中国节假日、调休日、工作日、24节气查询，农历阳历互转，支持 TS、CommonJS、UMD 模块化使用，提供 ics 日历格式，可供 Google Calendar、Apple Calendar、Microsoft Outlook 等客户端订阅。",
   "main": "dist/index.min.js",
   "module": "dist/index.es.js",
