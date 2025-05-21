@@ -64,7 +64,8 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
       text: '简介',
       collapsed: false,
       items: [
-        { text: 'Chinese Days', link: 'what-is-chinese-days' },
+        { text: '关于本项目', link: 'what-is-chinese-days' },
+        { text: '日历订阅', link: 'ical-subscription' },
         { text: '快速开始', link: 'getting-started' },
       ]
     },
@@ -85,11 +86,12 @@ function sidebarGuide(): DefaultTheme.SidebarItem[] {
       ]
     },
     {
-      text: '阴历/农历',
+      text: '农历（阴历）',
       collapsed: false,
       items: [
         { text: '阳历转农历', link: 'to-lunar' },
-        { text: '农历转阳历', link: 'from-lunar' }
+        { text: '农历转阳历', link: 'from-lunar' },
+        { text: '民俗节日与纪念日', link: 'lunar-folk-festival' },
       ]
     },
     { text: '其他',

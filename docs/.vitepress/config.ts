@@ -16,6 +16,9 @@ export default defineConfig({
 
   themeConfig: {
     logo: { src: '/icon.png', width: 24, height: 24 },
+    search: {
+      provider: 'local',
+    }
   },
 
   locales: {

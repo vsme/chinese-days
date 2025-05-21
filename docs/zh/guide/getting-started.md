@@ -1,6 +1,14 @@
 # 快速开始
 
-本文档内容主要针对 `JS` 和 `TS` 开发用户，使用其他语言请参考 [开发](/guide/what-is-chinese-days#非-js-语言)。
+本文档内容主要针对 `JS` 和 `TS` 开发用户。
+
+::: info 提示
+使用其他语言开发，请参考 [非 JS/TS 语言](/guide/what-is-chinese-days#非-js-语言) 部分内容。
+:::
+
+::: info 订阅
+此外还支持 `iCal` 文件 [订阅节假日](/guide/ical-subscription)，可供 Google Calendar、Apple Calendar、Microsoft Outlook 等客户端订阅。
+:::
 
 ## 推荐方式
 
@@ -55,5 +63,8 @@ console.log(isHoliday('2020-01-01'));
 
 ```
 https://cdn.jsdelivr.net/npm/chinese-days@1.4.0
+```
+
+```
 https://esm.run/chinese-days@1.4.0
 ```
