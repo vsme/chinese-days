@@ -323,7 +323,7 @@ describe('Holiday Functions', () => {
           return originalDayjs(dateInput);
         });
         Object.assign(dayjs, originalDayjs);
-        expect(findWorkday(0)).toBe(mockTodayWorkday);
+        expect(findWorkday()).toBe(mockTodayWorkday);
       });
 
       test('should return next workday if today is a holiday and delta is 0', () => {

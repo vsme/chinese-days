@@ -65,7 +65,7 @@ const getDateCN = (day: number): string => {
   const tensPlace = Math.floor(day / 10);
   const unitsPlace = day % 10;
 
-  return prefixes[tensPlace] + (unitsPlace ? CHINESE_NUMBER[unitsPlace] : "");
+  return prefixes[tensPlace] + CHINESE_NUMBER[unitsPlace];
 }
 
 
@@ -167,9 +167,7 @@ export const getLunarDate = (date: ConfigType): LunarDateDetail => {
     lunarDate[1] = j; // 农历月份
   }
 
-  if (offset === 0 && leap > 0 && lunarDate[6] === 1) {
-    lunarDate[6] = 0;
-  } else if (offset < 0) {
+  if (offset < 0) {
     offset += temp;
     lunarDate[1]--;
     lunarDate[4]--;

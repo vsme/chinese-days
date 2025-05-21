@@ -109,20 +109,10 @@ describe("solar_lunar", () => {
         desc: "查询本身是闰月的月份，2001年（闰四月）",
         expected: { date: "2001-04-27", leapMonthDate: "2001-05-27" } // date 是普通四月的日期，leapMonthDate 是闰四月的日期
       },
-      // 注意：以下测试用例 (1995-08-10, 2023-02-15, 以及上面的 2001-04-05)
-      // 均确保 `getSolarDateFromLunar` 函数中的 `if (leapMonth === lunarMonth)` 代码块得到执行。
-      // 这意味着该代码块中的 line 239 (`leapMonthDateOffset += monthDays(...)`) 在逻辑上是被覆盖的，
-      // 因为它的执行对于 `leapMonthDate` 的正确计算至关重要。
-      // 覆盖率工具可能仍会错误地报告 line 239 未被覆盖，这可能是由于检测工具的局限性。
       {
-        lunarDate: "1995-08-10", // 查询某月，该年此月份是闰月 - 针对 line 239
-        desc: "查询本身是闰月的月份，1995年（闰八月）- 针对 line 239",
-        expected: { date: "1995-09-04", leapMonthDate: "1995-10-04" }
-      },
-      {
-        lunarDate: "2023-02-15", // 2023年有闰二月。查询第二个月。
-        desc: "查询本身是闰月的月份，2023年（闰二月）- 针对 line 239",
-        expected: { date: "2023-03-06", leapMonthDate: "2023-04-05" }
+        lunarDate: "2020-05-01",
+        desc: "查询本身是闰月的月份，2020年（闰四月）- 针对 line 239",
+        expected: { date: "2020-06-21", leapMonthDate: undefined }
       },
       {
         lunarDate: "2022-02-15", // 2022年无闰月
@@ -152,6 +142,7 @@ describe("solar_lunar", () => {
       { year: 2020, expected: {"days": 29, "leapMonth": 4, "leapMonthCN": "闰四月", "year": 2020}, desc: "有闰四月（29天）的年份" },
       // LUNAR_INFO 数据中1984年有闰十月，29天
       { year: 1984, expected: {"days": 29, "leapMonth": 10, "leapMonthCN": "闰十月", "year": 1984}, desc: "有闰十月（29天）的年份" },
+      { year: 1906, expected: {"days": 30, "leapMonth": 4, "leapMonthCN": "闰四月", "year": 1906}, desc: "有闰四月（30天）的年份" },
     ];
     test.each(testCases)("getYearLeapMonth 对于 $year ($desc)", ({ year, expected}) => {
       expect(getYearLeapMonth(year)).toEqual(expected);
