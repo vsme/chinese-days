@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.5.1](https://github.com/vsme/chinese-days) (2025-05-21)
+
+- 优化了部分代码，完善了测试用例，测试覆盖率 100%。
+
 ## [1.5.0](https://github.com/vsme/chinese-days) (2025-01-24)
 
 - 增加中国农历民俗节日与纪念日
