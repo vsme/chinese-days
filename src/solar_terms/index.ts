@@ -8,7 +8,7 @@ import {
   type SolarTermKey,
 } from "./constants";
 
-/* Get solar term date => 获取节气日期 */
+/* 获取节气日期 */
 const getSolarTermDate = (
   year: number,
   month: number,
@@ -48,7 +48,7 @@ export interface SolarTerm {
 };
 
 /**
- * Get solar terms => 获取范围日期内的节气 开始的日期
+ * 获取指定日期范围内的节气（仅节气当日）
  * @param start 开始日期
  * @param end 不传只查当天
  * @returns Array of solar terms => 节气开始日数组
@@ -90,7 +90,7 @@ const getSolarTerms = (
 };
 
 /**
- * Get solar terms => 获取范围日期内的节气
+ * 获取指定日期范围内的所有每日节气信息
  * @param start 开始日期
  * @param end 不传只查当天
  * @returns Array of solar terms => 节气日数组

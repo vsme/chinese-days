@@ -4,16 +4,16 @@ import generate from './generate';
 
 const { holidays, workdays, inLieuDays } = generate()
 
-// Simplified to handle only a single date argument
+// 已简化为仅处理单个日期参数
 const _validateDate = (dateInput: ConfigType): Dayjs => {
-  // The wrapDate function handles potential Dayjs instances vs other types for dayjs()
+  // wrapDate 函数处理 Dayjs 实例及其他可供 dayjs() 使用的类型
   const date = wrapDate(dateInput); 
   if (!date.isValid()) {
-    // Note: The error message uses `typeof dateInput` to reflect the original type passed.
-    // `typeof date` would be 'object' for the Dayjs instance.
+    // 注意：错误信息使用 `typeof dateInput` 以反映传入的原始类型。
+    // `typeof date` 对于 Dayjs 实例将是 'object'。
     throw new Error(`unsupported type ${typeof dateInput}, expected type is Date or Dayjs`);
   }
-  return date; // Already a Dayjs object from wrapDate
+  return date;
 }
 
 /** 是否节假日 */
@@ -23,7 +23,7 @@ const isHoliday = (date: ConfigType): boolean => {
 
 /** 是否工作日 */
 const isWorkday = (date: ConfigType): boolean => {
-  const validDate = _validateDate(date); // No longer needs 'as Dayjs' due to simplified _validateDate return type
+  const validDate = _validateDate(date);
   const weekday = validDate.day();
   const formattedDate = validDate.format('YYYY-MM-DD');
 
@@ -32,13 +32,13 @@ const isWorkday = (date: ConfigType): boolean => {
 
 /** 是否调休日 - 是节假日，但后续有需要补班 */
 const isInLieu = (date: ConfigType): boolean => {
-  const validDate = _validateDate(date); // Use a new variable to avoid reassigning parameter
+  const validDate = _validateDate(date);
   return !!inLieuDays[validDate.format('YYYY-MM-DD')];
 }
 
 /** 获取工作日详情 */
 const getDayDetail = (date: ConfigType): { work: boolean, name: string, date: string } => {
-  const validDate = _validateDate(date); // Use a new variable
+  const validDate = _validateDate(date);
   const formattedDate = validDate.format('YYYY-MM-DD')
   if (workdays[formattedDate]) {
     return {
@@ -53,19 +53,19 @@ const getDayDetail = (date: ConfigType): { work: boolean, name: string, date: st
       name: holidays[formattedDate]
     }
   } else {
-    const weekday = validDate.day(); // Use validDate
+    const weekday = validDate.day();
     return {
       date: formattedDate,
       work: weekday !== 0 && weekday !== 6,
-      name: validDate.format('dddd') // Use validDate
+      name: validDate.format('dddd')
     }
   }
 }
 
 /** 获取节假日 */
 const getHolidaysInRange = (startInput: ConfigType, endInput: ConfigType, includeWeekends: boolean = true): string[] => {
-  const start = _validateDate(startInput); // No longer needs 'as Dayjs'
-  const end = _validateDate(endInput);     // No longer needs 'as Dayjs'
+  const start = _validateDate(startInput);
+  const end = _validateDate(endInput);
   if (includeWeekends) {
     return getDates(start, end).filter(isHoliday).map(date => date.format('YYYY-MM-DD'));
   }
@@ -74,8 +74,8 @@ const getHolidaysInRange = (startInput: ConfigType, endInput: ConfigType, includ
 
 /** 获取工作日 */
 const getWorkdaysInRange = (startInput: ConfigType, endInput: ConfigType, includeWeekends: boolean = true): string[] => {
-  const start = _validateDate(startInput); // No longer needs 'as Dayjs'
-  const end = _validateDate(endInput);     // No longer needs 'as Dayjs'
+  const start = _validateDate(startInput);
+  const end = _validateDate(endInput);
   if (includeWeekends) {
     return getDates(start, end).filter(isWorkday).map(date => date.format('YYYY-MM-DD'));
   }

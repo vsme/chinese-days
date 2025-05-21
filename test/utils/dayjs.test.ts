@@ -1,5 +1,4 @@
 import simpleDayjs from "../../src/utils/dayjs";
-// import simpleDayjs from "dayjs";
 
 describe("SimpleDayjs", () => {
   it("should return true for a valid date", () => {
