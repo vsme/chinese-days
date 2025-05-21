@@ -61,6 +61,7 @@ class Arrangement {
   public workdays: Record<string, string> = {};
   public inLieuDays: Record<string, string> = {};
 
+  /** year at */
   y(year: number) {
     this.dayDetails.year = year;
     return this;
@@ -84,7 +85,6 @@ class Arrangement {
 
   mark(holiday: Holiday) {
     this.dayDetails.holiday = holiday;
-    // No functional change, just removing comment blocks per instruction
     return this;
   }
 
@@ -148,12 +148,15 @@ class Arrangement {
     return this;
   }
 
+  /** work day */
   w(month: number, day: number) {
     return this.save(month, day, DayType.Workday);
   }
+  /** rest */
   r(month: number, day: number) {
     return this.save(month, day, DayType.Holiday);
   }
+  /** in-lieu */
   i(month: number, day: number) {
     return this.save(month, day, DayType.InLieu);
   }
