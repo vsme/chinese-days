@@ -1,4 +1,5 @@
 import Arrangement, { Holiday } from '../../src/holidays/arrangement';
+import dayjs from "../../src/utils/dayjs"; // Import dayjs
 import {
   isHoliday,
   isWorkday,
@@ -11,42 +12,44 @@ import {
 
 describe('Holiday Functions', () => {
   test('should throw an error for invalid date', () => {
-    // The error message uses `typeof date` where `date` is the Dayjs object.
-    // So, it will always be 'object' if the error is thrown from _validateDate's check.
+    // The _validateDate function throws an error for invalid date inputs.
+    // Note: Coverage tools might misreport the exact 'throw' line within _validateDate
+    // as uncovered, even though these tests validate its execution by catching the thrown error.
+    // The error message now uses `typeof dateInput` (the original passed type).
     expect(() => isHoliday('invalid-date')).toThrow(
-      'unsupported type object, expected type is Date or Dayjs'
+      'unsupported type string, expected type is Date or Dayjs' // typeof 'invalid-date' is 'string'
     );
     // Test with other functions that use _validateDate with various invalid inputs
     expect(() => isWorkday('invalid-date-for-isWorkday')).toThrow(
-      'unsupported type object, expected type is Date or Dayjs'
+      'unsupported type string, expected type is Date or Dayjs' // typeof 'invalid-date-for-isWorkday' is 'string'
     );
     expect(() => getDayDetail('yet-another-invalid-date')).toThrow( // Use a known invalid string
-      'unsupported type object, expected type is Date or Dayjs'
+      'unsupported type string, expected type is Date or Dayjs' // typeof 'yet-another-invalid-date' is 'string'
     );
      // For numeric input like 12345, dayjs(12345) is a valid date (Unix ms timestamp).
      // So, _validateDate does NOT throw an error. isInLieu(12345) would then calculate based on that date.
      // Assuming 1970-01-01T00:00:12.345Z is not an inLieu day.
      expect(isInLieu(12345)).toBe(false); // This was correct.
 
-    // Test _validateDate with multiple arguments (indirectly)
+    // Test _validateDate with multiple arguments (indirectly through the range functions that call _validateDate for start and end)
     // Use a known invalid string for one and a valid for other to ensure proper handling
     expect(() => getHolidaysInRange('invalid-start', '2024-01-01')).toThrow(
-      'unsupported type object, expected type is Date or Dayjs'
+      'unsupported type string, expected type is Date or Dayjs'
     );
     expect(() => getWorkdaysInRange('2024-01-01', 'invalid-end')).toThrow(
-      'unsupported type object, expected type is Date or Dayjs'
+      'unsupported type string, expected type is Date or Dayjs'
     );
-     // Specifically target line 12 (formerly line 9) in _validateDate: throw new Error(`unsupported type ${typeof date}, ...`);
-     // by providing an input (an invalid string) that results in date.isValid() being false.
-     // The error message will use `typeof date` (which is 'object').
-     const testLine12DirectlyViaGetDayDetail = () => {
+     // Specifically target the throw line in _validateDate by providing an input 
+     // (an invalid string) that results in date.isValid() being false.
+     // The error message will use `typeof dateInput` (which is 'string' here).
+     const testThrowLineDirectlyViaGetDayDetail = () => {
       getDayDetail('final-check-invalid-date');
      };
-     expect(testLine12DirectlyViaGetDayDetail).toThrow('unsupported type object, expected type is Date or Dayjs');
+     expect(testThrowLineDirectlyViaGetDayDetail).toThrow('unsupported type string, expected type is Date or Dayjs');
 
      // Test with an actual invalid Date object.
      // dayjs(new Date('foo')) results in a Dayjs object where isValid() is false.
-     // typeof date (the Dayjs object) is 'object'.
+     // typeof dateInput (the Date object itself) is 'object'.
      expect(() => isHoliday(new Date('foo'))).toThrow('unsupported type object, expected type is Date or Dayjs');
   });
 
@@ -275,11 +278,81 @@ describe('Holiday Functions', () => {
       { delta: 0, date: '2024-05-11', expected: '2024-05-11', desc: 'Current day is a makeup Saturday workday' },
       { delta: 0, date: '2024-05-12', expected: '2024-05-13', desc: 'Current day is Sunday (holiday), finds next workday' }, // Sunday, next is Monday
       { delta: 0, date: '2024-05-01', expected: '2024-05-06', desc: 'Current day is Labour Day (holiday), finds next workday'}, // May 1st is holiday, next workday is May 6th
-      { delta: 0, date: '2024-07-08', expected: '2024-07-08', desc: 'Current day is a regular workday (Monday)'}
+      { delta: 0, date: '2024-07-08', expected: '2024-07-08', desc: 'Current day is a regular workday (Monday)'},
+      // New specific tests for line 86 (if (isWorkday(date)) inside while loop)
+      { 
+        delta: 1, 
+        date: '2024-05-04', // Saturday (Holiday)
+        expected: '2024-05-06', // Next workday is Monday
+        desc: 'Line 86: Loop hits Holiday (Sun), then Workday (Mon)'
+        // Iteration 1: date becomes 2024-05-05 (Sun, Holiday). isWorkday(date) is FALSE. daysToAdd = 1.
+        // Iteration 2: date becomes 2024-05-06 (Mon, Workday). isWorkday(date) is TRUE. daysToAdd = 0. Loop ends.
+      },
+      {
+        delta: 2,
+        date: '2024-05-04', // Saturday (Holiday)
+        expected: '2024-05-07', // Second workday
+        desc: 'Line 86: Loop hits Hol, Work, Work'
+        // Iteration 1: date becomes 2024-05-05 (Sun, Holiday). isWorkday(date) is FALSE. daysToAdd = 2.
+        // Iteration 2: date becomes 2024-05-06 (Mon, Workday). isWorkday(date) is TRUE. daysToAdd = 1.
+        // Iteration 3: date becomes 2024-05-07 (Tue, Workday). isWorkday(date) is TRUE. daysToAdd = 0. Loop ends.
+      }
     ];
 
     test.each(testCases)('findWorkday($delta, "$date") should be $expected ($desc)', ({ delta, date, expected }) => {
       expect(findWorkday(delta, date)).toBe(expected);
+    });
+
+    describe('findWorkday with default date (today)', () => {
+      let originalDayjs: typeof dayjs;
+
+      beforeEach(() => {
+        originalDayjs = dayjs; // Store original dayjs
+      });
+
+      afterEach(() => {
+        // @ts-ignore
+        dayjs = originalDayjs; // Restore original dayjs
+      });
+
+      test('should return today if today is a workday and delta is 0', () => {
+        const mockTodayWorkday = "2024-05-06"; // Monday, a known workday
+        // @ts-ignore
+        dayjs = jest.fn((dateInput?: any) => {
+          if (dateInput === undefined || dateInput === null || dateInput === '') {
+            return originalDayjs(mockTodayWorkday);
+          }
+          return originalDayjs(dateInput);
+        });
+        Object.assign(dayjs, originalDayjs);
+        expect(findWorkday(0)).toBe(mockTodayWorkday);
+      });
+
+      test('should return next workday if today is a holiday and delta is 0', () => {
+        const mockTodayHoliday = "2024-05-05"; // Sunday, a known holiday
+        // @ts-ignore
+        dayjs = jest.fn((dateInput?: any) => {
+          if (dateInput === undefined || dateInput === null || dateInput === '') {
+            return originalDayjs(mockTodayHoliday);
+          }
+          return originalDayjs(dateInput);
+        });
+        Object.assign(dayjs, originalDayjs);
+        expect(findWorkday(0)).toBe("2024-05-06"); // Next workday
+      });
+
+      test('should return next workday if today is a workday and delta is 1', () => {
+        const mockTodayWorkday = "2024-05-06"; // Monday, a known workday
+        // @ts-ignore
+        dayjs = jest.fn((dateInput?: any) => {
+          if (dateInput === undefined || dateInput === null || dateInput === '') {
+            return originalDayjs(mockTodayWorkday);
+          }
+          return originalDayjs(dateInput);
+        });
+        Object.assign(dayjs, originalDayjs);
+        expect(findWorkday(1)).toBe("2024-05-07");
+      });
     });
   });
 });
