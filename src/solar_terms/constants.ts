@@ -1,4 +1,4 @@
-// Define the type for all solar terms
+// 定义所有节气的类型
 export type SolarTermKey =
   | "the_beginning_of_spring"
   | "rain_water"

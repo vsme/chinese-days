@@ -37,7 +37,7 @@ export const getLunarFestivals = (
     current = current.add(1, 'day');
   }
 
-  // 去重并排序
+  // 去重并将同一日期的节日名称合并
   return results.reduce((acc: { date: string; name: string[] }[], curr) => {
     const existing = acc.find(item => item.date === curr.date)
     if (existing) {

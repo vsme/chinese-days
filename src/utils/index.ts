@@ -1,6 +1,6 @@
 import dayjs, { type Dayjs, type ConfigType } from "../utils/dayjs";
 
-// wrapDate to the start of the day
+// wrapDate 将日期规范化为当天的开始
 export const wrapDate = (date: ConfigType): Dayjs => {
   return dayjs(date).startOf("day");
 };
