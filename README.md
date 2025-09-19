@@ -10,6 +10,8 @@
 
 已集成 AI 自动更新节假日数据，节假日变化时会自动 PR、并发送邮件提醒审核。
 
+参考PR：[#31 自动更新 2025 年假期配置](https://github.com/vsme/chinese-days/pull/31)
+
 ## 文档
 
 查看文档, 请访问 [chinese-days.yaavi.me](https://chinese-days.yaavi.me/).
