@@ -23,7 +23,6 @@ export default () => {
     .n().r(10, 1).to(10, 8).w(9, 28).w(10, 11).i(10, 7).i(10, 8)
     .m().r(10, 6)
 
-
   /**
    * 2024
    * https://www.gov.cn/zhengce/content/202310/content_6911527.htm
