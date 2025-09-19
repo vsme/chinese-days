@@ -1,5 +1,5 @@
 import fs from "fs";
-import path from 'path';
+import path from "path";
 import axios from "axios";
 import * as cheerio from "cheerio";
 import { ArgumentParser } from "argparse";
@@ -82,7 +82,9 @@ const getPaper = async (url: string): Promise<string> => {
   return ret;
 };
 
-const fetchHoliday = async (year: number): Promise<string> => {
+const fetchHoliday = async (
+  year: number
+): Promise<{ content: string; url?: string }> => {
   const paperUrls = await getPaperUrls(year);
   const papers: string[] = [];
 
@@ -91,7 +93,10 @@ const fetchHoliday = async (year: number): Promise<string> => {
     papers.push(paper);
   }
 
-  return papers.join("\n");
+  return {
+    content: papers.join("\n"),
+    url: paperUrls.length > 0 ? paperUrls[0] : undefined,
+  };
 };
 
 const main = async () => {
@@ -101,19 +106,25 @@ const main = async () => {
   const year = args.year;
   console.log(`Fetching holiday for ${year}...`);
 
-  let result = await fetchHoliday(year);
+  const result = await fetchHoliday(year);
 
-  if (result && result.length > 0) {
-    console.log(result)
-    result = result.split('\n').map(line => `<p>${line}</p>`).join('')
+  if (result.content && result.content.length > 0) {
+    console.log(result.content);
+    const htmlContent = result.content
+      .split("\n")
+      .map((line) => `<p>${line}</p>`)
+      .join("");
     const outputPath = process.env.GITHUB_OUTPUT;
-    const holidaysFile = path.join(process.cwd(), 'holidays.html');
-    fs.writeFileSync(holidaysFile, result);
+    const holidaysFile = path.join(process.cwd(), "holidays.html");
+    fs.writeFileSync(holidaysFile, htmlContent);
     if (outputPath) {
       fs.appendFileSync(outputPath, `holidays=${holidaysFile}\n`);
+      if (result.url) {
+        fs.appendFileSync(outputPath, `holiday_url=${result.url}\n`);
+      }
     }
   } else {
-    console.log('No holidays found.');
+    console.log("No holidays found.");
   }
 };
 

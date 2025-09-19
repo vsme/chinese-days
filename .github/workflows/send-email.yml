@@ -3,7 +3,7 @@ name: Send Email on Holidays Update
 on:
   schedule:
     # 从 00:00 到 10:00 UTC，每 2 小时运行一次（对应北京时间 08:00 到 06:00）
-    - cron: '0 0-10/2 * * *'
+    - cron: "0 0-10/2 * * *"
 
   # Allows you to run this workflow manually from the Actions tab on GitHub.
   workflow_dispatch:
@@ -13,38 +13,68 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: "20"
-        registry-url: "https://registry.npmjs.org"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Run script
-      id: run-script
-      run: npm run fetch ${{ vars.HOLIDAYS_YEAR }}
+      - name: Run script
+        id: run-script
+        run: npm run fetch ${{ vars.HOLIDAYS_YEAR }}
 
-    - name: Read holidays file
-      id: read-holidays
-      run: |
-        echo "HOLIDAYS_CONTENT=$(cat holidays.html)" >> $GITHUB_ENV
-      env:
-        HOLIDAYS_CONTENT: $(cat holidays.html)
+      - name: Auto-update holidays configuration
+        id: auto-update
+        if: ${{ steps.run-script.outputs.holidays != '' }}
+        run: |
+          if [ -n "${{ steps.run-script.outputs.holiday_url }}" ]; then
+            npm run auto-update ${{ vars.HOLIDAYS_YEAR }} -- --content "${{ steps.run-script.outputs.holidays }}" --url "${{ steps.run-script.outputs.holiday_url }}"
+          else
+            npm run auto-update ${{ vars.HOLIDAYS_YEAR }} -- --content "${{ steps.run-script.outputs.holidays }}"
+          fi
+        env:
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_API_URL: ${{ secrets.AI_API_URL }}
+          AI_MODEL: ${{ secrets.AI_MODEL }}
 
-    - name: Send notification if holidays has value
-      if: ${{ steps.run-script.outputs.holidays != '' }}
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 587
-        username: ${{ secrets.EMAIL_USERNAME }}
-        password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: "${{ vars.HOLIDAYS_YEAR }} Holidays Update"
-        to: ${{ secrets.TO_EMAIL }}
-        from: Holidays Update
-        html_body: ${{ env.HOLIDAYS_CONTENT }}
+      - name: Commit and push changes
+        if: ${{ steps.auto-update.outputs.updated == 'true' }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add src/holidays/generate.ts
+          git commit -m "Auto-update holidays configuration for ${{ vars.HOLIDAYS_YEAR }}" || exit 0
+          git push
+
+      - name: Read holidays file
+        id: read-holidays
+        if: ${{ steps.run-script.outputs.holidays != '' }}
+        run: |
+          echo "HOLIDAYS_CONTENT=$(cat holidays.html)" >> $GITHUB_ENV
+        env:
+          HOLIDAYS_CONTENT: $(cat holidays.html)
+
+      - name: Send notification if holidays has value
+        if: ${{ steps.run-script.outputs.holidays != '' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "${{ vars.HOLIDAYS_YEAR }} Holidays Update - Auto-generated Configuration"
+          to: ${{ secrets.TO_EMAIL }}
+          from: Holidays Update
+          html_body: |
+            <h2>${{ vars.HOLIDAYS_YEAR }} 年假期安排已自动更新</h2>
+            <p>系统已自动获取并处理假期信息，生成了相应的配置代码。</p>
+            <h3>原始假期内容：</h3>
+            ${{ env.HOLIDAYS_CONTENT }}
+            <hr>
+            <p>配置已自动提交到代码库，请查看最新的提交记录。</p>
