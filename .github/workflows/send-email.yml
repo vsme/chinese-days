@@ -80,7 +80,7 @@ jobs:
           base: main
 
       - name: Send notification if holidays has value
-        if: ${{ steps.run-script.outputs.holidays != '' }}
+        if: ${{ steps.run-script.outputs.holidays != '' && steps.check-branch.outputs.branch_exists == 'false' }}
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
