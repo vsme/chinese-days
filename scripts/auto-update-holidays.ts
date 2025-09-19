@@ -2,10 +2,6 @@ import fs from "fs";
 import path from "path";
 import axios from "axios";
 import { ArgumentParser } from "argparse";
-import dotenv from "dotenv";
-
-// 加载环境变量
-dotenv.config();
 
 // 大模型 API 配置
 const AI_API_URL = process.env.AI_API_URL || "https://api.openai.com/v1";
@@ -31,7 +27,7 @@ const processHolidayWithAI = async (
     return null;
   }
 
-  console.log(year, url);
+  console.log(holidayContent, '\n', year, url);
 
   const prompt = `请根据以下中国政府发布的${year}年假期安排通知，生成对应的假期配置代码。
 
