@@ -29,15 +29,19 @@ jobs:
         id: run-script
         run: npm run fetch ${{ vars.HOLIDAYS_YEAR }}
 
+      - name: Read holidays file
+        id: read-holidays
+        if: ${{ steps.run-script.outputs.holidays != '' }}
+        run: |
+          echo "HOLIDAYS_CONTENT=$(cat holidays.html)" >> $GITHUB_ENV
+        env:
+          HOLIDAYS_CONTENT: $(cat holidays.html)
+
       - name: Auto-update holidays configuration
         id: auto-update
         if: ${{ steps.run-script.outputs.holidays != '' }}
         run: |
-          if [ -n "${{ steps.run-script.outputs.holiday_url }}" ]; then
-            npm run auto-update ${{ vars.HOLIDAYS_YEAR }} -- --content "${{ steps.run-script.outputs.holidays }}" --url "${{ steps.run-script.outputs.holiday_url }}"
-          else
-            npm run auto-update ${{ vars.HOLIDAYS_YEAR }} -- --content "${{ steps.run-script.outputs.holidays }}"
-          fi
+          npm run auto-update ${{ vars.HOLIDAYS_YEAR }} -- --url "${{ steps.run-script.outputs.holiday_url }}"
         env:
           AI_API_KEY: ${{ secrets.AI_API_KEY }}
           AI_API_URL: ${{ secrets.AI_API_URL }}
@@ -51,14 +55,6 @@ jobs:
           git add src/holidays/generate.ts
           git commit -m "Auto-update holidays configuration for ${{ vars.HOLIDAYS_YEAR }}" || exit 0
           git push
-
-      - name: Read holidays file
-        id: read-holidays
-        if: ${{ steps.run-script.outputs.holidays != '' }}
-        run: |
-          echo "HOLIDAYS_CONTENT=$(cat holidays.html)" >> $GITHUB_ENV
-        env:
-          HOLIDAYS_CONTENT: $(cat holidays.html)
 
       - name: Send notification if holidays has value
         if: ${{ steps.run-script.outputs.holidays != '' }}

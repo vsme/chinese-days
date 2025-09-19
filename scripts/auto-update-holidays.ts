@@ -7,6 +7,7 @@ import { ArgumentParser } from "argparse";
 const AI_API_URL = process.env.AI_API_URL || "https://api.openai.com/v1";
 const AI_API_KEY = process.env.AI_API_KEY;
 const AI_MODEL = process.env.AI_MODEL || "gpt-5";
+const HOLIDAYS_CONTENT = process.env.HOLIDAYS_CONTENT;
 
 interface HolidayConfig {
   year: number;
@@ -18,7 +19,6 @@ interface HolidayConfig {
  * 调用大模型处理假期内容
  */
 const processHolidayWithAI = async (
-  holidayContent: string,
   year: number,
   url?: string
 ): Promise<HolidayConfig | null> => {
@@ -27,12 +27,12 @@ const processHolidayWithAI = async (
     return null;
   }
 
-  console.log(holidayContent, '\n', year, url);
+  console.log(HOLIDAYS_CONTENT, '\n', year, url);
 
   const prompt = `请根据以下中国政府发布的${year}年假期安排通知，生成对应的假期配置代码。
 
 假期内容：
-${holidayContent}${
+${HOLIDAYS_CONTENT}${
     url
       ? `
 
@@ -317,30 +317,13 @@ const main = async () => {
 
   console.log(`Processing holidays for ${year}...`);
 
-  // 获取假期内容
-  let holidayContent = args.content;
-  if (!holidayContent) {
-    const holidaysFile = path.join(process.cwd(), "holidays.html");
-    if (fs.existsSync(holidaysFile)) {
-      holidayContent = fs.readFileSync(holidaysFile, "utf-8");
-      // 移除 HTML 标签
-      holidayContent = holidayContent
-        .replace(/<[^>]*>/g, "")
-        .replace(/&nbsp;/g, " ")
-        .trim();
-    } else {
-      console.error("No holiday content provided and holidays.html not found");
-      process.exit(1);
-    }
-  }
-
-  if (!holidayContent || holidayContent.length === 0) {
+  if (!HOLIDAYS_CONTENT || HOLIDAYS_CONTENT.length === 0) {
     console.log("No holiday content to process");
     return;
   }
 
   // 使用 AI 处理假期内容
-  const config = await processHolidayWithAI(holidayContent, year, url);
+  const config = await processHolidayWithAI(year, url);
 
   if (!config) {
     console.error("Failed to process holiday content with AI");
