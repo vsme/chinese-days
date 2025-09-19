@@ -78,6 +78,8 @@ jobs:
           branch: auto-update-holidays-${{ vars.HOLIDAYS_YEAR }}
           delete-branch: true
           base: main
+          add-paths: |
+            src/holidays/generate.ts
 
       - name: Send notification if holidays has value
         if: ${{ steps.run-script.outputs.holidays != '' && steps.check-branch.outputs.branch_exists == 'false' }}
