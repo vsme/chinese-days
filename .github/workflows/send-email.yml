@@ -37,9 +37,22 @@ jobs:
         env:
           HOLIDAYS_CONTENT: $(cat holidays.html)
 
+      - name: 检查分支是否已存在
+        id: check-branch
+        if: ${{ steps.run-script.outputs.holidays != '' }}
+        run: |
+          BRANCH_NAME="auto-update-holidays-${{ vars.HOLIDAYS_YEAR }}"
+          if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
+            echo "branch_exists=true" >> $GITHUB_OUTPUT
+            echo "分支 $BRANCH_NAME 已存在，跳过后续步骤"
+          else
+            echo "branch_exists=false" >> $GITHUB_OUTPUT
+            echo "分支 $BRANCH_NAME 不存在，继续执行配置更新"
+          fi
+
       - name: Auto-update holidays configuration
         id: auto-update
-        if: ${{ steps.run-script.outputs.holidays != '' }}
+        if: ${{ steps.run-script.outputs.holidays != '' && steps.check-branch.outputs.branch_exists == 'false' }}
         run: |
           npm run auto-update ${{ vars.HOLIDAYS_YEAR }} -- --url "${{ steps.run-script.outputs.holiday_url }}"
         env:
@@ -48,7 +61,7 @@ jobs:
           AI_MODEL: ${{ secrets.AI_MODEL }}
 
       - name: 创建拉取请求
-        if: ${{ steps.auto-update.outputs.updated == 'true' }}
+        if: ${{ steps.auto-update.outputs.updated == 'true' && steps.check-branch.outputs.branch_exists == 'false' }}
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
