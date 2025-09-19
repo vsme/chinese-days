@@ -6,6 +6,10 @@
 
 This project provides a series of functions for querying Chinese holidays, adjusted working days, working days, 24 solar terms, and converting between lunar and solar calendars. Additionally, it supports ics file subscription for holidays, which can be subscribed to by Google Calendar, Apple Calendar, Microsoft Outlook, and other clients. 
 
+## Automation
+
+AI-powered automatic holiday data updates have been integrated. When holiday schedules change, it will automatically create a PR and send email notifications for review.
+
 ## Documentation
 
 To check out docs, visit [chinese-days.yaavi.me](https://chinese-days.yaavi.me/en/).

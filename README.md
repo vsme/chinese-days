@@ -6,6 +6,10 @@
 
 本项目提供了一系列用于查询中国节假日、调休日、工作日、24节气、以及农历阳历互转的函数，此外还支持 `iCal` 文件订阅节假日，可供 Google Calendar、Apple Calendar、Microsoft Outlook 等客户端订阅。
 
+## 自动化
+
+已集成 AI 自动更新节假日数据，节假日变化时会自动 PR、并发送邮件提醒审核。
+
 ## 文档
 
 查看文档, 请访问 [chinese-days.yaavi.me](https://chinese-days.yaavi.me/).
