@@ -1,5 +1,13 @@
-import dayjs, { type ConfigType } from "../utils/dayjs";
-import { type LunarDateDetail, LUNAR_INFO, CHINESE_NUMBER, NUMBER_MONTH, NUMBER_1, NUMBER_2, ZODIACS } from './constants'
+import dayjs, { type ConfigType } from '../utils/dayjs';
+import {
+  type LunarDateDetail,
+  LUNAR_INFO,
+  CHINESE_NUMBER,
+  NUMBER_MONTH,
+  NUMBER_1,
+  NUMBER_2,
+  ZODIACS,
+} from './constants';
 
 /**
  * 获取指定农历年的天数
@@ -12,7 +20,7 @@ const lunarYearDays = (y: number): number => {
     sum += (LUNAR_INFO[y - 1900] & i) !== 0 ? 1 : 0;
   }
   return sum + yearLeapDays(y);
-}
+};
 
 /**
  * 获取指定年份的闰月月份
@@ -26,14 +34,16 @@ const yearLeapMonth = (y: number): number => LUNAR_INFO[y - 1900] & 0xf;
  * @param y 年份
  * @returns 闰月天数，非闰年返回0
  */
-const yearLeapDays = (y: number): number => yearLeapMonth(y) ? ((LUNAR_INFO[y - 1900] & 0x10000) !== 0 ? 30 : 29) : 0;
+const yearLeapDays = (y: number): number =>
+  yearLeapMonth(y) ? ((LUNAR_INFO[y - 1900] & 0x10000) !== 0 ? 30 : 29) : 0;
 
 /**
  * 获取天干地支表示的月份或日期
  * @param num 月份或日期的数值
  * @returns 天干地支表示
  */
-const cyclicalm = (num: number): string => NUMBER_1[num % 10] + NUMBER_2[num % 12];
+const cyclicalm = (num: number): string =>
+  NUMBER_1[num % 10] + NUMBER_2[num % 12];
 
 /**
  * 获取指定年月的阴历天数
@@ -41,7 +51,8 @@ const cyclicalm = (num: number): string => NUMBER_1[num % 10] + NUMBER_2[num % 1
  * @param m 农历月份
  * @returns 月份天数
  */
-export const monthDays = (y: number, m: number): number => (LUNAR_INFO[y - 1900] & (0x10000 >> m)) === 0 ? 29 : 30;
+export const monthDays = (y: number, m: number): number =>
+  (LUNAR_INFO[y - 1900] & (0x10000 >> m)) === 0 ? 29 : 30;
 
 /**
  * 获取指定年份的生肖
@@ -56,18 +67,17 @@ const getYearZodiac = (y: number): string => ZODIACS[(y - 4) % 12];
  * @returns 农历表示
  */
 const getDateCN = (day: number): string => {
-  const prefixes = ["初", "十", "廿", "三十"];
+  const prefixes = ['初', '十', '廿', '三十'];
 
-  if (day === 10) return "初十";
-  if (day === 20) return "二十";
-  if (day === 30) return "三十";
+  if (day === 10) return '初十';
+  if (day === 20) return '二十';
+  if (day === 30) return '三十';
 
   const tensPlace = Math.floor(day / 10);
   const unitsPlace = day % 10;
 
   return prefixes[tensPlace] + CHINESE_NUMBER[unitsPlace];
-}
-
+};
 
 /**
  * 获取指定农历年份的天干地支表示
@@ -76,7 +86,7 @@ const getDateCN = (day: number): string => {
  */
 const getLunarYearText = (lunarYear: number): string => {
   return `${NUMBER_1[(lunarYear - 4) % 10]}${NUMBER_2[(lunarYear - 4) % 12]}年`;
-}
+};
 
 /**
  * 获取指定范围内的所有农历年份 信息
@@ -90,11 +100,15 @@ export const getLunarYears = (startYear: number, endYear: number) => {
     years.push({
       year: i,
       lunarYear: getLunarYearText(i),
-      lunarYearCN: i.toString().split('').map(i => CHINESE_NUMBER[Number(i)]).join('')
+      lunarYearCN: i
+        .toString()
+        .split('')
+        .map(i => CHINESE_NUMBER[Number(i)])
+        .join(''),
     });
   }
   return years;
-}
+};
 
 /**
  * 获取指定阳历年份的闰月
@@ -102,14 +116,14 @@ export const getLunarYears = (startYear: number, endYear: number) => {
  * @returns 农历闰月月份
  */
 export const getYearLeapMonth = (year: number) => {
-  const leap = yearLeapMonth(year)
+  const leap = yearLeapMonth(year);
   return {
     year,
     leapMonth: leap || undefined,
     leapMonthCN: leap ? `闰${NUMBER_MONTH[leap - 1]}月` : undefined,
-    days: leap ? (LUNAR_INFO[year - 1900] & 0x10000) !== 0 ? 30 : 29 : 0
+    days: leap ? ((LUNAR_INFO[year - 1900] & 0x10000) !== 0 ? 30 : 29) : 0,
   };
-}
+};
 
 /**
  * 计算指定日期的农历元素
@@ -123,10 +137,10 @@ export const getLunarDate = (date: ConfigType): LunarDateDetail => {
 
   const baseDate = dayjs(new Date(1900, 0, 31));
   const objDate = dayjs(date);
-  let offset = objDate.diff(baseDate, "day");
+  let offset = objDate.diff(baseDate, 'day');
 
   lunarDate[5] = offset + 40; // 日柱，从1900-01-31开始的天数计算
-  lunarDate[4] = 14;          // 月柱，从1900-01-31开始的月数计算
+  lunarDate[4] = 14; // 月柱，从1900-01-31开始的月数计算
 
   let i = 1900;
   for (; i < 2100 && offset > 0; i++) {
@@ -147,7 +161,7 @@ export const getLunarDate = (date: ConfigType): LunarDateDetail => {
   lunarDate[6] = 0; // 闰月标记，初始为0
 
   for (let j = 1; j < 13 && offset >= 0; j++) {
-    if (leap > 0 && j === (leap + 1) && lunarDate[6] === 0) {
+    if (leap > 0 && j === leap + 1 && lunarDate[6] === 0) {
       --j;
       lunarDate[6] = 1;
       temp = yearLeapDays(i);
@@ -155,7 +169,7 @@ export const getLunarDate = (date: ConfigType): LunarDateDetail => {
       temp = monthDays(i, j);
     }
 
-    if (lunarDate[6] === 1 && j === (leap + 1)) {
+    if (lunarDate[6] === 1 && j === leap + 1) {
       lunarDate[6] = 0;
     }
 
@@ -185,11 +199,15 @@ export const getLunarDate = (date: ConfigType): LunarDateDetail => {
     yearCyl: cyclicalm(lunarDate[3]), // 年柱
     monCyl: cyclicalm(lunarDate[4]), // 月柱
     dayCyl: cyclicalm(lunarDate[5]), // 日柱
-    lunarYearCN: `${lunarDate[0].toString().split('').map(i => CHINESE_NUMBER[Number(i)]).join('')}`, // 农历年份中文表示
+    lunarYearCN: `${lunarDate[0]
+      .toString()
+      .split('')
+      .map(i => CHINESE_NUMBER[Number(i)])
+      .join('')}`, // 农历年份中文表示
     lunarMonCN: `${NUMBER_MONTH[lunarDate[1]]}月`, // 农历月份中文表示
-    lunarDayCN: getDateCN(lunarDate[2]) // 农历日期中文表示
+    lunarDayCN: getDateCN(lunarDate[2]), // 农历日期中文表示
   };
-}
+};
 
 /**
  * 获取范围内所有日期的农历信息
@@ -197,17 +215,24 @@ export const getLunarDate = (date: ConfigType): LunarDateDetail => {
  * @param endDate 结束日期
  * @returns 范围内所有日期的农历信息
  */
-export const getLunarDatesInRange = (startDate: ConfigType, endDate: ConfigType): LunarDateDetail[] => {
+export const getLunarDatesInRange = (
+  startDate: ConfigType,
+  endDate: ConfigType
+): LunarDateDetail[] => {
   const start = dayjs(startDate);
   const end = dayjs(endDate);
   const lunarDates: LunarDateDetail[] = [];
 
-  for (let date = start; date.isBefore(end) || date.isSame(end, 'day'); date = date.add(1, 'day')) {
+  for (
+    let date = start;
+    date.isBefore(end) || date.isSame(end, 'day');
+    date = date.add(1, 'day')
+  ) {
     lunarDates.push(getLunarDate(date));
   }
 
   return lunarDates;
-}
+};
 
 /**
  * 根据阴历日期查询阳历日期
@@ -215,7 +240,9 @@ export const getLunarDatesInRange = (startDate: ConfigType, endDate: ConfigType)
  * @param isLeapMonth 是否闰月
  * @returns 阳历日期
  */
-export const getSolarDateFromLunar = (lunarDate: ConfigType): {
+export const getSolarDateFromLunar = (
+  lunarDate: ConfigType
+): {
   date: string;
   leapMonthDate?: string;
 } => {
@@ -230,7 +257,7 @@ export const getSolarDateFromLunar = (lunarDate: ConfigType): {
     offset += lunarYearDays(i);
   }
 
-  let leapMonth = yearLeapMonth(lunarYear);
+  const leapMonth = yearLeapMonth(lunarYear);
   for (let i = 1; i < lunarMonth; i++) {
     offset += monthDays(lunarYear, i);
     if (i === leapMonth) {
@@ -244,20 +271,21 @@ export const getSolarDateFromLunar = (lunarDate: ConfigType): {
   const baseDate = dayjs(new Date(1900, 0, 31));
   const solarDate = baseDate.add(offset, 'day').format('YYYY-MM-DD');
 
-
   /* 闰月日期 */
   let leapMonthDateOffset = offset;
   let solarLeapMonthDate: string | undefined;
   if (leapMonth === lunarMonth) {
     leapMonthDateOffset += monthDays(lunarYear, lunarMonth);
-    solarLeapMonthDate = baseDate.add(leapMonthDateOffset, 'day').format('YYYY-MM-DD');
+    solarLeapMonthDate = baseDate
+      .add(leapMonthDateOffset, 'day')
+      .format('YYYY-MM-DD');
   }
 
   return {
     date: solarDate,
     leapMonthDate: solarLeapMonthDate,
   };
-}
+};
 
 export default {
   getLunarYears,
@@ -265,4 +293,4 @@ export default {
   getLunarDate,
   getLunarDatesInRange,
   getSolarDateFromLunar,
-}
+};

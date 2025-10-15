@@ -4,13 +4,13 @@ export type ConfigType = string | number | Date | Dayjs | null | undefined;
 export class Dayjs {
   private _date: Date;
   private static daysOfWeek = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
   ];
 
   constructor(date?: ConfigType) {
@@ -18,10 +18,10 @@ export class Dayjs {
       this._date = new Date(date.toDate());
     } else if (date instanceof Date) {
       this._date = new Date(date);
-    } else if (typeof date === "string" || typeof date === "number") {
+    } else if (typeof date === 'string' || typeof date === 'number') {
       this._date = new Date(date);
-      if (typeof date === "string" && isNaN(this._date.getTime())) {
-        this._date = new Date(date.replace(/-/g, "/"));
+      if (typeof date === 'string' && isNaN(this._date.getTime())) {
+        this._date = new Date(date.replace(/-/g, '/'));
       }
     } else {
       this._date = new Date();
@@ -38,94 +38,96 @@ export class Dayjs {
 
   diff(
     date: string | number | Date | Dayjs | null | undefined,
-    unit: "day" | "month" | "year" = "day"
+    unit: 'day' | 'month' | 'year' = 'day'
   ): number {
     const targetDate = new Dayjs(date).toDate();
     const diffTime = this._date.getTime() - targetDate.getTime();
     switch (unit) {
-      case "year":
+      case 'year':
         return this._date.getFullYear() - targetDate.getFullYear();
-      case "month":
+      case 'month':
         return (
           (this._date.getFullYear() - targetDate.getFullYear()) * 12 +
           (this._date.getMonth() - targetDate.getMonth())
         );
-      case "day":
+      case 'day':
       default:
         return Math.floor(diffTime / (1000 * 60 * 60 * 24));
     }
   }
 
-  startOf(unit?: "year" | "month" | "day"): Dayjs {
+  startOf(unit?: 'year' | 'month' | 'day'): Dayjs {
     const newDate = new Date(this._date);
     switch (unit) {
-      case "year":
+      case 'year':
         newDate.setMonth(0);
         newDate.setDate(1);
         newDate.setHours(0, 0, 0, 0);
         break;
-      case "month":
+      case 'month':
         newDate.setDate(1);
         newDate.setHours(0, 0, 0, 0);
         break;
-      case "day":
+      case 'day':
         newDate.setHours(0, 0, 0, 0);
         break;
     }
     return new Dayjs(newDate);
   }
 
-  endOf(unit?: "year" | "month" | "day"): Dayjs {
+  endOf(unit?: 'year' | 'month' | 'day'): Dayjs {
     const newDate = new Date(this._date);
     switch (unit) {
-      case "year":
+      case 'year':
         newDate.setMonth(11);
         newDate.setDate(31);
         newDate.setHours(23, 59, 59, 999);
         break;
-      case "month":
-        newDate.setDate(new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0).getDate());
+      case 'month':
+        newDate.setDate(
+          new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0).getDate()
+        );
         newDate.setHours(23, 59, 59, 999);
         break;
-      case "day":
+      case 'day':
         newDate.setHours(23, 59, 59, 999);
         break;
     }
     return new Dayjs(newDate);
   }
 
-  add(value: number, unit: "year" | "month" | "day"): Dayjs {
+  add(value: number, unit: 'year' | 'month' | 'day'): Dayjs {
     const newDate = new Date(this._date);
     switch (unit) {
-      case "year":
+      case 'year':
         newDate.setFullYear(newDate.getFullYear() + value);
         break;
-      case "month":
+      case 'month':
         newDate.setMonth(newDate.getMonth() + value);
         break;
-      case "day":
+      case 'day':
         newDate.setDate(newDate.getDate() + value);
         break;
     }
     return new Dayjs(newDate);
   }
 
-  subtract(value: number, unit: "year" | "month" | "day"): Dayjs {
+  subtract(value: number, unit: 'year' | 'month' | 'day'): Dayjs {
     return this.add(-value, unit);
   }
 
   format(formatStr: string): string {
     const map: { [key: string]: number | string } = {
       YYYY: this._date.getFullYear(),
-      MM: (this._date.getMonth() + 1).toString().padStart(2, "0"),
-      DD: this._date.getDate().toString().padStart(2, "0"),
-      HH: this._date.getHours().toString().padStart(2, "0"),
-      mm: this._date.getMinutes().toString().padStart(2, "0"),
-      ss: this._date.getSeconds().toString().padStart(2, "0"),
+      MM: (this._date.getMonth() + 1).toString().padStart(2, '0'),
+      DD: this._date.getDate().toString().padStart(2, '0'),
+      HH: this._date.getHours().toString().padStart(2, '0'),
+      mm: this._date.getMinutes().toString().padStart(2, '0'),
+      ss: this._date.getSeconds().toString().padStart(2, '0'),
       dddd: Dayjs.daysOfWeek[this._date.getDay()],
     };
 
-    return formatStr.replace(/YYYY|MM|DD|HH|mm|ss|dddd/g, (matched) => {
+    return formatStr.replace(/YYYY|MM|DD|HH|mm|ss|dddd/g, matched => {
       return map[matched].toString();
     });
   }
@@ -183,18 +185,18 @@ export class Dayjs {
 
   isSame(
     date: string | number | Date | Dayjs | null | undefined,
-    unit: "year" | "month" | "day" = "day"
+    unit: 'year' | 'month' | 'day' = 'day'
   ): boolean {
     const targetDate = new Dayjs(date).toDate();
     switch (unit) {
-      case "year":
+      case 'year':
         return this._date.getFullYear() === targetDate.getFullYear();
-      case "month":
+      case 'month':
         return (
           this._date.getFullYear() === targetDate.getFullYear() &&
           this._date.getMonth() === targetDate.getMonth()
         );
-      case "day":
+      case 'day':
       default:
         return (
           this._date.getFullYear() === targetDate.getFullYear() &&
@@ -207,7 +209,7 @@ export class Dayjs {
   isBetween(
     startDate: string | number | Date | Dayjs | null | undefined,
     endDate: string | number | Date | Dayjs | null | undefined,
-    unit?: "year" | "month" | "day"
+    unit?: 'year' | 'month' | 'day'
   ): boolean {
     const start = new Dayjs(startDate).startOf(unit).toDate();
     const end = new Dayjs(endDate).endOf(unit).toDate();

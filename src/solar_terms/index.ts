@@ -1,12 +1,12 @@
-import dayjs, { Dayjs, type ConfigType } from "../utils/dayjs";
-import { wrapDate } from '../utils'
+import dayjs, { Dayjs, type ConfigType } from '../utils/dayjs';
+import { wrapDate } from '../utils';
 import {
   SOLAR_TERMS_C_NUMS,
   SOLAR_TERMS_DELTA,
   SOLAR_TERMS_MONTH,
   SOLAR_TERMS,
   type SolarTermKey,
-} from "./constants";
+} from './constants';
 
 /* 获取节气日期 */
 const getSolarTermDate = (
@@ -22,17 +22,18 @@ const getSolarTermDate = (
 
   if (
     [
-      "lesser_cold",
-      "greater_cold",
-      "the_beginning_of_spring",
-      "rain_water",
+      'lesser_cold',
+      'greater_cold',
+      'the_beginning_of_spring',
+      'rain_water',
     ].includes(term)
   ) {
     L = Math.floor((Y - 1) / 4);
   }
 
   let day = Math.floor(Y * D + C) - L;
-  const delta = SOLAR_TERMS_DELTA[`${year}_${term}` as keyof typeof SOLAR_TERMS_DELTA];
+  const delta =
+    SOLAR_TERMS_DELTA[`${year}_${term}` as keyof typeof SOLAR_TERMS_DELTA];
   if (delta) {
     day += delta;
   }
@@ -45,7 +46,7 @@ export interface SolarTerm {
   term: SolarTermKey;
   name: string;
   index?: number;
-};
+}
 
 /**
  * 获取指定日期范围内的节气（仅节气当日）
@@ -53,10 +54,7 @@ export interface SolarTerm {
  * @param end 不传只查当天
  * @returns Array of solar terms => 节气开始日数组
  */
-const getSolarTerms = (
-  start?: ConfigType,
-  end?: ConfigType
-): SolarTerm[] => {
+const getSolarTerms = (start?: ConfigType, end?: ConfigType): SolarTerm[] => {
   const result: SolarTerm[] = [];
   let current = wrapDate(start);
   const endDate = wrapDate(end || start);
@@ -72,7 +70,7 @@ const getSolarTerms = (
         (solarTermDate?.isAfter(current) || solarTermDate?.isSame(current))
       ) {
         result.push({
-          date: solarTermDate.format("YYYY-MM-DD"),
+          date: solarTermDate.format('YYYY-MM-DD'),
           term,
           name: SOLAR_TERMS[term],
           index: 1,
@@ -81,9 +79,10 @@ const getSolarTerms = (
     });
 
     /* 处理下个日期 */
-    month === 12
-      ? (current = current.add(1, "year").startOf("year"))
-      : (current = current.add(1, "month").startOf("month"));
+    current =
+      month === 12
+        ? current.add(1, 'year').startOf('year')
+        : current.add(1, 'month').startOf('month');
   }
 
   return result;
@@ -102,7 +101,7 @@ const getSolarTermsInRange = (
   // 从开始日减一个月 - 结束日下一个月 计算所有节气
   let current = wrapDate(start).subtract(1, 'month');
   const endDate = wrapDate(end || start).add(1, 'month');
-  const allTerms: { term: SolarTermKey, date: Dayjs }[] = []
+  const allTerms: { term: SolarTermKey; date: Dayjs }[] = [];
   while (current.isBefore(endDate) || current.isSame(endDate)) {
     const year = current.year();
     const month = current.month() + 1;
@@ -118,25 +117,31 @@ const getSolarTermsInRange = (
   }
 
   // 计算中间的所有日期
-  const deltaDays: (Omit<SolarTerm, 'date'> & {day: Dayjs})[] = []
+  const deltaDays: (Omit<SolarTerm, 'date'> & { day: Dayjs })[] = [];
   allTerms.forEach((term, index) => {
-    for (let date = term.date; allTerms[index + 1] && date.isBefore(allTerms[index + 1].date); date = date.add(1, 'day')) {
-      deltaDays.push({ day: date, term: term.term, name: SOLAR_TERMS[term.term], index: date.diff(term.date, 'day') + 1 })
+    for (
+      let date = term.date;
+      allTerms[index + 1] && date.isBefore(allTerms[index + 1].date);
+      date = date.add(1, 'day')
+    ) {
+      deltaDays.push({
+        day: date,
+        term: term.term,
+        name: SOLAR_TERMS[term.term],
+        index: date.diff(term.date, 'day') + 1,
+      });
     }
-  })
+  });
 
-  if (!end) end = start
-  return deltaDays.filter(trem => trem.day.isBetween(start, end, 'day')).map(trem => ({
-    date: trem.day.format('YYYY-MM-DD'),
-    term: trem.term,
-    name: trem.name,
-    index: trem.index
-  }));
+  if (!end) end = start;
+  return deltaDays
+    .filter(trem => trem.day.isBetween(start, end, 'day'))
+    .map(trem => ({
+      date: trem.day.format('YYYY-MM-DD'),
+      term: trem.term,
+      name: trem.name,
+      index: trem.index,
+    }));
 };
 
-
-export {
-  getSolarTermDate,
-  getSolarTerms,
-  getSolarTermsInRange,
-}
+export { getSolarTermDate, getSolarTerms, getSolarTermsInRange };

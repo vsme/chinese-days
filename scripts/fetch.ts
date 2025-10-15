@@ -1,8 +1,8 @@
-import fs from "fs";
-import path from "path";
-import axios from "axios";
-import * as cheerio from "cheerio";
-import { ArgumentParser } from "argparse";
+import fs from 'fs';
+import path from 'path';
+import axios from 'axios';
+import * as cheerio from 'cheerio';
+import { ArgumentParser } from 'argparse';
 
 const getPaperUrls = async (year: number): Promise<string[]> => {
   let hasNextPage = true;
@@ -11,21 +11,21 @@ const getPaperUrls = async (year: number): Promise<string[]> => {
 
   while (hasNextPage) {
     const response = await axios.get(
-      "https://sousuo.www.gov.cn/search-gov/data",
+      'https://sousuo.www.gov.cn/search-gov/data',
       {
         params: {
           // 不区分发布机构  `?t=zhengcelibrary_gw_bm_gb`
           // 分发布机构国务  `?t=zhengcelibrary_gw`   即 gw - 国务
           // 国务院部门文件  `?t=zhengcelibrary_bm`   即 bm - 部门
           // 国务院公报文件  `?t=zhengcelibrary_gb`   即 gb - 公报
-          t: "zhengcelibrary_gw",
+          t: 'zhengcelibrary_gw',
           p: pageIndex,
           n: 5,
           q: `假期 ${year}`,
-          pcodeJiguan: "国办发明电",
-          puborg: "国务院办公厅",
-          filetype: "通知",
-          sort: "pubtime",
+          pcodeJiguan: '国办发明电',
+          puborg: '国务院办公厅',
+          filetype: '通知',
+          sort: 'pubtime',
         },
       }
     );
@@ -63,17 +63,17 @@ const getPaper = async (url: string): Promise<string> => {
   }
 
   const $ = cheerio.load(response.data);
-  const container = $("#UCAP-CONTENT");
+  const container = $('#UCAP-CONTENT');
   if (!container.length) {
     throw new Error(`Cannot get paper container from url: ${url}`);
   }
 
-  const paragraphs = container.html()?.replace(/<br\/>/g, "</p><p>");
-  const p = cheerio.load(paragraphs || "")("p");
+  const paragraphs = container.html()?.replace(/<br\/>/g, '</p><p>');
+  const p = cheerio.load(paragraphs || '')('p');
   const ret = p
     .map((_, el) => $(el).text().trim())
     .get()
-    .join("\n");
+    .join('\n');
 
   if (!ret) {
     throw new Error(`Cannot get paper content from url: ${url}`);
@@ -94,14 +94,14 @@ const fetchHoliday = async (
   }
 
   return {
-    content: papers.join("\n"),
+    content: papers.join('\n'),
     url: paperUrls.length > 0 ? paperUrls[0] : undefined,
   };
 };
 
 const main = async () => {
   const parser = new ArgumentParser();
-  parser.addArgument("year", { type: "int" });
+  parser.addArgument('year', { type: 'int' });
   const args = parser.parseArgs();
   const year = args.year;
   console.log(`Fetching holiday for ${year}...`);
@@ -111,11 +111,11 @@ const main = async () => {
   if (result.content && result.content.length > 0) {
     console.log(result.content);
     const htmlContent = result.content
-      .split("\n")
-      .map((line) => `<p>${line}</p>`)
-      .join("");
+      .split('\n')
+      .map(line => `<p>${line}</p>`)
+      .join('');
     const outputPath = process.env.GITHUB_OUTPUT;
-    const holidaysFile = path.join(process.cwd(), "holidays.html");
+    const holidaysFile = path.join(process.cwd(), 'holidays.html');
     fs.writeFileSync(holidaysFile, htmlContent);
     if (outputPath) {
       fs.appendFileSync(outputPath, `holidays=${holidaysFile}\n`);
@@ -124,11 +124,11 @@ const main = async () => {
       }
     }
   } else {
-    console.log("No holidays found.");
+    console.log('No holidays found.');
   }
 };
 
-main().catch((error) => {
+main().catch(error => {
   console.error(error);
   process.exit(1);
 });

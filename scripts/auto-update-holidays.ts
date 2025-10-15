@@ -1,12 +1,12 @@
-import fs from "fs";
-import path from "path";
-import axios from "axios";
-import { ArgumentParser } from "argparse";
+import fs from 'fs';
+import path from 'path';
+import axios from 'axios';
+import { ArgumentParser } from 'argparse';
 
 // 大模型 API 配置
-const AI_API_URL = process.env.AI_API_URL || "https://api.openai.com/v1";
+const AI_API_URL = process.env.AI_API_URL || 'https://api.openai.com/v1';
 const AI_API_KEY = process.env.AI_API_KEY;
-const AI_MODEL = process.env.AI_MODEL || "gpt-5";
+const AI_MODEL = process.env.AI_MODEL || 'gpt-5';
 const HOLIDAYS_CONTENT = process.env.HOLIDAYS_CONTENT;
 
 interface HolidayConfig {
@@ -23,7 +23,7 @@ const processHolidayWithAI = async (
   url?: string
 ): Promise<HolidayConfig | null> => {
   if (!AI_API_KEY) {
-    console.error("AI_API_KEY environment variable is not set");
+    console.error('AI_API_KEY environment variable is not set');
     return null;
   }
 
@@ -38,18 +38,18 @@ ${HOLIDAYS_CONTENT}${
 
 政府通知原始链接：
 ${url}`
-      : ""
+      : ''
   }
 
 请参考以下格式生成代码，注释中需要包含实际的政府通知信息：
 
 /**
  * ${year}${
-    url
-      ? `
+   url
+     ? `
  * ${url}`
-      : ""
-  }
+     : ''
+ }
  * 根据通知内容总结的假期安排详细说明
  */
 arrangement.y(${year})
@@ -80,28 +80,28 @@ arrangement.y(${year})
 格式要求：
 1. 先返回完整的注释块，注释块必须严格按照以下格式：
    - 第一行：年份（如：${year}）${
-    url
-      ? `
+     url
+       ? `
    - 第二行：URL链接（${url}）`
-      : ""
-  }
+       : ''
+   }
    - 后续行：根据通知内容总结的假期安排详细说明
 2. 然后返回完整的 arrangement 配置代码
 3. 确保代码格式正确，缩进一致`;
 
   try {
     const response = await axios.post(
-      AI_API_URL + "/chat/completions",
+      AI_API_URL + '/chat/completions',
       {
         model: AI_MODEL,
         messages: [
           {
-            role: "system",
+            role: 'system',
             content:
-              "你是一个专业的代码生成助手，专门处理中国假期配置。请严格按照要求的格式生成代码。",
+              '你是一个专业的代码生成助手，专门处理中国假期配置。请严格按照要求的格式生成代码。',
           },
           {
-            role: "user",
+            role: 'user',
             content: prompt,
           },
         ],
@@ -111,7 +111,7 @@ arrangement.y(${year})
       {
         headers: {
           Authorization: `Bearer ${AI_API_KEY}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       }
     );
@@ -120,9 +120,9 @@ arrangement.y(${year})
       const aiResponse = response.data.choices[0].message.content.trim();
 
       // 解析 AI 返回的内容
-      const lines = aiResponse.split("\n");
-      let commentLines: string[] = [];
-      let codeLines: string[] = [];
+      const lines = aiResponse.split('\n');
+      const commentLines: string[] = [];
+      const codeLines: string[] = [];
       let inComment = false;
       let inCode = false;
 
@@ -130,14 +130,14 @@ arrangement.y(${year})
         const trimmedLine = line.trim();
 
         // 检测注释开始
-        if (trimmedLine.startsWith("/**")) {
+        if (trimmedLine.startsWith('/**')) {
           inComment = true;
           commentLines.push(line);
           continue;
         }
 
         // 检测注释结束
-        if (inComment && trimmedLine.endsWith("*/")) {
+        if (inComment && trimmedLine.endsWith('*/')) {
           commentLines.push(line);
           inComment = false;
           continue;
@@ -159,7 +159,7 @@ arrangement.y(${year})
         // 在代码中
         if (inCode) {
           // 如果遇到空行或下一个注释，结束代码收集
-          if (trimmedLine === "" || trimmedLine.startsWith("/**")) {
+          if (trimmedLine === '' || trimmedLine.startsWith('/**')) {
             break;
           }
           codeLines.push(line);
@@ -169,25 +169,29 @@ arrangement.y(${year})
       if (commentLines.length > 0 && codeLines.length > 0) {
         return {
           year,
-          comment: commentLines.join("\n"),
-          code: codeLines.join("\n"),
+          comment: commentLines.join('\n'),
+          code: codeLines.join('\n'),
         };
       }
     }
 
     return null;
-  } catch (error: any) {
-    console.error("Error calling AI API:");
-    if (error.response) {
-      console.error("Response status:", error.response.status);
-      console.error(
-        "Response data:",
-        JSON.stringify(error.response.data, null, 2)
-      );
-    } else if (error.request) {
-      console.error("Request error:", error.message);
+  } catch (error: unknown) {
+    console.error('Error calling AI API:');
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error(
+          'Response data:',
+          JSON.stringify(error.response.data, null, 2)
+        );
+      } else if (error.request) {
+        console.error('Request error:', error.message);
+      } else {
+        console.error('Error:', error.message);
+      }
     } else {
-      console.error("Error:", error.message);
+      console.error('Unknown error:', error);
     }
     return null;
   }
@@ -199,32 +203,32 @@ arrangement.y(${year})
 const updateGenerateFile = async (config: HolidayConfig): Promise<boolean> => {
   const generateFilePath = path.join(
     process.cwd(),
-    "src",
-    "holidays",
-    "generate.ts"
+    'src',
+    'holidays',
+    'generate.ts'
   );
 
   try {
-    const content = fs.readFileSync(generateFilePath, "utf-8");
-    const lines = content.split("\n");
+    const content = fs.readFileSync(generateFilePath, 'utf-8');
+    const lines = content.split('\n');
 
     // 查找插入位置：在 "const arrangement = new Arrangement()" 之后
     let insertLineIndex = -1;
     for (let i = 0; i < lines.length; i++) {
-      if (lines[i].trim() === "const arrangement = new Arrangement()") {
+      if (lines[i].trim() === 'const arrangement = new Arrangement()') {
         insertLineIndex = i + 1;
         break;
       }
     }
 
     if (insertLineIndex === -1) {
-      console.error("Could not find insertion point in generate.ts");
+      console.error('Could not find insertion point in generate.ts');
       return false;
     }
 
     // 检查是否已经存在该年份的配置
-    const yearPattern = new RegExp(`\\\* ${config.year}`);
-    const existingYearIndex = lines.findIndex((line) => yearPattern.test(line));
+    const yearPattern = new RegExp(`\\* ${config.year}`);
+    const existingYearIndex = lines.findIndex(line => yearPattern.test(line));
 
     if (existingYearIndex !== -1) {
       console.log(
@@ -239,9 +243,9 @@ const updateGenerateFile = async (config: HolidayConfig): Promise<boolean> => {
       for (let i = existingYearIndex; i < lines.length; i++) {
         const line = lines[i].trim();
 
-        if (line.startsWith("/**")) {
+        if (line.startsWith('/**')) {
           inComment = true;
-        } else if (line.endsWith("*/")) {
+        } else if (line.endsWith('*/')) {
           inComment = false;
         } else if (
           !inComment &&
@@ -250,9 +254,9 @@ const updateGenerateFile = async (config: HolidayConfig): Promise<boolean> => {
           inCode = true;
         } else if (
           inCode &&
-          (line === "" ||
-            line.startsWith("/**") ||
-            line.startsWith("arrangement.y("))
+          (line === '' ||
+            line.startsWith('/**') ||
+            line.startsWith('arrangement.y('))
         ) {
           endIndex = i;
           break;
@@ -268,7 +272,7 @@ const updateGenerateFile = async (config: HolidayConfig): Promise<boolean> => {
         (line, index) =>
           index >= existingYearIndex - 5 &&
           index <= existingYearIndex &&
-          line.trim().startsWith("/**")
+          line.trim().startsWith('/**')
       );
 
       const removeStartIndex =
@@ -279,26 +283,26 @@ const updateGenerateFile = async (config: HolidayConfig): Promise<boolean> => {
 
     // 准备要插入的内容
     const commentLines = config.comment
-      .split("\n")
-      .map((line) => (line ? `  ${line}` : line));
+      .split('\n')
+      .map(line => (line ? `  ${line}` : line));
     const codeLines = config.code
-      .split("\n")
-      .map((line) => (line ? `  ${line}` : line));
-    const newLines = [...commentLines, ...codeLines, ""];
+      .split('\n')
+      .map(line => (line ? `  ${line}` : line));
+    const newLines = [...commentLines, ...codeLines, ''];
 
     // 插入新内容
     lines.splice(insertLineIndex, 0, ...newLines);
 
     // 写回文件
-    const updatedContent = lines.join("\n");
-    fs.writeFileSync(generateFilePath, updatedContent, "utf-8");
+    const updatedContent = lines.join('\n');
+    fs.writeFileSync(generateFilePath, updatedContent, 'utf-8');
     console.log(
       `Successfully updated generate.ts with ${config.year} holiday configuration`
     );
 
     return true;
   } catch (error) {
-    console.error("Error updating generate.ts:", error);
+    console.error('Error updating generate.ts:', error);
     return false;
   }
 };
@@ -308,14 +312,14 @@ const updateGenerateFile = async (config: HolidayConfig): Promise<boolean> => {
  */
 const main = async () => {
   const parser = new ArgumentParser();
-  parser.addArgument("year", {
-    type: "int",
-    help: "Year to process holidays for",
+  parser.addArgument('year', {
+    type: 'int',
+    help: 'Year to process holidays for',
   });
-  parser.addArgument("--content", {
-    help: "Holiday content to process (if not provided, will read from holidays.html)",
+  parser.addArgument('--content', {
+    help: 'Holiday content to process (if not provided, will read from holidays.html)',
   });
-  parser.addArgument("--url", { help: "Original government notice URL" });
+  parser.addArgument('--url', { help: 'Original government notice URL' });
 
   const args = parser.parseArgs();
   const year = args.year;
@@ -324,7 +328,7 @@ const main = async () => {
   console.log(`Processing holidays for ${year}...`);
 
   if (!HOLIDAYS_CONTENT || HOLIDAYS_CONTENT.length === 0) {
-    console.log("No holiday content to process");
+    console.log('No holiday content to process');
     return;
   }
 
@@ -332,11 +336,11 @@ const main = async () => {
   const config = await processHolidayWithAI(year, url);
 
   if (!config) {
-    console.error("Failed to process holiday content with AI");
+    console.error('Failed to process holiday content with AI');
     process.exit(1);
   }
 
-  console.log("Generated holiday configuration:");
+  console.log('Generated holiday configuration:');
   console.log(config.comment);
   console.log(config.code);
 
@@ -344,7 +348,7 @@ const main = async () => {
   const success = await updateGenerateFile(config);
 
   if (success) {
-    console.log("Holiday configuration updated successfully!");
+    console.log('Holiday configuration updated successfully!');
 
     // 设置 GitHub Actions 输出
     const outputPath = process.env.GITHUB_OUTPUT;
@@ -353,12 +357,12 @@ const main = async () => {
       fs.appendFileSync(outputPath, `year=${year}\n`);
     }
   } else {
-    console.error("Failed to update holiday configuration");
+    console.error('Failed to update holiday configuration');
     process.exit(1);
   }
 };
 
-main().catch((error) => {
-  console.error("Script failed:", error);
+main().catch(error => {
+  console.error('Script failed:', error);
   process.exit(1);
 });

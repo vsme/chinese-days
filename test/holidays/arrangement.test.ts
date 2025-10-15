@@ -1,5 +1,5 @@
 import dayjs from '../../src/utils/dayjs';
-import Arrangement, { Holiday} from '../../src/holidays/arrangement';
+import Arrangement, { Holiday } from '../../src/holidays/arrangement';
 
 describe('Arrangement class', () => {
   let arrangement: Arrangement;
@@ -32,13 +32,13 @@ describe('Arrangement class', () => {
   it('should save workday correctly', () => {
     arrangement.y(2024).s().w(2, 4);
     const date = dayjs('2024-02-04').format('YYYY-MM-DD');
-    expect(arrangement.workdays[date]).toBe("Spring Festival,春节,3");
+    expect(arrangement.workdays[date]).toBe('Spring Festival,春节,3');
   });
 
   it('should save in-lieu day correctly', () => {
     arrangement.y(2024).m().i(9, 16);
     const date = dayjs('2024-09-16').format('YYYY-MM-DD');
-    expect(arrangement.inLieuDays[date]).toBe("Mid-autumn Festival,中秋,1");
+    expect(arrangement.inLieuDays[date]).toBe('Mid-autumn Festival,中秋,1');
   });
 
   it('should save holiday range correctly', () => {
@@ -47,7 +47,7 @@ describe('Arrangement class', () => {
       dayjs(date).format('YYYY-MM-DD')
     );
     dates.forEach(date => {
-      expect(arrangement.holidays[date]).toBe("Spring Festival,春节,3");
+      expect(arrangement.holidays[date]).toBe('Spring Festival,春节,3');
     });
   });
 
@@ -65,7 +65,9 @@ describe('Arrangement class', () => {
 
   it('should throw error if end date is before start date in holiday range', () => {
     arrangement.y(2024).s().r(2, 10);
-    expect(() => arrangement.to(2, 9)).toThrow('end date should be after start date');
+    expect(() => arrangement.to(2, 9)).toThrow(
+      'end date should be after start date'
+    );
   });
 
   it('should throw error if year/month/day is not set before saving holiday range', () => {

@@ -1,17 +1,18 @@
-import { getLunarDate, monthDays } from "../solar_lunar";
-import { getSolarTermsInRange } from "../solar_terms";
-import { type Dayjs } from "../utils/dayjs";
+import { getLunarDate, monthDays } from '../solar_lunar';
+import { getSolarTermsInRange } from '../solar_terms';
+import { type Dayjs } from '../utils/dayjs';
 
 // 特殊节日处理器类型
 export interface LunarFestival {
-  date: string;     // 节日日期（公历）
-  name: string;     // 节日名称
+  date: string; // 节日日期（公历）
+  name: string; // 节日名称
   type: 'lunar' | 'solar_term' | 'special';
 }
 
 // 固定农历节日配置
 export const LUNAR_FESTIVAL_MAP: Record<number, Record<number, string[]>> = {
-  1: { // 正月
+  1: {
+    // 正月
     1: ['春节', '鸡日', '元始天尊诞辰'],
     2: ['犬日'],
     3: ['猪日', '小年朝'],
@@ -27,7 +28,8 @@ export const LUNAR_FESTIVAL_MAP: Record<number, Record<number, string[]>> = {
     18: ['落灯日'],
     25: ['天仓(填仓)节'],
   },
-  2: { // 二月
+  2: {
+    // 二月
     1: ['太阳生日'],
     2: ['春龙节', '土地公生日', '济公活佛生日'],
     3: ['文昌帝君诞辰'],
@@ -89,20 +91,25 @@ export const LUNAR_FESTIVAL_MAP: Record<number, Record<number, string[]>> = {
     23: ['官家送灶'],
     24: ['民间送灶'],
     25: ['接玉皇'],
-  }
+  },
 };
 
 // 特殊节日处理器
-export const SPECIAL_FESTIVAL_HANDLERS: ((date: Dayjs, result: LunarFestival[]) => void)[] = [
+export const SPECIAL_FESTIVAL_HANDLERS: ((
+  date: Dayjs,
+  result: LunarFestival[]
+) => void)[] = [
   // 处理寒食节（清明前一日）
   (current, result) => {
-    const pureBrightnessDay = current.add(1, 'day')
-    const pureBrightness = getSolarTermsInRange(pureBrightnessDay).find(t => t.term === 'pure_brightness');
+    const pureBrightnessDay = current.add(1, 'day');
+    const pureBrightness = getSolarTermsInRange(pureBrightnessDay).find(
+      t => t.term === 'pure_brightness'
+    );
     if (pureBrightness) {
       result.push({
         date: current.format('YYYY-MM-DD'),
         name: '寒食节',
-        type: 'solar_term'
+        type: 'solar_term',
       });
     }
   },
@@ -110,15 +117,18 @@ export const SPECIAL_FESTIVAL_HANDLERS: ((date: Dayjs, result: LunarFestival[]) 
   // 处理除夕（农历腊月最后一日）
   (current, result) => {
     const lunar = getLunarDate(current);
-    if (lunar.lunarMon === 12 && lunar.lunarDay === monthDays(lunar.lunarYear, 12)) {
+    if (
+      lunar.lunarMon === 12 &&
+      lunar.lunarDay === monthDays(lunar.lunarYear, 12)
+    ) {
       const date = current.format('YYYY-MM-DD');
       ['除夕', '封井', '祭井神', '贴春联', '迎财神'].forEach(name => {
         result.push({
           date,
           name,
-          type: 'lunar'
+          type: 'lunar',
         });
-      })
+      });
     }
-  }
+  },
 ];

@@ -1,16 +1,16 @@
-import dayjs from "../utils/dayjs";
+import dayjs from '../utils/dayjs';
 
 export enum Holiday {
   NY = "New Year's Day,元旦",
-  S = "Spring Festival,春节",
-  T = "Tomb-sweeping Day,清明",
-  L = "Labour Day,劳动节",
-  D = "Dragon Boat Festival,端午",
-  N = "National Day,国庆节",
-  M = "Mid-autumn Festival,中秋",
+  S = 'Spring Festival,春节',
+  T = 'Tomb-sweeping Day,清明',
+  L = 'Labour Day,劳动节',
+  D = 'Dragon Boat Festival,端午',
+  N = 'National Day,国庆节',
+  M = 'Mid-autumn Festival,中秋',
 
   /** special holidays */
-  A = "Anti-Fascist 70th Day,中国人民抗日战争暨世界反法西斯战争胜利70周年纪念日",
+  A = 'Anti-Fascist 70th Day,中国人民抗日战争暨世界反法西斯战争胜利70周年纪念日',
 }
 
 interface DayDetails {
@@ -90,19 +90,24 @@ class Arrangement {
 
   save(month: number, day: number, dayType: DayType) {
     if (!this.dayDetails.year) {
-      throw new Error("should set year before saving holiday");
+      throw new Error('should set year before saving holiday');
     }
     if (!this.dayDetails.holiday) {
-      throw new Error("should set holiday before saving holiday");
+      throw new Error('should set holiday before saving holiday');
     }
 
     this.dayDetails.month = month;
     this.dayDetails.day = day;
     this.dayDetails.dayType = dayType;
 
-    const date = dayjs(`${this.dayDetails.year}-${month}-${day}`).format("YYYY-MM-DD");
-    const holidayDays = this.getHolidayDays(this.dayDetails.year, this.dayDetails.holiday);
-    const holidayDescription = `${this.dayDetails.holiday},${holidayDays}`
+    const date = dayjs(`${this.dayDetails.year}-${month}-${day}`).format(
+      'YYYY-MM-DD'
+    );
+    const holidayDays = this.getHolidayDays(
+      this.dayDetails.year,
+      this.dayDetails.holiday
+    );
+    const holidayDescription = `${this.dayDetails.holiday},${holidayDays}`;
 
     if (dayType === DayType.Holiday) {
       this.holidays[date] = holidayDescription;
@@ -121,22 +126,25 @@ class Arrangement {
       !this.dayDetails.month ||
       !this.dayDetails.day
     ) {
-      throw new Error("should set year/month/day before saving holiday range");
+      throw new Error('should set year/month/day before saving holiday range');
     }
     const startDate = dayjs(
       `${this.dayDetails.year}-${this.dayDetails.month}-${this.dayDetails.day}`
     );
     const endDate = dayjs(`${this.dayDetails.year}-${month}-${day}`);
     if (endDate.isBefore(startDate) || endDate.isSame(startDate)) {
-      throw new Error("end date should be after start date");
+      throw new Error('end date should be after start date');
     }
 
-    const holidayDays = this.getHolidayDays(this.dayDetails.year, this.dayDetails.holiday);
-    const holidayDescription = `${this.dayDetails.holiday},${holidayDays}`
+    const holidayDays = this.getHolidayDays(
+      this.dayDetails.year,
+      this.dayDetails.holiday
+    );
+    const holidayDescription = `${this.dayDetails.holiday},${holidayDays}`;
 
-    const diffDays = endDate.diff(startDate, "day");
+    const diffDays = endDate.diff(startDate, 'day');
     for (let i = 1; i <= diffDays; i++) {
-      const theDate = startDate.add(i, "day").format("YYYY-MM-DD");
+      const theDate = startDate.add(i, 'day').format('YYYY-MM-DD');
       if (this.dayDetails.dayType === DayType.Holiday) {
         this.holidays[theDate] = holidayDescription;
       } else if (this.dayDetails.dayType === DayType.Workday) {

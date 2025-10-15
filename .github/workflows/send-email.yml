@@ -3,7 +3,7 @@ name: Send Email on Holidays Update
 on:
   schedule:
     # 从 00:00 到 10:00 UTC，每 2 小时运行一次（对应北京时间 08:00 到 06:00）
-    - cron: "0 0-10/2 * * *"
+    - cron: '0 0-10/2 * * *'
 
   # Allows you to run this workflow manually from the Actions tab on GitHub.
   workflow_dispatch:
@@ -19,8 +19,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          registry-url: "https://registry.npmjs.org"
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: npm install
@@ -65,8 +65,8 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
-          commit-message: "自动更新 ${{ vars.HOLIDAYS_YEAR }} 年假期配置"
-          title: "自动更新 ${{ vars.HOLIDAYS_YEAR }} 年假期配置"
+          commit-message: '自动更新 ${{ vars.HOLIDAYS_YEAR }} 年假期配置'
+          title: '自动更新 ${{ vars.HOLIDAYS_YEAR }} 年假期配置'
           body: |
             此拉取请求由假期更新工作流自动创建。
 
@@ -89,7 +89,7 @@ jobs:
           server_port: 587
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "${{ vars.HOLIDAYS_YEAR }} Holidays Update - Auto-generated Configuration"
+          subject: '${{ vars.HOLIDAYS_YEAR }} Holidays Update - Auto-generated Configuration'
           to: ${{ secrets.TO_EMAIL }}
           from: Holidays Update
           html_body: |

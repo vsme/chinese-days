@@ -1,7 +1,10 @@
-import { type ConfigType } from "../utils/dayjs";
-import dayjs from '../utils/dayjs';
-import { getLunarDate } from "../solar_lunar";
-import { LUNAR_FESTIVAL_MAP, SPECIAL_FESTIVAL_HANDLERS, type LunarFestival } from './constants'
+import dayjs, { type ConfigType } from '../utils/dayjs';
+import { getLunarDate } from '../solar_lunar';
+import {
+  LUNAR_FESTIVAL_MAP,
+  SPECIAL_FESTIVAL_HANDLERS,
+  type LunarFestival,
+} from './constants';
 
 /**
  * 获取农历节日（包含固定节日和特殊计算节日）
@@ -11,7 +14,7 @@ import { LUNAR_FESTIVAL_MAP, SPECIAL_FESTIVAL_HANDLERS, type LunarFestival } fro
 export const getLunarFestivals = (
   start?: ConfigType,
   end?: ConfigType
-): { date: string, name: string[] }[] => {
+): { date: string; name: string[] }[] => {
   const results: LunarFestival[] = [];
   let current = dayjs(start);
   const endDate = dayjs(end || start);
@@ -21,12 +24,13 @@ export const getLunarFestivals = (
     // 处理固定农历节日
     const lunar = getLunarDate(current);
     if (!lunar.isLeap) {
-      const festivals = LUNAR_FESTIVAL_MAP[lunar.lunarMon]?.[lunar.lunarDay] || [];
+      const festivals =
+        LUNAR_FESTIVAL_MAP[lunar.lunarMon]?.[lunar.lunarDay] || [];
       festivals.forEach(name => {
         results.push({
           date: current.format('YYYY-MM-DD'),
           name,
-          type: 'lunar'
+          type: 'lunar',
         });
       });
     }
@@ -39,16 +43,16 @@ export const getLunarFestivals = (
 
   // 去重并将同一日期的节日名称合并
   return results.reduce((acc: { date: string; name: string[] }[], curr) => {
-    const existing = acc.find(item => item.date === curr.date)
+    const existing = acc.find(item => item.date === curr.date);
     if (existing) {
-      existing.name.push(curr.name)
+      existing.name.push(curr.name);
     } else {
-      acc.push({ date: curr.date, name: [curr.name] })
+      acc.push({ date: curr.date, name: [curr.name] });
     }
-    return acc
-  }, [])
+    return acc;
+  }, []);
 };
 
 export default {
-  getLunarFestivals
-}
+  getLunarFestivals,
+};
