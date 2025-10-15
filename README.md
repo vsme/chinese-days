@@ -36,7 +36,7 @@ For English: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics](ht
 
 订阅的日历包含近三年的节假日和调休日。
 
-如果需要按年份单独的 `ics` 文件，也可以通过链接 [years/2025.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.ics) 直接引用，英文版本为 [years/2025.en.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.en.ics)，支持 2004 及之后的年份。
+如果需要按年份单独的 `ics` 文件，也可以通过链接 [https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.ics) 直接引用，英文版本为 [https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.en.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.en.ics)，支持 2004 及之后的年份。
 
 ## 贡献代码
 

@@ -20,6 +20,12 @@
 https://cdn.jsdelivr.net/npm/chinese-days/dist/chinese-days.json
 ```
 
+如果你需要独立的年份 `json`，可以使用如下链接单独使用，支持2004年及之后的年份。
+
+```
+https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.json
+```
+
 比如在 `Java` 中使用，可以参考 [Warnier-zhang/java-chinese-days](https://github.com/Warnier-zhang/java-chinese-days)，仅用于查询中国节假日、调休日、工作日。
 
 ## 许可信息

@@ -13,3 +13,17 @@ https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics
 ```
 https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics
 ```
+
+## Specify Historical Years
+
+If you need subscription URLs for historical years, you can use the following links, supporting years from 2004 onward.
+
+```
+https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.en.ics
+```
+
+Chinese Subscription URL:
+
+```
+https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.ics
+```

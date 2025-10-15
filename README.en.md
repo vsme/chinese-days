@@ -28,7 +28,7 @@ Subscription URL: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics](
 
 For English: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics)
 
-If you need a `ics` file for a specific year, you can also reference it through this link: [years/2025.en.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.en.ics), and the Chinese version is [years/2025.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.ics).
+If you need a `ics` file for a specific year, you can also reference it through this link: [https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.en.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.en.ics), and the Chinese version is [https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.ics).
 
 ## For non-JS projects, you can use the JSON file
 

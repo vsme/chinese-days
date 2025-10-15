@@ -20,6 +20,12 @@ If you are not developing projects in `JS` or `TS`, this project provides a [chi
 https://cdn.jsdelivr.net/npm/chinese-days/dist/chinese-days.json
 ```
 
+If you need a separate JSON file for a specific year, you can use the following link, which supports years from 2004 onward.
+
+```
+https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.json
+```
+
 For example, in `Java`, you can refer to [Warnier-zhang/java-chinese-days](https://github.com/Warnier-zhang/java-chinese-days), which is designed solely for querying Chinese holidays, adjusted working days, and regular workdays.
 
 ## License Information

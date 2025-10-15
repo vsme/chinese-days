@@ -13,3 +13,16 @@ https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics
 ```
 https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics
 ```
+
+## 指定历史年份
+
+如果你需要历史年份的订阅地址，可以使用如下链接，支持2004年及之后的年份。
+
+```
+https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.ics
+```
+
+英文订阅地址：
+```
+https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.en.ics
+```
