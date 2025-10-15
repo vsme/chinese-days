@@ -5,6 +5,10 @@ on:
     tags:
       - "v*"
 
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+
 jobs:
   release:
     name: Release
@@ -20,14 +24,18 @@ jobs:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
 
+      # Ensure npm 11.5.1 or later is installed
+      - name: Update npm
+        run: npm install -g npm@latest
+
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run build script
         run: npm run build
 
       - name: Run test script
-        run: npm run test
+        run: npm test
 
       - name: Create Release
         id: create_release
@@ -44,5 +52,3 @@ jobs:
 
       - name: Publish package
         run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
