@@ -16,17 +16,32 @@ enum DayType {
 const { holidays, workdays } = generate();
 const endYear = Number(Object.keys(holidays)[0].slice(0, 4))
 
-const buildIcal = (language: 'CN' | 'EN') => {
+// 确保 dist 和 dist/years 目录存在
+fs.mkdirSync("./dist", { recursive: true });
+fs.mkdirSync("./dist/years", { recursive: true });
+
+// 获取所有年份
+const getAllYears = () => {
+  const years = new Set<number>();
+  Object.keys(holidays).forEach(date => years.add(Number(date.slice(0, 4))));
+  Object.keys(workdays).forEach(date => years.add(Number(date.slice(0, 4))));
+  return Array.from(years).sort((a, b) => b - a);
+};
+
+const buildIcal = (language: 'CN' | 'EN', years?: number[], yearSuffix?: string) => {
+  const targetYears = years || [endYear, endYear - 1, endYear - 2];
+  const yearRange = years ? (years.length === 1 ? `${years[0]}` : `${Math.min(...years)}~${Math.max(...years)}`) : `${endYear - 2}~${endYear}`;
+  
   const info = language == 'CN' ? {
     name: '中国节假日',
-    desc: `${endYear - 2}~${endYear}年中国节假日日历`,
+    desc: `${yearRange}年中国节假日日历`,
     location: '北京',
     categories: '节假日',
     holiday: '休',
     workday: '班'
   } : {
     name: 'Chinese Public Holidays',
-    desc: `Calendar of Chinese Public Holidays for ${endYear - 2}~${endYear} Years`,
+    desc: `Calendar of Chinese Public Holidays for ${yearRange} Years`,
     location: 'Beijing',
     categories: 'Holidays',
     holiday: 'Holiday',
@@ -144,15 +159,30 @@ END:VTIMEZONE`,
     }
   };
 
-  buildHolidays([endYear, endYear - 1, endYear - 2], holidays, DayType.Holiday);
-  buildHolidays([endYear, endYear - 1, endYear - 2], workdays, DayType.Workday);
+  buildHolidays(targetYears, holidays, DayType.Holiday);
+  buildHolidays(targetYears, workdays, DayType.Workday);
 
-  // 将日历保存到 ./dist/holidays.ics 文件
-  fs.writeFile(`./dist/holidays${language == 'CN' ? '' : '.en'}.ics`, cal.toString(), "utf8", (err) => {
+  // 生成文件名
+  const fileName = yearSuffix && years && years.length > 0
+    ? `./dist/years/${years[0]}${language == 'CN' ? '' : '.en'}.ics`
+    : `./dist/holidays${language == 'CN' ? '' : '.en'}.ics`;
+
+  // 将日历保存到文件
+  fs.writeFile(fileName, cal.toString(), "utf8", (err) => {
     if (err) throw err;
-    console.log(`The ${language} ICS file has been saved!`);
+    console.log(`The ${language} ICS file has been saved to ${fileName}!`);
   });
 }
 
+// 生成总的 ICS 文件（保持原有功能）
 buildIcal('CN')
 buildIcal('EN')
+
+// 生成按年份分组的 ICS 文件
+const allYears = getAllYears();
+allYears.forEach(year => {
+  buildIcal('CN', [year], `${year}`);
+  buildIcal('EN', [year], `${year}`);
+});
+
+console.log(`Generated ICS files for years: ${allYears.join(', ')}`);
