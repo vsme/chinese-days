@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.5.2](https://github.com/vsme/chinese-days) (2025-10-15)
+
+- 日常维护，优化代码。
+
 ## [1.5.1](https://github.com/vsme/chinese-days) (2025-05-21)
 
 - 优化了部分代码，完善了测试用例，测试覆盖率 100%。
