@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.5.3](https://github.com/vsme/chinese-days) (2025-10-15)
+
+- 新增 `json` 和 `ics` 按年份生成单独文件
+
 ## [1.5.2](https://github.com/vsme/chinese-days) (2025-10-15)
 
 - 日常维护，优化代码。

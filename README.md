@@ -24,7 +24,7 @@
 
 ## 非 `JS` 语言
 
-如果你不使用 `JS` 或 `TS` 开发项目，本项目提供了中国节假日的 `JSON` 文件，通过链接 [chinese-days.json](https://cdn.jsdelivr.net/npm/chinese-days/dist/chinese-days.json) 可以直接引用。
+如果你不使用 `JS` 或 `TS` 开发项目，本项目提供了中国节假日的 `JSON` 文件，通过链接 [chinese-days.json](https://cdn.jsdelivr.net/npm/chinese-days/dist/chinese-days.json) 可以直接引用；如果需要按年份单独的 `JSON` 文件，也可以通过链接 [years/2025.json](https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.json) 直接引用，支持 2004 及之后的年份。
 
 比如在 `Java` 中使用，可以参考 [Warnier-zhang/java-chinese-days](https://github.com/Warnier-zhang/java-chinese-days)，仅用于查询中国节假日、调休日、工作日；
 
@@ -34,7 +34,9 @@
 
 For English: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics)
 
-订阅的日历包含近三年（2023-2025年）的节假日和调休日。
+订阅的日历包含近三年的节假日和调休日。
+
+如果需要按年份单独的 `ics` 文件，也可以通过链接 [years/2025.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.ics) 直接引用，英文版本为 [years/2025.en.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.en.ics)，支持 2004 及之后的年份。
 
 ## 贡献代码
 

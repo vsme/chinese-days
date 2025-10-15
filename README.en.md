@@ -28,9 +28,13 @@ Subscription URL: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics](
 
 For English: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics)
 
+If you need a `ics` file for a specific year, you can also reference it through this link: [years/2025.en.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.en.ics), and the Chinese version is [years/2025.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.ics).
+
 ## For non-JS projects, you can use the JSON file
 
 A `JSON` file of Chinese holidays is provided and can be directly referenced through this link: [chinese-days.json](https://cdn.jsdelivr.net/npm/chinese-days/dist/chinese-days.json).
+
+If you need a `JSON` file for a specific year, you can also reference it through this link: [years/2025.json](https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.json).
 
 For example, in `Java`, you can refer to [Warnier-zhang/java-chinese-days](https://github.com/Warnier-zhang/java-chinese-days), which is only for querying Chinese holidays, in-lieu days, and regular workdays.
 
