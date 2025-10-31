@@ -23,6 +23,9 @@ https://cdn.jsdelivr.net/npm/chinese-days/dist/chinese-days.json
 如果你需要独立的年份 `json`，可以使用如下链接单独使用，支持2004年及之后的年份。
 
 ```
+https://cdn.jsdelivr.net/npm/chinese-days/dist/years/{year}.json
+
+<!-- 2025年中国节假日 json 文件 -->
 https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.json
 ```
 

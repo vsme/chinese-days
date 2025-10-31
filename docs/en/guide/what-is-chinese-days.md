@@ -23,6 +23,9 @@ https://cdn.jsdelivr.net/npm/chinese-days/dist/chinese-days.json
 If you need a separate JSON file for a specific year, you can use the following link, which supports years from 2004 onward.
 
 ```
+https://cdn.jsdelivr.net/npm/chinese-days/dist/years/{year}.json
+
+<!-- 2025 JSON file -->
 https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.json
 ```
 

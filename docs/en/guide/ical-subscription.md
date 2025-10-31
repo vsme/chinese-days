@@ -19,11 +19,17 @@ https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics
 If you need subscription URLs for historical years, you can use the following links, supporting years from 2004 onward.
 
 ```
+https://cdn.jsdelivr.net/npm/chinese-days/dist/years/{year}.en.ics
+
+<!-- 2025 English subscription URL -->
 https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.en.ics
 ```
 
 Chinese Subscription URL:
 
 ```
+https://cdn.jsdelivr.net/npm/chinese-days/dist/years/{year}.ics
+
+<!-- 2025 Chinese subscription URL -->
 https://cdn.jsdelivr.net/npm/chinese-days/dist/years/2025.ics
 ```

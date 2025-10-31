@@ -1,0 +1,432 @@
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>实时薪资计算</title>
+  <!-- 引入中国节假日库 - 使用官方推荐的 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chinese-days"></script>
+  <style>
+    html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial;color:#000;background:#fff}
+    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;position:relative}
+    .controls{width:420px;max-width:92vw}
+    .row{display:flex;gap:8px;margin-bottom:10px;align-items:center}
+    .freq-setting{opacity:0.6;font-size:0.85em;margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,0,0,0.1)}
+    .freq-setting label{font-size:0.8em;color:#666}
+    .freq-setting input{width:60px;font-size:0.8em}
+    label{width:140px;font-size:14px}
+    input[type=number],input[type=time]{flex:1;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px}
+    .btn-start{width:100%;padding:12px;border-radius:8px;border:0;background:#000;color:#fff;font-size:16px;cursor:pointer;margin-top:12px}
+    .display{display:none;flex-direction:column;align-items:center;justify-content:center;position:relative}
+    .money-box{display:flex;align-items:flex-end;gap:12px;margin-bottom:24px;}
+    .currency{font-size:48px;font-weight:700}
+    .digits{display:flex;height:88px;overflow:hidden;align-items:flex-end;}
+    .digit-slot{width:38px;height:88px;border-radius:8px;overflow:hidden;display:inline-block}
+    .digit-strip{display:block;transform:translateY(0);transition:transform 700ms cubic-bezier(.2,.9,.2,1)}
+    .digit{height:88px;line-height:88px;font-size:64px;font-weight:700;text-align:center}
+
+    /* 工作时间信息样式 */
+    .work-time-info{text-align:center;color:#666;font-size:14px;line-height:1.6}
+    .time-detail{font-size:16px;font-weight:500;color:#333;margin-bottom:8px}
+    .progress-info{font-size:13px;opacity:0.8}
+
+    /* reset 按钮样式 */
+    .reset-icon{
+      position:fixed;
+      top:16px;
+      right:16px;
+      font-size:24px;
+      width: 40px;
+      height: 34px;
+      color:#000;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      user-select:none;
+      border:1px solid #ccc;
+      border-radius:8px;
+      background:#f8f8f8;
+      transition:background 0.3s,opacity 0.3s;
+      padding-bottom: 3px;
+    }
+    .reset-icon:hover{background:#eee;opacity:0.8;}
+
+    @media (max-width:420px){
+      .currency{font-size:36px}
+      .digit{font-size:48px;height:64px;line-height:64px}
+      .digit-slot{width:30px;height:64px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="controls" id="controls">
+      <div class="row"><label>月薪（元）</label><input id="salary" type="number" min="0" step="100" value="5000"></div>
+      <div class="row"><label>每月开始日期</label><input id="monthStartDay" type="number" min="1" max="31" value="1" title="设置每月薪资周期的开始日期"></div>
+      <div class="row"><label>上班时间</label><input id="startHour" type="time" value="09:00"><span style="padding:0 4px;opacity:0.7">—</span><input id="endHour" type="time" value="18:00"></div>
+      <div class="row freq-setting"><label>刷新频率（秒）</label><input id="freq" type="number" min="0.1" step="0.1" value="1"></div>
+      <button class="btn-start" id="startBtn">开始计算</button>
+    </div>
+
+    <div class="display" id="display">
+      <div class="money-box">
+        <div class="currency">￥</div>
+        <div id="digitsWrap" class="digits" aria-live="polite"></div>
+      </div>
+      <div class="work-time-info" id="workTimeInfo">
+        <div class="time-detail">本月已工作：<span id="workDays">0</span>天 <span id="workHours">0</span>小时 <span id="workMinutes">0</span>分 <span id="workSeconds">0</span>秒</div>
+        <div class="progress-info">薪资周期：<span id="periodInfo">计算中...</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reset-icon" id="resetBtn">⟳</div>
+
+  <script>
+    const startBtn=document.getElementById('startBtn');
+    const resetBtn=document.getElementById('resetBtn');
+    const controls=document.getElementById('controls');
+    const display=document.getElementById('display');
+    const digitsWrap=document.getElementById('digitsWrap');
+    let timer=null;
+
+    // 获取薪资周期的开始和结束日期
+    function getPayrollPeriod(startDay) {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+      const currentDay = now.getDate();
+      
+      let periodStart, periodEnd;
+      
+      if (currentDay >= startDay) {
+        // 当前在本月的薪资周期内
+        periodStart = new Date(currentYear, currentMonth - 1, startDay);
+        const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
+        const nextYear = currentMonth === 12 ? currentYear + 1 : currentYear;
+        periodEnd = new Date(nextYear, nextMonth - 1, startDay - 1, 23, 59, 59, 999);
+      } else {
+        // 当前在上个月的薪资周期内
+        const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+        const prevYear = currentMonth === 1 ? currentYear - 1 : currentYear;
+        periodStart = new Date(prevYear, prevMonth - 1, startDay);
+        periodEnd = new Date(currentYear, currentMonth - 1, startDay - 1, 23, 59, 59, 999);
+      }
+      
+      return { periodStart, periodEnd };
+    }
+
+    // 获取指定月份的工作日数量（改进版）
+    function getWorkingDaysInPeriod(periodStart, periodEnd) {
+      // 使用正确的 chinese-days 库 API
+      const { isWorkday } = window.chineseDays || {};
+      
+      if (!isWorkday) {
+        // 回退计算：按工作日占比估算
+        const totalDays = Math.ceil((periodEnd - periodStart) / (24 * 60 * 60 * 1000));
+        return Math.round(totalDays * 22 / 30); // 假设30天中有22个工作日
+      }
+
+      let workingDays = 0;
+      const current = new Date(periodStart);
+      
+      while (current <= periodEnd) {
+        // 使用 isWorkday 函数判断是否为工作日
+        const dateStr = current.toISOString().split('T')[0]; // YYYY-MM-DD 格式
+        const isWork = isWorkday(dateStr);
+        
+        if (isWork) {
+          workingDays++;
+        }
+        current.setDate(current.getDate() + 1);
+      }
+      
+      return workingDays;
+    }
+
+    // 计算已工作的时间详情
+    function calculateWorkingTimeDetails(startDay, startTime, endTime) {
+      const { isWorkday } = window.chineseDays || {};
+      const now = new Date();
+      const { periodStart, periodEnd } = getPayrollPeriod(startDay);
+      
+      const [startHour, startMinute] = startTime.split(':').map(Number);
+      const [endHour, endMinute] = endTime.split(':').map(Number);
+      
+      let totalWorkedSeconds = 0;
+      let completedWorkDays = 0; // 完整工作的天数
+      let currentDayWorkedSeconds = 0; // 当天已工作的秒数
+      const workSecondsPerDay = ((endHour * 60 + endMinute) - (startHour * 60 + startMinute)) * 60;
+      
+      // 遍历从周期开始到现在的每一天
+      const current = new Date(periodStart);
+      while (current <= now && current <= periodEnd) {
+        const isToday = current.toDateString() === now.toDateString();
+        
+        // 使用 chinese-days 库检查是否为工作日
+        const dateStr = current.toISOString().split('T')[0];
+        const isWorking = isWorkday ? isWorkday(dateStr) : 
+          (current.getDay() !== 0 && current.getDay() !== 6); // 回退：排除周末
+        
+        if (isWorking) {
+          const dayStart = new Date(current.getFullYear(), current.getMonth(), current.getDate(), startHour, startMinute);
+          const dayEnd = new Date(current.getFullYear(), current.getMonth(), current.getDate(), endHour, endMinute);
+          
+          if (isToday) {
+            // 今天：只计算工作时间段内的时间
+            if (now >= dayStart && now <= dayEnd) {
+              // 当前在工作时间内
+              currentDayWorkedSeconds = (now - dayStart) / 1000;
+              totalWorkedSeconds += currentDayWorkedSeconds;
+            } else if (now > dayEnd) {
+              // 已经过了下班时间，算完整一天
+              totalWorkedSeconds += workSecondsPerDay;
+              completedWorkDays += 1;
+            }
+            // 如果还没到上班时间，不加任何时间
+          } else {
+            // 过去的工作日：加上完整的工作时间
+            totalWorkedSeconds += workSecondsPerDay;
+            completedWorkDays += 1;
+          }
+        }
+        
+        current.setDate(current.getDate() + 1);
+      }
+      
+      // 计算总的工作日数
+      const totalWorkingDays = getWorkingDaysInPeriod(periodStart, periodEnd);
+      
+      return {
+        totalWorkedSeconds,
+        completedWorkDays,
+        currentDayWorkedSeconds,
+        totalWorkingDays,
+        periodStart,
+        periodEnd,
+        workSecondsPerDay
+      };
+    }
+
+    // 格式化时间显示
+    function formatTimeDetails(totalSeconds) {
+      const days = Math.floor(totalSeconds / (24 * 60 * 60));
+      const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
+      const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+      const seconds = Math.floor(totalSeconds % 60);
+      
+      return { days, hours, minutes, seconds };
+    }
+
+    // 更新工作时间显示
+    function updateWorkTimeDisplay(timeDetails) {
+      const { totalWorkedSeconds, completedWorkDays, currentDayWorkedSeconds, totalWorkingDays, periodStart, periodEnd, workSecondsPerDay } = timeDetails;
+      
+      // 计算当天已工作的小时、分钟、秒
+      const currentDayHours = Math.floor(currentDayWorkedSeconds / 3600);
+      const currentDayMinutes = Math.floor((currentDayWorkedSeconds % 3600) / 60);
+      const currentDaySeconds = Math.floor(currentDayWorkedSeconds % 60);
+      
+      // 显示完整工作天数和当天的工作时间
+      document.getElementById('workDays').textContent = completedWorkDays;
+      document.getElementById('workHours').textContent = currentDayHours;
+      document.getElementById('workMinutes').textContent = currentDayMinutes;
+      document.getElementById('workSeconds').textContent = currentDaySeconds;
+      
+      const startStr = `${periodStart.getMonth() + 1}/${periodStart.getDate()}`;
+      const endStr = `${periodEnd.getMonth() + 1}/${periodEnd.getDate()}`;
+      document.getElementById('periodInfo').textContent = 
+        `${startStr} - ${endStr} (共${totalWorkingDays}个工作日)`;
+    }
+
+    // 回退计算函数（当chinese-days库不可用时）
+    function computeTodayAmountFallback(startTime, endTime) {
+      const [startHour, startMinute] = startTime.split(':').map(Number);
+      const [endHour, endMinute] = endTime.split(':').map(Number);
+      const now = new Date();
+      const msDay = 24 * 60 * 60 * 1000;
+      const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startHour, startMinute, 0);
+      let endToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endHour, endMinute, 0);
+      const overnight = endToday <= startToday;
+      if (overnight) endToday = new Date(endToday.getTime() + msDay);
+
+      const startPrev = new Date(startToday.getTime() - msDay);
+      const endPrev = new Date(endToday.getTime() - msDay);
+      const workMs = endToday - startToday;
+      let workSeconds = workMs / 1000;
+      if (!isFinite(workSeconds) || workSeconds <= 0) { workSeconds = 1800 }
+
+      const inRange = (t, a, b) => t >= a && t <= b;
+      let activeStart = null;
+      if (inRange(now, startToday, endToday)) { activeStart = startToday; }
+      else if (inRange(now, startPrev, endPrev)) { activeStart = startPrev; }
+      
+      let elapsed = 0;
+      if (activeStart) {
+        elapsed = (now - activeStart) / 1000;
+        if (elapsed < 0) elapsed = 0;
+        if (elapsed > workSeconds) elapsed = workSeconds;
+      } else {
+        elapsed = now < startToday ? 0 : workSeconds;
+      }
+      return elapsed;
+    }
+
+    function createDigitsContainer(charCount){
+      digitsWrap.innerHTML='';
+      for(let i=0;i<charCount;i++){
+        const slot=document.createElement('div');slot.className='digit-slot';
+        const strip=document.createElement('div');strip.className='digit-strip';
+        for(let d=0;d<20;d++){const digit=document.createElement('div');digit.className='digit';digit.textContent=(d%10).toString();strip.appendChild(digit)}
+        slot.appendChild(strip);digitsWrap.appendChild(slot);
+      }
+    }
+
+    function formatAmount(value){return Number(value).toFixed(2).split('')}
+
+    function updateDigitsTo(chars){
+      const slots=digitsWrap.querySelectorAll('.digit-slot');
+      if(slots.length!==chars.length)createDigitsContainer(chars.length);
+      const newSlots=digitsWrap.querySelectorAll('.digit-slot');
+      newSlots.forEach((slot,idx)=>{
+        const strip=slot.firstElementChild;const ch=chars[idx];
+        if(ch==='.'){
+          strip.style.transition='none';
+          strip.style.transform='translateY(0px)';
+          strip.innerHTML='<div class="digit">.</div>';
+          slot.style.width='18px';
+        }
+        else{
+          // 确保有足够的数字条带（2组0-9，共20个数字）
+          if(strip.children.length < 20){
+            strip.innerHTML='';
+            for(let d=0; d<20; d++){
+              const digit=document.createElement('div');
+              digit.className='digit';
+              digit.textContent=(d%10).toString();
+              strip.appendChild(digit);
+            }
+          }
+          
+          const target=parseInt(ch,10);
+          const digitHeight = 88;
+          
+          // 获取当前transform值
+          const currentTransform = strip.style.transform;
+          let currentY = 0;
+          if (currentTransform && currentTransform.includes('translateY')) {
+            const match = currentTransform.match(/translateY\((-?\d+(?:\.\d+)?)px\)/);
+            if (match) {
+              currentY = parseFloat(match[1]);
+            }
+          }
+          
+          // 计算当前显示的数字
+          const currentIndex = Math.round(-currentY / digitHeight);
+          const currentDigit = currentIndex >= 0 ? (currentIndex % 10) : 0;
+          
+          // 计算需要向前滚动的步数
+          let steps;
+          if (target >= currentDigit) {
+            steps = target - currentDigit;
+          } else {
+            steps = (10 - currentDigit) + target;
+          }
+          
+          // 计算目标位置（始终向前滚动到第二组）
+          const targetIndex = currentIndex + steps;
+          const targetY = -targetIndex * digitHeight;
+          
+          slot.style.width = '';
+          strip.style.transition = 'transform 700ms cubic-bezier(.2,.9,.2,1)';
+          strip.style.transform = `translateY(${targetY}px)`;
+          
+          // 动画结束后重置到第一组对应位置
+          setTimeout(() => {
+            const resetY = -target * digitHeight; // 第一组的对应位置
+            strip.style.transition = 'none';
+            strip.style.transform = `translateY(${resetY}px)`;
+          }, 700); // 与动画时间一致
+        }
+      })
+    }
+
+    // 更新工作日数显示（内部计算，不再显示UI）
+    function updateWorkingDaysDisplay() {
+      const monthStartDay = parseInt(document.getElementById('monthStartDay').value) || 1;
+      const { periodStart, periodEnd } = getPayrollPeriod(monthStartDay);
+      const workingDays = getWorkingDaysInPeriod(periodStart, periodEnd);
+      // 工作日数仅用于内部计算，不再更新UI显示
+      return workingDays;
+    }
+
+    // 监听每月开始日期变化
+    document.getElementById('monthStartDay').addEventListener('input', updateWorkingDaysDisplay);
+
+    function start(fromCache=false){
+      const freq=Math.max(0.1,Number(document.getElementById('freq').value));
+      const salary=Math.max(0,Number(document.getElementById('salary').value));
+      const monthStartDay=parseInt(document.getElementById('monthStartDay').value) || 1;
+      const startTime=document.getElementById('startHour').value||'09:00';
+      const endTime=document.getElementById('endHour').value||'18:00';
+
+      // 计算当前薪资周期的工作日数
+      updateWorkingDaysDisplay();
+
+      // 保存到 localStorage
+      localStorage.setItem('wageSettings', JSON.stringify({freq,salary,monthStartDay,startTime,endTime}));
+
+      controls.style.display='none';display.style.display='flex';
+      resetBtn.style.display='flex';
+
+      function tick(){
+        const timeDetails = calculateWorkingTimeDetails(monthStartDay, startTime, endTime);
+        const { totalWorkedSeconds, totalWorkingDays, workSecondsPerDay } = timeDetails;
+        
+        // 计算薪资进度
+        const totalWorkSeconds = totalWorkingDays * workSecondsPerDay;
+        const progress = totalWorkSeconds > 0 ? Math.min(totalWorkedSeconds / totalWorkSeconds, 1) : 0;
+        const amt = salary * progress;
+        
+        // 更新金额显示
+        const formatted = formatAmount(amt);
+        updateDigitsTo(formatted);
+        
+        // 更新工作时间显示
+        updateWorkTimeDisplay(timeDetails);
+      }
+      createDigitsContainer(10);tick();timer=setInterval(tick,Math.max(100,Math.round(freq*1000)));
+    }
+
+    startBtn.addEventListener('click',()=>start());
+
+    resetBtn.addEventListener('click',()=>{
+      if(timer){clearInterval(timer);timer=null}
+      display.style.display='none';controls.style.display='block';digitsWrap.innerHTML='';
+      resetBtn.style.display='none';
+      localStorage.removeItem('wageSettings');
+    });
+
+    window.addEventListener('load',()=>{
+      createDigitsContainer(10);
+      updateWorkingDaysDisplay(); // 初始化工作日数显示
+      
+      const cache=localStorage.getItem('wageSettings');
+      if(cache){
+        try{
+          const {freq,salary,monthStartDay,startTime,endTime}=JSON.parse(cache);
+          document.getElementById('freq').value=freq;
+          document.getElementById('salary').value=salary;
+          if(monthStartDay) document.getElementById('monthStartDay').value=monthStartDay;
+          document.getElementById('startHour').value=startTime;
+          if(endTime){document.getElementById('endHour').value=endTime;}
+          updateWorkingDaysDisplay(); // 更新工作日数
+          start(true);
+        }catch(e){console.error(e)}
+      }
+    });
+  </script>
+</body>
+</html>
