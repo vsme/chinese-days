@@ -212,10 +212,11 @@ const updateGenerateFile = async (config: HolidayConfig): Promise<boolean> => {
     const content = fs.readFileSync(generateFilePath, 'utf-8');
     const lines = content.split('\n');
 
-    // 查找插入位置：在 "const arrangement = new Arrangement()" 之后
+    // 查找插入位置：在 "const arrangement = new Arrangement()"（允许可选分号与空白）之后
     let insertLineIndex = -1;
+    const arrangementInitRegex = /^\s*const\s+arrangement\s*=\s*new\s+Arrangement\s*\(\)\s*;?\s*$/;
     for (let i = 0; i < lines.length; i++) {
-      if (lines[i].trim() === 'const arrangement = new Arrangement()') {
+      if (arrangementInitRegex.test(lines[i])) {
         insertLineIndex = i + 1;
         break;
       }
@@ -226,8 +227,8 @@ const updateGenerateFile = async (config: HolidayConfig): Promise<boolean> => {
       return false;
     }
 
-    // 检查是否已经存在该年份的配置
-    const yearPattern = new RegExp(`\\* ${config.year}`);
+    // 检查是否已经存在该年份的配置（更宽松匹配注释中的年份）
+    const yearPattern = new RegExp(`\\*\\s*${config.year}\\b`);
     const existingYearIndex = lines.findIndex(line => yearPattern.test(line));
 
     if (existingYearIndex !== -1) {
