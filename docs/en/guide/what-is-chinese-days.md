@@ -6,7 +6,7 @@ This project provides a collection of functions for querying Chinese holidays, i
 
 Data is automatically fetched daily through `GitHub Actions`. Notifications are sent via email when there are changes to holiday schedules, and information is updated based on announcements from the State Council.
 
-+ **Holidays**: Covers the years from 2004 to 2025, including the extended Spring Festival in 2020.
++ **Holidays**: Covers the years from 2004 to 2026, including the extended Spring Festival in 2020.
 + **24 Solar Terms**: Supports dates from 1900 to 2100.
 + **Lunar Calendar**: Supports dates from 1900 to 2100.
 

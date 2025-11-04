@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: Chinese Days
-  text: 2004 ~ 2025
+  text: 2004 ~ 2026
   tagline: 本项目提供查询中国节假日、调休、24 节气及农历阳历转换的功能，支持 iCal 订阅和 JSON 文件引用，便于多平台集成和使用。
   actions:
     - theme: brand

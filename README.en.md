@@ -16,13 +16,13 @@ To check out docs, visit [chinese-days.yaavi.me](https://chinese-days.yaavi.me/e
 
 The holiday information will be updated according to the announcements from the State Council.
 
-- **Holidays**: Supports the years 2004 to 2025, including the extended Spring Festival of 2020.
+- **Holidays**: Supports the years 2004 to 2026, including the extended Spring Festival of 2020.
 - **24 Solar Terms**: Supports the years 1900 to 2100.
 - **Lunar Days**: Supports the years 1900 to 2100.
 
 ## Subscribe to Calendar
 
-The subscribed calendar includes holidays and adjusted working days for the past three years (2023-2025).
+The subscribed calendar includes holidays and adjusted working days for the past three years (2024-2026).
 
 Subscription URL: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics](https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.ics) (default language is Chinese)
 

@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: Chinese Days
-  text: 2004 ~ 2025
+  text: 2004 ~ 2026
   tagline: This project offers functionalities to query Chinese holidays, adjusted workdays, 24 solar terms, and Gregorian-Lunar date conversions. It supports iCal subscription and JSON file reference, enabling easy integration across multiple platforms.
   actions:
     - theme: brand
