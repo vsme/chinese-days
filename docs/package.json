@@ -12,9 +12,9 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "vitepress": "^1.6.3"
+    "vitepress": "^1.6.4"
   },
   "dependencies": {
-    "chinese-days": "^1.5.1"
+    "chinese-days": "^1.5.4"
   }
 }
