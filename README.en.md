@@ -4,7 +4,7 @@
 [![GitHub License](https://img.shields.io/github/license/vsme/chinese-days)](https://github.com/vsme/chinese-days/blob/main/LICENSE)
 [![README](https://img.shields.io/badge/README-中文-brightgreen.svg)](https://github.com/vsme/chinese-days/blob/main/README.md)
 
-This project provides a series of functions for querying Chinese holidays, adjusted working days, working days, 24 solar terms, and converting between lunar and solar calendars. Additionally, it supports ics file subscription for holidays, which can be subscribed to by Google Calendar, Apple Calendar, Microsoft Outlook, and other clients.
+This project provides a series of functions for querying Chinese holidays, adjusted working days, working days, 24 solar terms, and converting between lunar and solar calendars. Provide `JSON` file, Additionally, it supports ics file subscription for holidays, which can be subscribed to by Google Calendar, Apple Calendar, Microsoft Outlook, and other clients.
 
 ## Automation
 
@@ -50,3 +50,5 @@ For example, in `Java`, you can refer to [Warnier-zhang/java-chinese-days](https
 
 1. Lunar calendar data is sourced from the [Bigkoo/Android-PickerView](https://github.com/Bigkoo/Android-PickerView) project.
 2. Chinese holiday data generation references the `Python` version of the [LKI/chinese-calendar](https://github.com/LKI/chinese-calendar) project.
+3. Thank you for the recommendation from [Mr. Ruan Yifeng](https://github.com/ruanyf/weekly/blob/master/docs/issue-372.md#%E5%B7%A5%E5%85%B7).
+
