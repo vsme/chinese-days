@@ -4,7 +4,7 @@
 [![GitHub License](https://img.shields.io/github/license/vsme/chinese-days)](https://github.com/vsme/chinese-days/blob/main/LICENSE)
 [![README](https://img.shields.io/badge/README-English-brightgreen.svg)](https://github.com/vsme/chinese-days/blob/main/README.en.md)
 
-本项目提供了一系列用于查询中国节假日、调休日、工作日、24节气、以及农历阳历互转的函数，此外还支持 `iCal` 文件订阅节假日，可供 Google Calendar、Apple Calendar、Microsoft Outlook 等客户端订阅。
+本项目提供了一系列用于查询中国节假日、调休日、工作日、24节气、以及农历阳历互转的函数，提供 `JSON` 文件，此外还支持 `iCal` 文件订阅节假日，可供 Google Calendar、Apple Calendar、Microsoft Outlook 等客户端订阅。
 
 ## 自动化
 
@@ -50,3 +50,4 @@ For English: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics](ht
 
 1. 农历数据来自于 [Bigkoo/Android-PickerView](https://github.com/Bigkoo/Android-PickerView) 项目。
 2. 中国节假日数据生成参考了 `Python` 版本的 [LKI/chinese-calendar](https://github.com/LKI/chinese-calendar) 项目。
+3. 感谢[阮一峰大佬的推荐](https://github.com/ruanyf/weekly/blob/master/docs/issue-372.md#%E5%B7%A5%E5%85%B7)。
