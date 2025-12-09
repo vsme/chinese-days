@@ -109,7 +109,8 @@ function sidebarDemo(): DefaultTheme.SidebarItem[] {
     {
       text: '使用示例',
       items: [
-        { text: '日历', link: 'calendar' }
+        { text: '日历', link: 'calendar' },
+        { text: '实时薪资计算器', link: 'salary-calculator' }
       ]
     }
   ]

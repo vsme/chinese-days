@@ -85,7 +85,8 @@ function sidebarDemo(): DefaultTheme.SidebarItem[] {
     {
       text: 'Demo',
       items: [
-        { text: 'Calendar', link: 'calendar' }
+        { text: 'Calendar', link: 'calendar' },
+        { text: 'Salary Calculator', link: 'salary-calculator' }
       ]
     }
   ]
