@@ -51,6 +51,17 @@ export class Dayjs {
           (this._date.getMonth() - targetDate.getMonth())
         );
       case 'day':
+        const date1 = Date.UTC(
+          this._date.getFullYear(),
+          this._date.getMonth(),
+          this._date.getDate()
+        );
+        const date2 = Date.UTC(
+          targetDate.getFullYear(),
+          targetDate.getMonth(),
+          targetDate.getDate()
+        );
+        return Math.floor((date1 - date2) / (1000 * 60 * 60 * 24));
       default:
         return Math.floor(diffTime / (1000 * 60 * 60 * 24));
     }
