@@ -19,9 +19,25 @@ export class Dayjs {
     } else if (date instanceof Date) {
       this._date = new Date(date);
     } else if (typeof date === 'string' || typeof date === 'number') {
-      this._date = new Date(date);
-      if (typeof date === 'string' && isNaN(this._date.getTime())) {
-        this._date = new Date(date.replace(/-/g, '/'));
+      if (typeof date === 'string') {
+        // Regex to match YYYY-MM-DD or YYYY-M-D
+        const match = date.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+        if (match) {
+          // Parse as UTC explicitly to ensure consistency and avoid Local/UTC mixing
+          // This handles '2004-10-9' (Local in V8) vs '2004-10-10' (UTC in V8) inconsistency
+          this._date = new Date(Date.UTC(
+            parseInt(match[1], 10),
+            parseInt(match[2], 10) - 1,
+            parseInt(match[3], 10)
+          ));
+        } else if (isNaN(new Date(date).getTime())) {
+          // Fallback for slash format or other formats
+          this._date = new Date(date.replace(/-/g, '/'));
+        } else {
+          this._date = new Date(date);
+        }
+      } else {
+        this._date = new Date(date);
       }
     } else {
       this._date = new Date();
@@ -51,17 +67,6 @@ export class Dayjs {
           (this._date.getMonth() - targetDate.getMonth())
         );
       case 'day':
-        const date1 = Date.UTC(
-          this._date.getFullYear(),
-          this._date.getMonth(),
-          this._date.getDate()
-        );
-        const date2 = Date.UTC(
-          targetDate.getFullYear(),
-          targetDate.getMonth(),
-          targetDate.getDate()
-        );
-        return Math.floor((date1 - date2) / (1000 * 60 * 60 * 24));
       default:
         return Math.floor(diffTime / (1000 * 60 * 60 * 24));
     }
