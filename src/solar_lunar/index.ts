@@ -125,6 +125,9 @@ export const getYearLeapMonth = (year: number) => {
   };
 };
 
+/** 农历计算基准：1900-01-31 00:00:00 东八区（中国时间），固定 UTC 时间戳避免用户时区导致前后差一天 */
+const LUNAR_BASE_DATE = new Date(Date.UTC(1900, 0, 30, 16, 0, 0));
+
 /**
  * 计算指定日期的农历元素
  * @param date 指定日期
@@ -134,8 +137,7 @@ export const getLunarDate = (date: ConfigType): LunarDateDetail => {
   const lunarDate: number[] = new Array(7).fill(0);
   let temp = 0;
   let leap = 0;
-
-  const baseDate = dayjs(new Date(1900, 0, 31));
+  const baseDate = dayjs(LUNAR_BASE_DATE);
   const objDate = dayjs(date);
   let offset = objDate.diff(baseDate, 'day');
 
