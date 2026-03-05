@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [1.5.5](https://github.com/vsme/chinese-days) (2026-03-05)
+
+- fix: 时区问题导致用户农历误差。
+
+# CHANGELOG
+
 ## [1.5.4](https://github.com/vsme/chinese-days) (2025-11-05)
 
 - 新增 2026 年节假日
