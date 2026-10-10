@@ -24,6 +24,7 @@
     "auto-update": "ts-node scripts/auto-update-holidays.ts",
     "check:scripts": "tsc -p tsconfig.scripts.json",
     "test:ai": "ts-node scripts/test-ai-holidays.ts",
+    "test:notification": "ts-node scripts/test-holiday-notification.ts",
     "test": "jest",
     "lint": "eslint . --ext .ts,.js --fix",
     "lint:check": "eslint . --ext .ts,.js",

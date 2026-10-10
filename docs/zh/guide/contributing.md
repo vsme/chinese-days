@@ -74,3 +74,9 @@ npm run build
 ```sh
 node --env-file=.env -r ts-node/register scripts/test-ai-holidays.ts 2026
 ```
+
+### 测试真实 PR 和邮件通知
+
+`Send Email on Holidays Update` 提供显式的 `test_mode` 输入。手动启用时，`year` 指定已有年份（默认 2026）：先抓取公告并执行真实 AI 回归，再使用与正式流程相同的令牌、创建 PR Action 和 SMTP 配置，创建带 `[TEST]` 标记的草稿 PR 并发送测试邮件。
+
+测试仅在 `data/holiday-e2e/运行编号.json` 中新增测试记录，不修改正式日历。测试 PR 请勿合并，验证完成后关闭。定时运行不会启用测试模式；推送相关测试脚本或本工作流时，可在最后一条提交消息加入 `[holiday-e2e]` 显式触发一次端到端测试。

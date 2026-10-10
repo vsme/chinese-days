@@ -2,6 +2,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { runRegression } from '../../scripts/test-ai-holidays';
+import { prepareNotificationTest } from '../../scripts/test-holiday-notification';
 import { readBlocks } from '../../scripts/holidays/update';
 
 const source = fs.readFileSync(
@@ -87,4 +88,63 @@ it('requires an existing regression baseline', async () => {
   await expect(
     runRegression({ root, year: 2027, sources, extraction: fixture() })
   ).rejects.toThrow('not recorded');
+});
+
+it('prepares only an explicitly labelled test record and PR body after successful regression', async () => {
+  const result = await prepareNotificationTest({
+    root,
+    year,
+    runId: '12345',
+    runAttempt: '1',
+    sources,
+    extraction: fixture(),
+  });
+  expect(result).toMatchObject({
+    updated: true,
+    branch: 'codex/holiday-e2e-12345',
+    nextYear: 2027,
+  });
+  const receipt = JSON.parse(
+    fs.readFileSync(path.join(root, 'data/holiday-e2e/12345.json'), 'utf8')
+  );
+  expect(receipt).toMatchObject({
+    testOnly: true,
+    regressionYear: 2026,
+    calendarUnchanged: true,
+    differences: [],
+  });
+  expect(fs.readFileSync(result.report, 'utf8')).toContain(
+    '测试草稿 PR，请勿合并'
+  );
+  expect(
+    fs.readFileSync(path.join(root, 'src/holidays/generate.ts'), 'utf8')
+  ).toBe(source);
+  expect(fs.existsSync(path.join(root, 'data/holiday-reviews/2026.json'))).toBe(
+    false
+  );
+});
+
+it('does not prepare notification changes if the date comparison fails', async () => {
+  const extraction = fixture();
+  extraction.holidays
+    .find(h => h.id === 'ny')!
+    .rest.push(['2026-01-10', '2026-01-10']);
+  await expect(
+    prepareNotificationTest({
+      root,
+      year,
+      runId: '12345',
+      runAttempt: '1',
+      sources,
+      extraction,
+    })
+  ).rejects.toThrow('passing AI regression');
+  expect(fs.existsSync(path.join(root, 'data/holiday-e2e'))).toBe(false);
+});
+
+it('rejects unsafe run identities before any external call or file write', async () => {
+  await expect(
+    prepareNotificationTest({ root, year, runId: '../bad', runAttempt: '1' })
+  ).rejects.toThrow('Invalid GitHub run identity');
+  expect(fs.existsSync(path.join(root, 'cache'))).toBe(false);
 });

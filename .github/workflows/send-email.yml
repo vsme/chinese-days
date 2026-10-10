@@ -10,6 +10,16 @@ on:
         description: '指定新增年份；留空时使用 HOLIDAYS_YEAR，未设置则取已收录最大年份加一'
         required: false
         type: string
+      test_mode:
+        description: '用已有年份回归并真实创建测试草稿 PR、发送测试邮件，不改正式日历'
+        required: false
+        default: false
+        type: boolean
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/send-email.yml'
+      - 'scripts/test-holiday-notification.ts'
 
 permissions:
   contents: write
@@ -22,6 +32,7 @@ concurrency:
 
 jobs:
   notify:
+    if: github.event_name != 'push' || contains(github.event.head_commit.message, '[holiday-e2e]')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -34,19 +45,28 @@ jobs:
           cache: npm
       - run: npm ci
 
+      - name: Select production or explicit test mode
+        id: mode
+        env:
+          TEST_MODE: ${{ inputs.test_mode == true || github.event_name == 'push' }}
+        run: echo "test=$TEST_MODE" >> "$GITHUB_OUTPUT"
+
       - name: Select next year and skip existing years
         id: target
         env:
           REQUESTED_YEAR: ${{ inputs.year || vars.HOLIDAYS_YEAR }}
+          TEST_MODE: ${{ steps.mode.outputs.test }}
         run: |
-          if [ -n "$REQUESTED_YEAR" ]; then
+          if [ "$TEST_MODE" = 'true' ]; then
+            npm run auto-update -- --check-year
+          elif [ -n "$REQUESTED_YEAR" ]; then
             npm run auto-update -- "$REQUESTED_YEAR" --check-year
           else
             npm run auto-update -- --check-year
           fi
 
       - name: Fetch official notices
-        if: steps.target.outputs.eligible == 'true'
+        if: steps.target.outputs.eligible == 'true' && steps.mode.outputs.test != 'true'
         env:
           HOLIDAY_YEAR: ${{ steps.target.outputs.year }}
         id: fetch
@@ -80,8 +100,18 @@ jobs:
           AI_MODEL: ${{ secrets.AI_MODEL }}
         run: npm run auto-update -- "$HOLIDAY_YEAR" --source-file "$SOURCE_FILE" --previous-review "$RUNNER_TEMP/previous-review.json"
 
+      - name: Prepare end-to-end notification test
+        id: e2e
+        if: steps.mode.outputs.test == 'true'
+        env:
+          TEST_YEAR: ${{ inputs.year || '2026' }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_API_URL: ${{ secrets.AI_API_URL }}
+          AI_MODEL: ${{ secrets.AI_MODEL }}
+        run: npm run test:notification -- "$TEST_YEAR"
+
       - name: Validate before opening a PR
-        if: steps.update.outputs.updated == 'true'
+        if: steps.update.outputs.updated == 'true' || steps.e2e.outputs.updated == 'true'
         run: |
           npm run check:scripts
           npm run lint:check
@@ -91,20 +121,22 @@ jobs:
 
       - name: Create or update PR
         id: pr
-        if: steps.update.outputs.updated == 'true'
+        if: steps.update.outputs.updated == 'true' || steps.e2e.outputs.updated == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
-          commit-message: '新增 ${{ steps.target.outputs.year }} 年假期配置'
-          title: '新增 ${{ steps.target.outputs.year }} 年假期配置'
-          body-path: ${{ steps.update.outputs.report }}
-          draft: false
-          branch: auto-update-holidays-${{ steps.target.outputs.year }}
+          commit-message: >-
+            ${{ steps.mode.outputs.test == 'true' && 'test: verify holiday PR and email workflow' || format('新增 {0} 年假期配置', steps.target.outputs.year) }}
+          title: ${{ steps.mode.outputs.test == 'true' && '[TEST] 节假日自动化 PR 与邮件端到端测试（请勿合并）' || format('新增 {0} 年假期配置', steps.target.outputs.year) }}
+          body-path: ${{ steps.e2e.outputs.report || steps.update.outputs.report }}
+          draft: ${{ steps.mode.outputs.test == 'true' }}
+          branch: ${{ steps.e2e.outputs.branch || format('auto-update-holidays-{0}', steps.target.outputs.year) }}
           delete-branch: true
           base: main
           add-paths: |
             src/holidays/generate.ts
             data/holiday-reviews/${{ steps.target.outputs.year }}.json
+            data/holiday-e2e/*.json
 
       - name: Send notification for an actual PR change
         if: steps.pr.outputs.pull-request-operation == 'created' || steps.pr.outputs.pull-request-operation == 'updated'
@@ -114,13 +146,25 @@ jobs:
           server_port: 587
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: '${{ steps.target.outputs.year }} 年假期核对 PR 已更新'
+          subject: ${{ steps.mode.outputs.test == 'true' && '[测试邮件] 中国节假日自动化 PR 与邮件流程验证' || format('{0} 年假期核对 PR 已更新', steps.target.outputs.year) }}
           to: ${{ secrets.TO_EMAIL }}
           from: Holidays Update
           body: |
-            AI 已生成新年份配置并通过自动校验，公告依据和逐日记录见 PR：
+            ${{ steps.mode.outputs.test == 'true' && '这是一封端到端测试邮件，无需合并测试 PR；正式年份配置没有修改。' || 'AI 已生成新年份配置并通过自动校验。' }}
+            公告依据和逐日记录见 PR：
             ${{ steps.pr.outputs.pull-request-url }}
             无需填写人工调休规则。
+
+      - name: Record workflow result
+        if: always()
+        env:
+          TEST_MODE: ${{ steps.mode.outputs.test }}
+          PR_URL: ${{ steps.pr.outputs.pull-request-url }}
+          PR_OPERATION: ${{ steps.pr.outputs.pull-request-operation }}
+        run: |
+          echo "Test mode: $TEST_MODE" >> "$GITHUB_STEP_SUMMARY"
+          echo "PR operation: $PR_OPERATION" >> "$GITHUB_STEP_SUMMARY"
+          echo "PR: $PR_URL" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Report failure
         if: failure()
