@@ -134,9 +134,8 @@ jobs:
           delete-branch: true
           base: main
           add-paths: |
-            src/holidays/generate.ts
-            data/holiday-reviews/${{ steps.target.outputs.year }}.json
-            data/holiday-e2e/*.json
+            ${{ steps.mode.outputs.test != 'true' && 'src/holidays/generate.ts' || '' }}
+            ${{ steps.mode.outputs.test == 'true' && format('data/holiday-e2e/{0}.json', github.run_id) || format('data/holiday-reviews/{0}.json', steps.target.outputs.year) }}
 
       - name: Send notification for an actual PR change
         if: steps.pr.outputs.pull-request-operation == 'created' || steps.pr.outputs.pull-request-operation == 'updated'
