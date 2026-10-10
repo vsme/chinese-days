@@ -1,3 +1,4 @@
+import { calendarFixture } from '../helpers/holiday-fixture';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -5,10 +6,7 @@ import { runRegression } from '../../scripts/test-ai-holidays';
 import { prepareNotificationTest } from '../../scripts/test-holiday-notification';
 import { readBlocks } from '../../scripts/holidays/update';
 
-const source = fs.readFileSync(
-  path.join(__dirname, '../../src/holidays/generate.ts'),
-  'utf8'
-);
+const source = calendarFixture();
 const year = 2026;
 const baseline = readBlocks(source).find(b => b.year === year)!;
 const sources = [

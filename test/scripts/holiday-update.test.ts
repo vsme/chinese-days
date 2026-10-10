@@ -1,3 +1,4 @@
+import { calendarFixture } from '../helpers/holiday-fixture';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -22,10 +23,7 @@ import { extractWithAI, runUpdate } from '../../scripts/auto-update-holidays';
 
 jest.mock('axios');
 const post = axios.post as jest.Mock;
-const source = fs.readFileSync(
-  path.join(__dirname, '../../src/holidays/generate.ts'),
-  'utf8'
-);
+const source = calendarFixture();
 const currentBlock = readBlocks(source).find(b => b.year === 2026)!;
 const previous = currentBlock.holidays;
 const historicalSource =
