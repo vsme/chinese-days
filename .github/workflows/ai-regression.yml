@@ -1,0 +1,53 @@
+name: AI Holiday Regression
+
+on:
+  workflow_dispatch:
+    inputs:
+      year:
+        description: '已收录的回归测试年份（只在临时副本中生成）'
+        type: choice
+        default: '2026'
+        options: ['2026', '2025', '2024']
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/**'
+      - '.github/workflows/ai-regression.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-holiday-regression
+  cancel-in-progress: false
+
+jobs:
+  regression:
+    # Live model calls are opt-in; normal pushes only run the offline test suite.
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[ai-regression]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run check:scripts
+      - run: npm test -- --runInBand
+      - name: Re-generate and compare recorded year
+        env:
+          HOLIDAY_YEAR: ${{ inputs.year || '2026' }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_API_URL: ${{ secrets.AI_API_URL }}
+          AI_MODEL: ${{ secrets.AI_MODEL }}
+        run: npm run test:ai -- "$HOLIDAY_YEAR" --output cache/ai-regression
+      - name: Upload comparison and generated calendar
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-regression-${{ inputs.year || '2026' }}
+          path: cache/ai-regression/
+          if-no-files-found: ignore
+          retention-days: 7

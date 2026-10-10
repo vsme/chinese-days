@@ -2,100 +2,126 @@ name: Send Email on Holidays Update
 
 on:
   schedule:
-    # 从 00:00 到 10:00 UTC，每 2 小时运行一次（对应北京时间 08:00 到 06:00）
+    # 北京时间 08:00–18:00，每两小时检查一次。
     - cron: '0 0-10/2 * * *'
-
-  # Allows you to run this workflow manually from the Actions tab on GitHub.
   workflow_dispatch:
+    inputs:
+      year:
+        description: '指定新增年份；留空时使用 HOLIDAYS_YEAR，未设置则取已收录最大年份加一'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# Serialize scheduled/manual runs for the new-year proposal.
+concurrency:
+  group: holiday-updates
+  cancel-in-progress: false
 
 jobs:
   notify:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 15
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run script
-        id: run-script
-        run: npm run fetch ${{ vars.HOLIDAYS_YEAR }}
-
-      - name: Read holidays file
-        id: read-holidays
-        if: ${{ steps.run-script.outputs.holidays != '' }}
-        run: |
-          echo "HOLIDAYS_CONTENT=$(cat holidays.html)" >> $GITHUB_ENV
+      - name: Select next year and skip existing years
+        id: target
         env:
-          HOLIDAYS_CONTENT: $(cat holidays.html)
-
-      - name: 检查分支是否已存在
-        id: check-branch
-        if: ${{ steps.run-script.outputs.holidays != '' }}
+          REQUESTED_YEAR: ${{ inputs.year || vars.HOLIDAYS_YEAR }}
         run: |
-          BRANCH_NAME="auto-update-holidays-${{ vars.HOLIDAYS_YEAR }}"
-          if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
-            echo "branch_exists=true" >> $GITHUB_OUTPUT
-            echo "分支 $BRANCH_NAME 已存在，跳过后续步骤"
+          if [ -n "$REQUESTED_YEAR" ]; then
+            npm run auto-update -- "$REQUESTED_YEAR" --check-year
           else
-            echo "branch_exists=false" >> $GITHUB_OUTPUT
-            echo "分支 $BRANCH_NAME 不存在，继续执行配置更新"
+            npm run auto-update -- --check-year
           fi
 
-      - name: Auto-update holidays configuration
-        id: auto-update
-        if: ${{ steps.run-script.outputs.holidays != '' && steps.check-branch.outputs.branch_exists == 'false' }}
-        run: |
-          npm run auto-update ${{ vars.HOLIDAYS_YEAR }} -- --url "${{ steps.run-script.outputs.holiday_url }}"
+      - name: Fetch official notices
+        if: steps.target.outputs.eligible == 'true'
         env:
+          HOLIDAY_YEAR: ${{ steps.target.outputs.year }}
+        id: fetch
+        run: npm run fetch -- "$HOLIDAY_YEAR"
+
+      - name: Read previous proposal for extraction cache
+        env:
+          HOLIDAY_YEAR: ${{ steps.target.outputs.year }}
+        if: steps.fetch.outputs.found == 'true'
+        run: |
+          branch="auto-update-holidays-$HOLIDAY_YEAR"
+          if git ls-remote --exit-code --heads origin "$branch" > /dev/null; then
+            git fetch origin "$branch:refs/remotes/origin/$branch"
+            file="data/holiday-reviews/$HOLIDAY_YEAR.json"
+            if git cat-file -e "origin/$branch:$file"; then
+              git show "origin/$branch:$file" > "$RUNNER_TEMP/previous-review.json"
+            fi
+          else
+            status=$?
+            if [ "$status" -ne 2 ]; then exit "$status"; fi
+          fi
+
+      - name: Extract facts and validate holiday update
+        id: update
+        if: steps.fetch.outputs.found == 'true'
+        env:
+          HOLIDAY_YEAR: ${{ steps.target.outputs.year }}
+          SOURCE_FILE: ${{ steps.fetch.outputs.sources }}
           AI_API_KEY: ${{ secrets.AI_API_KEY }}
           AI_API_URL: ${{ secrets.AI_API_URL }}
           AI_MODEL: ${{ secrets.AI_MODEL }}
+        run: npm run auto-update -- "$HOLIDAY_YEAR" --source-file "$SOURCE_FILE" --previous-review "$RUNNER_TEMP/previous-review.json"
 
-      - name: 创建拉取请求
-        if: ${{ steps.auto-update.outputs.updated == 'true' && steps.check-branch.outputs.branch_exists == 'false' }}
+      - name: Validate before opening a PR
+        if: steps.update.outputs.updated == 'true'
+        run: |
+          npm run check:scripts
+          npm run lint:check
+          npm test -- --runInBand
+          npm run build
+          git diff --check
+
+      - name: Create or update PR
+        id: pr
+        if: steps.update.outputs.updated == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
-          commit-message: '自动更新 ${{ vars.HOLIDAYS_YEAR }} 年假期配置'
-          title: '自动更新 ${{ vars.HOLIDAYS_YEAR }} 年假期配置'
-          body: |
-            此拉取请求由假期更新工作流自动创建。
-
-            变更内容：
-            - 更新了 ${{ vars.HOLIDAYS_YEAR }} 年的假期配置
-            - 通过 AI 处理官方假期公告生成
-
-            请在合并前审查变更内容。
-          branch: auto-update-holidays-${{ vars.HOLIDAYS_YEAR }}
+          commit-message: '新增 ${{ steps.target.outputs.year }} 年假期配置'
+          title: '新增 ${{ steps.target.outputs.year }} 年假期配置'
+          body-path: ${{ steps.update.outputs.report }}
+          draft: false
+          branch: auto-update-holidays-${{ steps.target.outputs.year }}
           delete-branch: true
           base: main
           add-paths: |
             src/holidays/generate.ts
+            data/holiday-reviews/${{ steps.target.outputs.year }}.json
 
-      - name: Send notification if holidays has value
-        if: ${{ steps.run-script.outputs.holidays != '' && steps.check-branch.outputs.branch_exists == 'false' }}
+      - name: Send notification for an actual PR change
+        if: steps.pr.outputs.pull-request-operation == 'created' || steps.pr.outputs.pull-request-operation == 'updated'
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 587
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: '${{ vars.HOLIDAYS_YEAR }} Holidays Update - Auto-generated Configuration'
+          subject: '${{ steps.target.outputs.year }} 年假期核对 PR 已更新'
           to: ${{ secrets.TO_EMAIL }}
           from: Holidays Update
-          html_body: |
-            <h2>${{ vars.HOLIDAYS_YEAR }} 年假期安排已自动更新</h2>
-            <p>系统已自动获取并处理假期信息，生成了相应的配置代码。</p>
-            <h3>原始假期内容：</h3>
-            ${{ env.HOLIDAYS_CONTENT }}
-            <hr>
-            <p>配置已自动提交到代码库，请查看最新的提交记录。</p>
+          body: |
+            AI 已生成新年份配置并通过自动校验，公告依据和逐日记录见 PR：
+            ${{ steps.pr.outputs.pull-request-url }}
+            无需填写人工调休规则。
+
+      - name: Report failure
+        if: failure()
+        run: echo 'Holiday update failed; inspect the failed step. No success notification was sent.' >> "$GITHUB_STEP_SUMMARY"
