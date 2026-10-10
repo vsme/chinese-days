@@ -34,3 +34,6 @@ jobs:
 
       - name: Build package
         run: npm run build
+
+      - name: Verify npm package contents without publishing
+        run: npm pack --dry-run

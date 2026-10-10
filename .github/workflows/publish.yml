@@ -2,53 +2,191 @@ name: Node.js Package
 
 on:
   push:
-    tags:
-      - 'v*'
+    tags: ['v*']
+  pull_request:
+    types: [closed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '重试发布已存在的版本标签，例如 v1.5.10'
+        required: true
+        type: string
 
 permissions:
-  id-token: write # Required for OIDC
-  contents: write
+  contents: read
+
+# Serialize version allocation and publishing. Never cancel an active release.
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
 
 jobs:
   release:
     name: Release
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event.pull_request.merged == true &&
+       github.event.pull_request.draft == false &&
+       github.event.pull_request.head.repo.full_name == github.repository &&
+       startsWith(github.event.pull_request.head.ref, 'auto-update-holidays-'))
     runs-on: ubuntu-latest
-
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: read
+      id-token: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
-
-      # Ensure npm 11.5.1 or later is installed
-      - name: Update npm
-        run: npm install -g npm@latest
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run build script
-        run: npm run build
-
-      - name: Run test script
-        run: npm test
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Require the existing maintainer token for automatic version/tag pushes
+        if: github.event_name == 'pull_request'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          RELEASE_PAT: ${{ secrets.PAT_TOKEN }}
+        run: |
+          if [ -z "$RELEASE_PAT" ]; then
+            echo 'PAT_TOKEN is required for protected-main writes and tag-triggered publishing.' >&2
+            exit 1
+          fi
+      - uses: actions/checkout@v4
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          body: |
-            Please refer to [CHANGELOG.md](https://github.com/vsme/chinese-days/blob/main/CHANGELOG.md) for details.
-          draft: false
-          prerelease: false
+          ref: ${{ github.event_name == 'pull_request' && 'main' || github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
+          fetch-depth: 0
+          # The existing maintainer PAT can update protected main under repository rules.
+          token: ${{ github.event_name == 'pull_request' && secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          cache: npm
+      - name: Install npm with trusted publishing support
+        run: npm install -g npm@11
+      - run: npm ci
+
+      - name: Fetch merged PR metadata
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {data: pr} = await github.rest.pulls.get({...context.repo, pull_number: context.issue.number});
+            const files = await github.paginate(github.rest.pulls.listFiles, {...context.repo, pull_number: context.issue.number, per_page: 100});
+            require('fs').writeFileSync(`${process.env.RUNNER_TEMP}/holiday-pr.json`, JSON.stringify({...pr, files}));
+
+      - name: Prepare one patch release for this holiday PR
+        id: prepare
+        if: github.event_name == 'pull_request'
+        run: npm run release:prepare -- "$RUNNER_TEMP/holiday-pr.json"
+
+      - name: Restore the previously prepared commit on retry
+        if: steps.prepare.outputs.eligible == 'true' && steps.prepare.outputs.changed == 'false'
+        env:
+          RELEASE_SHA: ${{ steps.prepare.outputs.release_sha }}
+        run: |
+          git checkout --detach "$RELEASE_SHA"
+          npm ci
+
+      - name: Verify publication target
+        id: target
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          ELIGIBLE: ${{ steps.prepare.outputs.eligible }}
+          RELEASE_TAG: ${{ steps.prepare.outputs.tag || (github.event_name == 'workflow_dispatch' && inputs.tag) || github.ref_name }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          if (process.env.EVENT_NAME === 'pull_request' && process.env.ELIGIBLE !== 'true') {
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'enabled=false\n');
+            process.exit(0);
+          }
+          const tag = process.env.RELEASE_TAG;
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          if (!/^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(tag) || tag !== `v${pkg.version}` || pkg.name !== 'chinese-days') throw new Error('Release tag/package identity mismatch');
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `enabled=true\ntag=${tag}\nversion=${pkg.version}\n`);
+          NODE
+          git merge-base --is-ancestor HEAD origin/main
+
+      - name: Validate and build the release
+        if: steps.target.outputs.enabled == 'true'
+        run: |
+          npm run check:scripts --if-present
+          npm run lint:check --if-present
+          npm test -- --runInBand
+          npm run build
+          npm pack --dry-run
+          git diff --check
+
+      - name: Check npm version and protect latest
+        id: registry
+        if: steps.target.outputs.enabled == 'true'
+        uses: actions/github-script@v7
+        env:
+          FRESH_BUMP: ${{ steps.prepare.outputs.changed }}
+        with:
+          script: |
+            const pkg = JSON.parse(require('fs').readFileSync('package.json', 'utf8'));
+            const base = `https://registry.npmjs.org/${encodeURIComponent(pkg.name)}`;
+            const response = await fetch(`${base}/${pkg.version}`, {signal: AbortSignal.timeout(30000)});
+            if (response.ok) {
+              const published = await response.json();
+              const sha = require('child_process').execFileSync('git', ['rev-parse', 'HEAD'], {encoding: 'utf8'}).trim();
+              if (process.env.FRESH_BUMP === 'true' || published.gitHead !== sha) throw new Error('npm version already exists for another or unverifiable commit');
+              core.setOutput('exists', 'true');
+            } else {
+              if (response.status !== 404) throw new Error(`npm registry check failed: ${response.status}`);
+              const latestResponse = await fetch(`${base}/latest`, {signal: AbortSignal.timeout(30000)});
+              if (latestResponse.ok) {
+                const latest = (await latestResponse.json()).version;
+                const parts = value => {
+                  if (!/^\d+\.\d+\.\d+$/.test(value)) throw new Error('Cannot compare registry latest version');
+                  return value.split('.').map(BigInt);
+                };
+                const a = parts(latest), b = parts(pkg.version);
+                const index = a.findIndex((part, i) => part !== b[i]);
+                if (index === -1 || a[index] > b[index]) throw new Error('Refusing to move npm latest backwards or reuse an existing version');
+              } else if (latestResponse.status !== 404) throw new Error(`npm latest check failed: ${latestResponse.status}`);
+              core.setOutput('exists', 'false');
+            }
+
+      - name: Commit the version bump and atomically push its tag
+        id: commit
+        if: steps.target.outputs.enabled == 'true' && github.event_name == 'pull_request'
+        env:
+          CHANGED: ${{ steps.prepare.outputs.changed }}
+          RELEASE_YEAR: ${{ steps.prepare.outputs.year }}
+          RELEASE_TAG: ${{ steps.target.outputs.tag }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if [ "$CHANGED" = 'true' ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -- package.json package-lock.json CHANGELOG.md "data/holiday-releases/$RELEASE_YEAR.json"
+            git commit -m "chore(release): $RELEASE_TAG for $RELEASE_YEAR holidays (#$PR_NUMBER)"
+          fi
+          if git show-ref --verify --quiet "refs/tags/$RELEASE_TAG"; then
+            test "$(git rev-parse "$RELEASE_TAG^{commit}")" = "$(git rev-parse HEAD)"
+          else
+            git tag "$RELEASE_TAG"
+          fi
+          if [ "$CHANGED" = 'true' ]; then
+            git push --atomic origin HEAD:refs/heads/main "refs/tags/$RELEASE_TAG"
+          else
+            git push origin "refs/tags/$RELEASE_TAG"
+          fi
+          echo "Prepared $RELEASE_TAG; its tag push triggers the npm publishing run." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Publish package
-        run: npm publish
+        if: github.event_name != 'pull_request' && steps.target.outputs.enabled == 'true' && steps.registry.outputs.exists != 'true'
+        run: npm publish --provenance --access public
+
+      - name: Create GitHub release after npm succeeds
+        if: github.event_name != 'pull_request' && steps.target.outputs.enabled == 'true'
+        uses: actions/github-script@v7
+        env:
+          RELEASE_TAG: ${{ steps.target.outputs.tag }}
+        with:
+          script: |
+            const tag = process.env.RELEASE_TAG;
+            try { await github.rest.repos.getReleaseByTag({...context.repo, tag}); }
+            catch (error) {
+              if (error.status !== 404) throw error;
+              await github.rest.repos.createRelease({...context.repo, tag_name: tag, name: tag, draft: false, prerelease: false,
+                body: `Published to npm. See [CHANGELOG.md](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/${tag}/CHANGELOG.md).`});
+            }

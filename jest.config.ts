@@ -5,6 +5,7 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
     'scripts/holidays/**/*.ts',
+    'scripts/release/**/*.ts',
     'scripts/auto-update-holidays.ts',
     'scripts/fetch.ts',
   ],
