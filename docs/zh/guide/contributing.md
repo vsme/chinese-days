@@ -80,3 +80,23 @@ node --env-file=.env -r ts-node/register scripts/test-ai-holidays.ts 2026
 `Send Email on Holidays Update` 提供显式的 `test_mode` 输入。手动启用时，`year` 指定已有年份（默认 2026）：先抓取公告并执行真实 AI 回归，再使用与正式流程相同的令牌、创建 PR Action 和 SMTP 配置，创建带 `[TEST]` 标记的草稿 PR 并发送测试邮件。
 
 测试仅在 `data/holiday-e2e/运行编号.json` 中新增测试记录，不修改正式日历。测试 PR 请勿合并，验证完成后关闭。定时运行不会启用测试模式；推送相关测试脚本或本工作流时，可在最后一条提交消息加入 `[holiday-e2e]` 显式触发一次端到端测试。
+
+## 节假日 PR 合并后自动发布 npm
+
+正式节假日 PR 合并到 `main` 后，`Node.js Package` 工作流自动执行：
+
+1. 校验来源为本仓库的 `auto-update-holidays-年份` 分支，且仅修改该年份配置与对应 `data/holiday-reviews/年份.json`。
+2. 核对合并后的年份数据与 AI 校验记录一致，再将 `package.json`、`package-lock.json` 的 patch 版本加一（例如 `1.5.9 → 1.5.10`），更新 `CHANGELOG.md`。
+3. 写入 `data/holiday-releases/年份.json` 发布记录，运行类型检查、测试、构建及 npm 打包预检。
+4. 使用现有 `PAT_TOKEN` 将版本提交与 `v版本号` 标签一起原子推送。推送冲突会失败，不能只推送标签或覆盖并发的 `main` 更新。
+5. 标签触发同一个 `publish.yml` 的发布运行，使用 npm OIDC 认证发布；npm 成功后再创建 GitHub Release。
+
+合并视为审核完成信号；仅审批但尚未合并不会发布。测试 PR、未合并就关闭的 PR、其他分支和夹带其他文件修改的 PR 都不会自动升版本。测试模式不会发布 npm。
+
+`PAT_TOKEN` 必须具有仓库内容写权限，并满足 `main` 的分支规则。使用它推送标签是为了让标签事件正常触发发布；普通 `GITHUB_TOKEN` 推送不会触发后续 push 工作流。npm 继续使用已有的可信发布配置，工作流文件名保持 `publish.yml`，运行时为 Node.js 22 与 npm 11，无需新增 npm token。
+
+同一年、同一个 PR 重跑会读取已提交的发布记录，不会再次增加 patch。已存在的标签必须对应相同提交；已发布 npm 版本也必须具有相同的 `gitHead`，否则停止。还会阻止将 npm `latest` 指回更旧的版本。
+
+如果标签已创建而 npm 发布失败，直接重跑失败的标签工作流；也可以手动运行 `Node.js Package` 并填写已有标签（如 `v1.5.10`）。手动推送 `v*` 标签的原有发布方式仍然保留。
+
+发布逻辑的测试使用临时 Git 仓库，验证版本号/锁文件同步、幂等重试、标签冲突、并发推送失败，以及 npm registry 的重复版本和 `latest` 保护。CI 的 `npm pack --dry-run` 仅检查打包内容，不发布测试版本。

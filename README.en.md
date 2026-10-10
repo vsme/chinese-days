@@ -8,7 +8,7 @@ This project provides a series of functions for querying Chinese holidays, adjus
 
 ## Automation
 
-Automation only appends the year after the latest recorded year; existing years are skipped. AI extracts official notice facts and proposes in-lieu dates with explanations. Statutory dates, compensatory rest and calendar conflicts are validated automatically, with correction retries before creating a regular PR. No per-year manual rules or in-lieu confirmation step is required. Email is sent only when the PR changes. The existing `.r()`, `.w()`, and `.i()` format is preserved.
+Automation only appends the year after the latest recorded year; existing years are skipped. AI extracts official notice facts and proposes in-lieu dates with explanations. Statutory dates, compensatory rest and calendar conflicts are validated automatically, with correction retries before creating a regular PR. No per-year manual rules or in-lieu confirmation step is required. Email is sent only when the PR changes. The existing `.r()`, `.w()`, and `.i()` format is preserved. Merging a production holiday PR into `main` automatically increments the patch version, creates a version tag and publishes to npm. Test PRs do not trigger a release.
 
 ## Documentation
 
