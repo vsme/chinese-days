@@ -1,134 +1,129 @@
 import fs from 'fs';
 import path from 'path';
+import { parseArgs } from 'util';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import { ArgumentParser } from 'argparse';
+import {
+  check,
+  officialUrl,
+  validateSources,
+  validateYear,
+  type Source,
+} from './holidays/update';
 
-const getPaperUrls = async (year: number): Promise<string[]> => {
-  let hasNextPage = true;
-  let pageIndex = 0;
-  const ret: string[] = [];
-
-  while (hasNextPage) {
-    const response = await axios.get(
-      'https://sousuo.www.gov.cn/search-gov/data',
-      {
-        params: {
-          // 不区分发布机构  `?t=zhengcelibrary_gw_bm_gb`
-          // 分发布机构国务  `?t=zhengcelibrary_gw`   即 gw - 国务
-          // 国务院部门文件  `?t=zhengcelibrary_bm`   即 bm - 部门
-          // 国务院公报文件  `?t=zhengcelibrary_gb`   即 gb - 公报
-          t: 'zhengcelibrary_gw',
-          p: pageIndex,
-          n: 5,
-          q: `假期 ${year}`,
-          pcodeJiguan: '国办发明电',
-          puborg: '国务院办公厅',
-          filetype: '通知',
-          sort: 'pubtime',
+async function get(url: string, params?: Record<string, string | number>) {
+  officialUrl(url);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      return await axios.get(url, {
+        params,
+        timeout: 30_000,
+        maxContentLength: 2_000_000,
+        maxRedirects: 5,
+        beforeRedirect: options => {
+          officialUrl(
+            `${options.protocol}//${options.hostname}${options.path}`
+          );
         },
+      });
+    } catch (error) {
+      const status = axios.isAxiosError(error)
+        ? error.response?.status
+        : undefined;
+      if (
+        attempt === 2 ||
+        !axios.isAxiosError(error) ||
+        (status !== undefined && status !== 429 && status < 500)
+      ) {
+        throw new Error(
+          `Notice request failed: ${url} (${status ?? 'network/redirect error'})`
+        );
       }
-    );
-
-    if (response.status !== 200) {
-      throw new Error(`Request failed with status code ${response.status}`);
+      await new Promise(resolve => setTimeout(resolve, 1000 * 2 ** attempt));
     }
+  }
+  throw new Error('Notice request failed');
+}
 
+export async function fetchHoliday(year: number): Promise<Source[]> {
+  validateYear(year);
+  const urls = new Set<string>();
+  let pageCount = 1;
+  for (let page = 0; page < pageCount; page++) {
+    const response = await get('https://sousuo.www.gov.cn/search-gov/data', {
+      t: 'zhengcelibrary_gw',
+      p: page,
+      n: 5,
+      q: `假期 ${year}`,
+      pcodeJiguan: '国办发明电',
+      puborg: '国务院办公厅',
+      filetype: '通知',
+      sort: 'pubtime',
+    });
     const data = response.data;
-    if (data.code === 1001) {
+    // Verified no-result response from the official endpoint. Do not conflate
+    // other 1001/error responses, or disappearing later pages, with no notices.
+    if (
+      page === 0 &&
+      data?.code === 1001 &&
+      data.searchVO === null &&
+      data.msg === '抱歉，没有找到相关结果'
+    )
       return [];
-    }
-
-    if (data.code !== 200) {
-      throw new Error(`Error: ${data.code}: ${data.msg}`);
-    }
-
+    // Unknown response codes are failures, never silently treated as "no announcement".
+    check(
+      data?.code === 200 && Array.isArray(data.searchVO?.listVO),
+      'Unexpected government search response'
+    );
+    pageCount = Number(data.searchVO.totalpage);
+    check(
+      Number.isInteger(pageCount) && pageCount >= 0 && pageCount <= 20,
+      'Unexpected search page count'
+    );
     for (const item of data.searchVO.listVO) {
-      if (item.title.includes(year.toString())) {
-        ret.unshift(item.url);
-      }
+      check(typeof item.title === 'string', 'Missing search title');
+      if (
+        item.title.includes(String(year)) &&
+        /节假日|放假|假期/.test(item.title)
+      )
+        urls.add(officialUrl(item.url));
     }
-
-    pageIndex += 1;
-    hasNextPage = pageIndex < data.searchVO.totalpage;
   }
-
-  return ret;
-};
-
-const getPaper = async (url: string): Promise<string> => {
-  const response = await axios.get(url);
-  if (response.status !== 200) {
-    throw new Error(`Request failed with status code ${response.status}`);
+  const sources: Source[] = [];
+  for (const url of urls) {
+    const response = await get(url);
+    const $ = cheerio.load(response.data);
+    const container = $('#UCAP-CONTENT');
+    check(container.length > 0, `Cannot find notice body: ${url}`);
+    container.find('script, style').remove();
+    const text = container.text().trim();
+    check(text, `Empty notice: ${url}`);
+    sources.push({ url, text });
   }
+  return sources.length ? validateSources(sources) : [];
+}
 
-  const $ = cheerio.load(response.data);
-  const container = $('#UCAP-CONTENT');
-  if (!container.length) {
-    throw new Error(`Cannot get paper container from url: ${url}`);
-  }
-
-  const paragraphs = container.html()?.replace(/<br\/>/g, '</p><p>');
-  const p = cheerio.load(paragraphs || '')('p');
-  const ret = p
-    .map((_, el) => $(el).text().trim())
-    .get()
-    .join('\n');
-
-  if (!ret) {
-    throw new Error(`Cannot get paper content from url: ${url}`);
-  }
-
-  return ret;
-};
-
-const fetchHoliday = async (
-  year: number
-): Promise<{ content: string; url?: string }> => {
-  const paperUrls = await getPaperUrls(year);
-  const papers: string[] = [];
-
-  for (const url of paperUrls) {
-    const paper = await getPaper(url);
-    papers.push(paper);
-  }
-
-  return {
-    content: papers.join('\n'),
-    url: paperUrls.length > 0 ? paperUrls[0] : undefined,
-  };
-};
-
-const main = async () => {
-  const parser = new ArgumentParser();
-  parser.addArgument('year', { type: 'int' });
-  const args = parser.parseArgs();
-  const year = args.year;
-  console.log(`Fetching holiday for ${year}...`);
-
-  const result = await fetchHoliday(year);
-
-  if (result.content && result.content.length > 0) {
-    console.log(result.content);
-    const htmlContent = result.content
-      .split('\n')
-      .map(line => `<p>${line}</p>`)
-      .join('');
-    const outputPath = process.env.GITHUB_OUTPUT;
-    const holidaysFile = path.join(process.cwd(), 'holidays.html');
-    fs.writeFileSync(holidaysFile, htmlContent);
-    if (outputPath) {
-      fs.appendFileSync(outputPath, `holidays=${holidaysFile}\n`);
-      if (result.url) {
-        fs.appendFileSync(outputPath, `holiday_url=${result.url}\n`);
-      }
-    }
-  } else {
-    console.log('No holidays found.');
-  }
-};
-
-main().catch(error => {
-  console.error(error);
-  process.exit(1);
-});
+async function main() {
+  const args = parseArgs({ allowPositionals: true });
+  check(args.positionals.length === 1, 'Usage: npm run fetch -- YEAR');
+  const year = Number(args.positionals[0]);
+  const sources = await fetchHoliday(year);
+  const file = path.join(process.cwd(), `cache/holiday-notices-${year}.json`);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, JSON.stringify({ year, sources }, null, 2) + '\n');
+  console.log(
+    sources.length
+      ? `Fetched ${sources.length} official notices for ${year}.`
+      : `No notices found for ${year}.`
+  );
+  if (process.env.GITHUB_OUTPUT)
+    fs.appendFileSync(
+      process.env.GITHUB_OUTPUT,
+      `found=${sources.length > 0}\nsources=${file}\n`
+    );
+}
+if (require.main === module)
+  main().catch(error => {
+    console.error(error.message);
+    process.exitCode = 1;
+  });

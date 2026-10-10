@@ -22,6 +22,8 @@
     "build": "tsc && vite build && ts-node scripts/build-json.ts && ts-node scripts/build-ics.ts",
     "fetch": "ts-node scripts/fetch.ts",
     "auto-update": "ts-node scripts/auto-update-holidays.ts",
+    "check:scripts": "tsc -p tsconfig.scripts.json",
+    "test:ai": "ts-node scripts/test-ai-holidays.ts",
     "test": "jest",
     "lint": "eslint . --ext .ts,.js --fix",
     "lint:check": "eslint . --ext .ts,.js",
