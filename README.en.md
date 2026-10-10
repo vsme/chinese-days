@@ -8,7 +8,7 @@ This project provides a series of functions for querying Chinese holidays, adjus
 
 ## Automation
 
-AI-powered automatic holiday data updates have been integrated. When holiday schedules change, it will automatically create a PR and send email notifications for review.
+Automation only appends the year after the latest recorded year; existing years are skipped. AI extracts official notice facts and proposes in-lieu dates with explanations. Statutory dates, compensatory rest and calendar conflicts are validated automatically, with correction retries before creating a regular PR. No per-year manual rules or in-lieu confirmation step is required. Email is sent only when the PR changes. The existing `.r()`, `.w()`, and `.i()` format is preserved.
 
 ## Documentation
 
@@ -51,4 +51,3 @@ For example, in `Java`, you can refer to [Warnier-zhang/java-chinese-days](https
 1. Lunar calendar data is sourced from the [Bigkoo/Android-PickerView](https://github.com/Bigkoo/Android-PickerView) project.
 2. Chinese holiday data generation references the `Python` version of the [LKI/chinese-calendar](https://github.com/LKI/chinese-calendar) project.
 3. Thank you for the recommendation from [Mr. Ruan Yifeng](https://github.com/ruanyf/weekly/blob/master/docs/issue-372.md#%E5%B7%A5%E5%85%B7).
-
