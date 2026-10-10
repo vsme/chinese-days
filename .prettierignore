@@ -73,3 +73,6 @@ Thumbs.db
 
 # Generated files
 CHANGELOG.md
+
+# Keep each holiday's arrangement chain on one line.
+src/holidays/generate.ts
