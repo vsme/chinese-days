@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [1.5.10](https://github.com/vsme/chinese-days/releases/tag/v1.5.10) (2026-11-05)
+
+- 新增 2027 年节假日安排（[#50](https://github.com/vsme/chinese-days/pull/50)）。
+
 ## [1.5.9](https://github.com/vsme/chinese-days) (2026-06-02)
 
 - fix: 修复 [#40](https://github.com/vsme/chinese-days/issues/40) 中1989年4月16/17日的农历日错误
