@@ -32,6 +32,9 @@ jobs:
        startsWith(github.event.pull_request.head.ref, 'auto-update-holidays-'))
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      version: ${{ steps.target.outputs.version }}
+      published: ${{ github.event_name != 'pull_request' && steps.target.outputs.enabled == 'true' }}
     permissions:
       contents: write
       pull-requests: read
@@ -190,3 +193,21 @@ jobs:
               await github.rest.repos.createRelease({...context.repo, tag_name: tag, name: tag, draft: false, prerelease: false,
                 body: `Published to npm. See [CHANGELOG.md](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/${tag}/CHANGELOG.md).`});
             }
+
+  refresh-cdn:
+    name: Refresh jsDelivr
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    uses: ./.github/workflows/refresh-cdn.yml
+    with:
+      version: ${{ needs.release.outputs.version }}
+
+  deploy-docs:
+    name: Update documentation
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    uses: ./.github/workflows/deploy-docs.yml
+    with:
+      version: ${{ needs.release.outputs.version }}
+    permissions:
+      contents: write

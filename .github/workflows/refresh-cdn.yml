@@ -1,0 +1,48 @@
+name: Refresh jsDelivr
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/refresh-cdn.yml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Published npm version to refresh, e.g. 1.5.10'
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refresh-jsdelivr
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Resolve refresh version
+        id: version
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+        run: |
+          VERSION="${REQUESTED_VERSION:-$(node -p "require('./package.json').version")}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Refresh unversioned and latest CDN URLs
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: node .github/scripts/purge-jsdelivr.cjs

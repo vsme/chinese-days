@@ -89,7 +89,7 @@ node --env-file=.env -r ts-node/register scripts/test-ai-holidays.ts 2026
 2. 核对合并后的年份数据与 AI 校验记录一致，再将 `package.json`、`package-lock.json` 的 patch 版本加一（例如 `1.5.9 → 1.5.10`），更新 `CHANGELOG.md`。
 3. 写入 `data/holiday-releases/年份.json` 发布记录，运行类型检查、测试、构建及 npm 打包预检。
 4. 使用现有 `PAT_TOKEN` 将版本提交与 `v版本号` 标签一起原子推送。推送冲突会失败，不能只推送标签或覆盖并发的 `main` 更新。
-5. 标签触发同一个 `publish.yml` 的发布运行，使用 npm OIDC 认证发布；npm 成功后再创建 GitHub Release。
+5. 标签触发同一个 `publish.yml` 的发布运行，使用 npm OIDC 认证发布；npm 成功后再创建 GitHub Release，并自动刷新 jsDelivr 缓存、部署文档网站。
 
 合并视为审核完成信号；仅审批但尚未合并不会发布。测试 PR、未合并就关闭的 PR、其他分支和夹带其他文件修改的 PR 都不会自动升版本。测试模式不会发布 npm。
 
@@ -100,3 +100,8 @@ node --env-file=.env -r ts-node/register scripts/test-ai-holidays.ts 2026
 如果标签已创建而 npm 发布失败，直接重跑失败的标签工作流；也可以手动运行 `Node.js Package` 并填写已有标签（如 `v1.5.10`）。手动推送 `v*` 标签的原有发布方式仍然保留。
 
 发布逻辑的测试使用临时 Git 仓库，验证版本号/锁文件同步、幂等重试、标签冲突、并发推送失败，以及 npm registry 的重复版本和 `latest` 保护。CI 的 `npm pack --dry-run` 仅检查打包内容，不发布测试版本。
+
+
+发布成功后，两个独立任务会分别刷新 jsDelivr 和更新文档，缓存刷新失败不会阻止文档部署。刷新范围包括无版本号与 `@latest` 的包入口、`package.json` 和所有 `dist` 文件（含各年份 JSON、ICS）；固定版本链接不需要刷新。先等待 npm 可读取确切版本（最多 10 次、间隔 30 秒），再等待 60 秒刷新 CDN；接口异常会重试，刷新后还会核对 CDN 的包版本（最多 5 次、间隔 60 秒）。持续失败会将刷新任务标记为失败，可单独重跑。
+
+文档工作流安装本次发布的确切 npm 版本后重新构建，部署到 `chinese-days.yaavi.me`，避免沿用锁文件中的旧版本；npm 同步延迟导致安装失败时最多重试 10 次、间隔 30 秒。仍可手动运行 `Deploy GitHub Pages`，此时安装 npm `latest`。更改工作流后，需要推送到 GitHub 才会生效；修改缓存刷新或文档部署工作流并推送到 `main` 时，会自动按仓库版本补跑对应任务。也可以手动运行 `Refresh jsDelivr` 或 `Deploy GitHub Pages` 并填写已发布版本。

@@ -1,41 +1,79 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Deploy GitHub Pages
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  # push:
-  #   tags:
-  #     - "v*"
-
-  # Allows you to run this workflow manually from the Actions tab on GitHub.
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-docs.yml'
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Published npm version (leave latest for the newest release)'
+        default: latest
+        type: string
+  workflow_call:
+    inputs:
+      version:
+        description: 'Exact npm version published by the release workflow'
+        required: true
+        type: string
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-docs
+  cancel-in-progress: false
+
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    timeout-minutes: 15
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout code
+      - name: Checkout documentation
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          ref: main
 
-      - name: Install dependencies
-        run: npm install
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
+
+      - name: Install documentation dependencies
+        run: npm ci
         working-directory: ./docs
 
-      - name: Run build site
+      - name: Resolve documentation version
+        id: version
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+        run: |
+          VERSION="${REQUESTED_VERSION:-$(node -p "require('./package.json').version")}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Install the published package
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          for attempt in {1..10}; do
+            if npm install --no-save --package-lock=false --prefer-online "chinese-days@$RELEASE_VERSION"; then
+              INSTALLED_VERSION=$(node -p "require('chinese-days/package.json').version")
+              if [ "$RELEASE_VERSION" = latest ] || [ "$INSTALLED_VERSION" = "$RELEASE_VERSION" ]; then
+                exit 0
+              fi
+            fi
+            if [ "$attempt" -eq 10 ]; then
+              echo 'Published package is still unavailable after retries.' >&2
+              exit 1
+            fi
+            echo 'Waiting 30 seconds for npm registry propagation...'
+            sleep 30
+          done
+        working-directory: ./docs
+
+      - name: Build documentation
         run: npm run build
         working-directory: ./docs
 
@@ -44,3 +82,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/.vitepress/dist
+          cname: chinese-days.yaavi.me
