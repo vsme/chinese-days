@@ -40,6 +40,8 @@ For example, in `Java`, you can refer to [Warnier-zhang/java-chinese-days](https
 
 ## Contributing
 
+After changing lunar dates or solar terms, run `npm run check:calendars` to verify the source against both observatories’ calendars. [Coverage, known differences and reference data](scripts/calendar-audit/README.md)
+
 1. Fork + Clone the project to your local machine;
 2. Holidays: Modify the [holiday definitions](https://github.com/vsme/chinese-days/blob/main/src/holidays/generate.ts);
 3. Lunar definitions: Modify the [lunar definitions](https://github.com/vsme/chinese-days/blob/main/src/solar_lunar/constants.ts);

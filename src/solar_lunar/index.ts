@@ -9,6 +9,9 @@ import {
   ZODIACS,
 } from './constants';
 
+// 农历年表从 1900 年正月开始。公历 1900 年 1 月 1 日是上一农历年的腊月初一。
+const precedingMonth = { year: 1899, month: 12, days: 30 } as const;
+
 /**
  * 获取指定农历年的天数
  * @param y 年份
@@ -51,8 +54,11 @@ const cyclicalm = (num: number): string =>
  * @param m 农历月份
  * @returns 月份天数
  */
-export const monthDays = (y: number, m: number): number =>
-  (LUNAR_INFO[y - 1900] & (0x10000 >> m)) === 0 ? 29 : 30;
+export const monthDays = (y: number, m: number): number => {
+  if (y === precedingMonth.year && m === precedingMonth.month)
+    return precedingMonth.days;
+  return (LUNAR_INFO[y - 1900] & (0x10000 >> m)) === 0 ? 29 : 30;
+};
 
 /**
  * 获取指定年份的生肖
@@ -125,92 +131,107 @@ export const getYearLeapMonth = (year: number) => {
   };
 };
 
+// offset 为距 1900 年正月初一（公历 1 月 31 日）的天数。
+const lunarPartsFromOffset = (offset: number) => {
+  let monthCycle = 14; // 1900 年正月为戊寅月
+  if (offset < 0 && offset >= -precedingMonth.days) {
+    return {
+      lunarYear: precedingMonth.year,
+      lunarMon: precedingMonth.month,
+      lunarDay: offset + precedingMonth.days + 1,
+      isLeap: false,
+      monthCycle: monthCycle - 1,
+    };
+  }
+  let temp = 0;
+  let i = 1900;
+  for (; i < 2100 && offset > 0; i++) {
+    temp = lunarYearDays(i);
+    offset -= temp;
+    monthCycle += 12; // 每经过一年增加12个月柱
+  }
+
+  if (offset < 0) {
+    offset += temp;
+    i--;
+    monthCycle -= 12;
+  }
+
+  const leap = yearLeapMonth(i); // 闰哪个月
+  let isLeap = false;
+  let monthIndex = 0;
+
+  for (let j = 1; j < 13 && offset >= 0; j++) {
+    if (leap > 0 && j === leap + 1 && !isLeap) {
+      --j;
+      isLeap = true;
+      temp = yearLeapDays(i);
+    } else {
+      temp = monthDays(i, j);
+    }
+
+    if (isLeap && j === leap + 1) {
+      isLeap = false;
+    }
+
+    offset -= temp;
+    if (!isLeap) {
+      monthCycle++;
+    }
+
+    monthIndex = j; // 农历月份
+  }
+
+  if (offset < 0) {
+    offset += temp;
+    monthIndex--;
+    monthCycle--;
+  }
+
+  return {
+    lunarYear: i,
+    lunarMon: monthIndex + 1,
+    lunarDay: offset + 1,
+    isLeap,
+    monthCycle,
+  };
+};
+
 /**
  * 计算指定日期的农历元素
  * @param date 指定日期
  * @returns 农历信息
  */
 export const getLunarDate = (date: ConfigType): LunarDateDetail => {
-  const lunarDate: number[] = new Array(7).fill(0);
-  let temp = 0;
-  let leap = 0;
   const objDate = dayjs(date);
   const [year, month, day] = objDate
     .format('YYYY-MM-DD')
     .split('-')
     .map(Number);
-  let offset = Math.floor(
+  const offset = Math.floor(
     (Date.UTC(year, month - 1, day) - Date.UTC(1900, 0, 31)) /
       (24 * 60 * 60 * 1000)
   );
 
-  lunarDate[5] = offset + 40; // 日柱，从1900-01-31开始的天数计算
-  lunarDate[4] = 14; // 月柱，从1900-01-31开始的月数计算
-
-  let i = 1900;
-  for (; i < 2100 && offset > 0; i++) {
-    temp = lunarYearDays(i);
-    offset -= temp;
-    lunarDate[4] += 12; // 每经过一年增加12个月柱
-  }
-
-  if (offset < 0) {
-    offset += temp;
-    i--;
-    lunarDate[4] -= 12;
-  }
-
-  lunarDate[0] = i; // 农历年份
-  lunarDate[3] = i - 1864; // 年柱，甲子从1864年开始
-  leap = yearLeapMonth(i); // 闰哪个月
-  lunarDate[6] = 0; // 闰月标记，初始为0
-
-  for (let j = 1; j < 13 && offset >= 0; j++) {
-    if (leap > 0 && j === leap + 1 && lunarDate[6] === 0) {
-      --j;
-      lunarDate[6] = 1;
-      temp = yearLeapDays(i);
-    } else {
-      temp = monthDays(i, j);
-    }
-
-    if (lunarDate[6] === 1 && j === leap + 1) {
-      lunarDate[6] = 0;
-    }
-
-    offset -= temp;
-    if (lunarDate[6] === 0) {
-      lunarDate[4]++;
-    }
-
-    lunarDate[1] = j; // 农历月份
-  }
-
-  if (offset < 0) {
-    offset += temp;
-    lunarDate[1]--;
-    lunarDate[4]--;
-  }
-
-  lunarDate[2] = offset + 1; // 农历日期
-
+  const { lunarYear, lunarMon, lunarDay, isLeap, monthCycle } =
+    lunarPartsFromOffset(offset);
   return {
     date: objDate.format('YYYY-MM-DD'), // 公历日期
-    lunarYear: lunarDate[0], // 农历年份
-    lunarMon: lunarDate[1] + 1, // 农历月份
-    lunarDay: lunarDate[2], // 农历日期
-    isLeap: Boolean(lunarDate[6]), // 是否闰月
-    zodiac: getYearZodiac(lunarDate[0]), // 生肖
-    yearCyl: cyclicalm(lunarDate[3]), // 年柱
-    monCyl: cyclicalm(lunarDate[4]), // 月柱
-    dayCyl: cyclicalm(lunarDate[5]), // 日柱
-    lunarYearCN: `${lunarDate[0]
+    lunarYear, // 农历年份
+    lunarMon, // 农历月份
+    lunarDay, // 农历日期
+    isLeap, // 是否闰月
+    zodiac: getYearZodiac(lunarYear), // 生肖
+    yearCyl: cyclicalm(lunarYear - 1864), // 年柱
+    monCyl: cyclicalm(monthCycle), // 月柱
+    dayCyl: cyclicalm(offset + 40), // 日柱
+    lunarYearCN: `${lunarYear
       .toString()
       .split('')
       .map(i => CHINESE_NUMBER[Number(i)])
       .join('')}`, // 农历年份中文表示
-    lunarMonCN: `${NUMBER_MONTH[lunarDate[1]]}月`, // 农历月份中文表示
-    lunarDayCN: getDateCN(lunarDate[2]), // 农历日期中文表示
+    lunarMonCN: `${NUMBER_MONTH[lunarMon - 1]}月`, // 农历月份中文表示
+    lunarDayCN: getDateCN(lunarDay), // 农历日期中文表示
   };
 };
 
@@ -242,19 +263,42 @@ export const getLunarDatesInRange = (
 /**
  * 根据阴历日期查询阳历日期
  * @param lunarDate 农历日期
- * @param isLeapMonth 是否闰月
  * @returns 阳历日期
  */
 export const getSolarDateFromLunar = (
   lunarDate: ConfigType
 ): {
-  date: string;
+  /** 优先普通月，只有闰月有效时返回闰月日期。 */
+  date: string | undefined;
+  /** date 是否取自闰月；无有效日期时为 false。 */
+  isLeap: boolean;
   leapMonthDate?: string;
 } => {
-  const date = dayjs(lunarDate);
-  const lunarYear = date.year();
-  const lunarMonth = date.month() + 1;
-  const lunarDay = date.date();
+  // 农历二月可有三十天，日期字符串须保留原始年月日。
+  const input = typeof lunarDate === 'string' ? lunarDate.trim() : lunarDate;
+  const dateText =
+    typeof input === 'string' && /^\d{4}[-/]\d{1,2}[-/]\d{1,2}$/.test(input)
+      ? input
+      : dayjs(input).format('YYYY-MM-DD');
+  const [lunarYear, lunarMonth, lunarDay] = dateText.split(/[-/]/).map(Number);
+  if (
+    lunarYear === precedingMonth.year &&
+    lunarMonth === precedingMonth.month &&
+    lunarDay >= 1 &&
+    lunarDay <= precedingMonth.days
+  ) {
+    return {
+      date: dayjs(new Date(1900, 0, lunarDay)).format('YYYY-MM-DD'),
+      isLeap: false,
+      leapMonthDate: undefined,
+    };
+  }
+  if (
+    !LUNAR_INFO[lunarYear - 1900] ||
+    !(lunarMonth >= 1 && lunarMonth <= 12 && lunarDay >= 1 && lunarDay <= 30)
+  ) {
+    return { date: undefined, isLeap: false, leapMonthDate: undefined };
+  }
 
   // 计算从农历年开始到指定农历日期的总天数
   let offset = 0;
@@ -274,21 +318,19 @@ export const getSolarDateFromLunar = (
 
   // 通过在基准日期上添加偏移量来获取阳历日期
   const baseDate = dayjs(new Date(1900, 0, 31));
-  const solarDate = baseDate.add(offset, 'day').format('YYYY-MM-DD');
-
-  /* 闰月日期 */
-  let leapMonthDateOffset = offset;
-  let solarLeapMonthDate: string | undefined;
-  if (leapMonth === lunarMonth) {
-    leapMonthDateOffset += monthDays(lunarYear, lunarMonth);
-    solarLeapMonthDate = baseDate
-      .add(leapMonthDateOffset, 'day')
-      .format('YYYY-MM-DD');
-  }
-
+  const regularDays = monthDays(lunarYear, lunarMonth);
+  const regularDate =
+    lunarDay <= regularDays
+      ? baseDate.add(offset, 'day').format('YYYY-MM-DD')
+      : undefined;
+  const leapMonthDate =
+    leapMonth === lunarMonth && lunarDay <= yearLeapDays(lunarYear)
+      ? baseDate.add(offset + regularDays, 'day').format('YYYY-MM-DD')
+      : undefined;
   return {
-    date: solarDate,
-    leapMonthDate: solarLeapMonthDate,
+    date: regularDate ?? leapMonthDate,
+    isLeap: regularDate === undefined && leapMonthDate !== undefined,
+    leapMonthDate,
   };
 };
 

@@ -12,6 +12,65 @@ import {
 } from '../../src/solar_terms/constants';
 
 describe('Solar Terms', () => {
+  // 香港天文台公历与农历对照表。1900 年采用日本国立天文台节气时刻换算至 UTC+8。
+  test.each<[string, SolarTermKey]>([
+    ['1900-01-06', 'lesser_cold'],
+    ['1900-02-04', 'the_beginning_of_spring'],
+    ['1900-02-19', 'rain_water'],
+    ['1914-02-04', 'the_beginning_of_spring'],
+    ['1914-12-23', 'the_winter_solstice'],
+    ['1915-03-06', 'the_waking_of_insects'],
+    ['1918-12-22', 'the_winter_solstice'],
+    ['1947-02-04', 'the_beginning_of_spring'],
+    ['1947-12-23', 'the_winter_solstice'],
+    ['1948-03-05', 'the_waking_of_insects'],
+    ['1951-12-23', 'the_winter_solstice'],
+    ['1954-12-07', 'greater_snow'],
+    ['1979-01-21', 'greater_cold'],
+    ['1980-12-22', 'the_winter_solstice'],
+    ['1984-12-22', 'the_winter_solstice'],
+    ['1985-08-07', 'the_beginning_of_autumn'],
+    ['2000-01-21', 'greater_cold'],
+    ['2084-03-19', 'the_spring_equinox'],
+    ['2100-01-05', 'lesser_cold'],
+    ['2100-01-20', 'greater_cold'],
+    ['2100-02-18', 'rain_water'],
+    ['2100-04-05', 'pure_brightness'],
+    ['2100-07-23', 'greater_heat'],
+    ['2100-12-22', 'the_winter_solstice'],
+  ])('%s 应为 %s', (date, term) => {
+    expect(getSolarTerms(date)).toEqual([
+      { date, term, name: SOLAR_TERMS[term], index: 1 },
+    ]);
+  });
+
+  // 紫金山天文台《1900—2025年日历》正文与旧历书异日的六个节气。
+  test.each<[string, string, SolarTermKey]>([
+    ['1912-11-22', '1912-11-23', 'lesser_snow'],
+    ['1913-09-23', '1913-09-24', 'the_autumn_equinox'],
+    ['1917-12-08', '1917-12-07', 'greater_snow'],
+    ['1923-02-20', '1923-02-19', 'rain_water'],
+    ['1927-09-09', '1927-09-08', 'white_dew'],
+    ['1928-06-22', '1928-06-21', 'the_summer_solstice'],
+  ])('正文交节日 %s 与旧历书日期 %s', (date, historicalDate, term) => {
+    const expected = [{ date, term, name: SOLAR_TERMS[term], index: 1 }];
+    expect(getSolarTerms(date)).toEqual(expected);
+    expect(getSolarTerms(historicalDate)).toEqual([]);
+    expect(getSolarTermsInRange(date)).toEqual(expected);
+  });
+
+  test('1985 年立秋至处暑的日期连续，每天只属于一个节气', () => {
+    const days = getSolarTermsInRange('1985-08-07', '1985-08-23');
+    expect(days).toEqual(
+      Array.from({ length: 17 }, (_, i) => ({
+        date: dayjs('1985-08-07').add(i, 'day').format('YYYY-MM-DD'),
+        ...(i < 16
+          ? { name: '立秋', term: 'the_beginning_of_autumn', index: i + 1 }
+          : { name: '处暑', term: 'the_end_of_heat', index: 1 }),
+      }))
+    );
+  });
+
   describe('getSolarTermDate', () => {
     const testCases = [
       {
@@ -50,7 +109,7 @@ describe('Solar Terms', () => {
         year: 1900,
         month: 1,
         term: 'greater_cold' as SolarTermKey,
-        expected: '1900-01-21',
+        expected: '1900-01-20',
         century: 20,
         desc: '大寒 1900 (1月节气使用(Y-1)/4逻辑)',
       },

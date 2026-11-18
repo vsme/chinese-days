@@ -6,6 +6,19 @@ For example, the solar term **"Lesser Fullness of Grain" (小满)** begins aroun
 
 ---
 
+## Solar term dates
+
+Solar terms begin on the Beijing calendar date (UTC+8) of the event. Where the Purple Mountain Observatory lists different dates in its main table and its historical almanac notes, this library follows the main table. The six dates below differ from the Hong Kong Observatory tables for 1901–2100. [Purple Mountain Observatory calendar, 1900–2025](https://www.pmo.cas.cn/xwdt2019/kpdt2019/202203/P020250414456381274062.pdf) · [Hong Kong Observatory tables](https://www.hko.gov.hk/en/gts/time/conversion.htm)
+
+| Solar term | Library (Purple Mountain Observatory main table) | Hong Kong Observatory |
+| --- | --- | --- |
+| Light Snow | 1912-11-22 | 1912-11-23 |
+| Autumnal Equinox | 1913-09-23 | 1913-09-24 |
+| Heavy Snow | 1917-12-08 | 1917-12-07 |
+| Rain Water | 1923-02-20 | 1923-02-19 |
+| White Dew | 1927-09-09 | 1927-09-08 |
+| Summer Solstice | 1928-06-22 | 1928-06-21 |
+
 ## Retrieve Dates of the 24 Solar Terms
 
 ### Get Solar Term Dates Within a Range

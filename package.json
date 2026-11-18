@@ -1,6 +1,6 @@
 {
   "name": "chinese-days",
-  "version": "1.5.10",
+  "version": "2.0.0",
   "description": "中国节假日、调休日、工作日、24节气查询，农历阳历互转，支持 TS、CommonJS、UMD 模块化使用，提供 ics 日历格式，可供 Google Calendar、Apple Calendar、Microsoft Outlook 等客户端订阅。",
   "main": "dist/index.min.js",
   "module": "dist/index.es.js",
@@ -22,6 +22,7 @@
     "build": "tsc && vite build && ts-node scripts/build-json.ts && ts-node scripts/build-ics.ts",
     "fetch": "ts-node scripts/fetch.ts",
     "auto-update": "ts-node scripts/auto-update-holidays.ts",
+    "check:calendars": "ts-node scripts/calendar-audit/check.ts",
     "check:scripts": "tsc -p tsconfig.scripts.json",
     "test:ai": "ts-node scripts/test-ai-holidays.ts",
     "test:notification": "ts-node scripts/test-holiday-notification.ts",

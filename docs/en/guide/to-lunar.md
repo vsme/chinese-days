@@ -1,11 +1,13 @@
 # Gregorian to Lunar Calendar Conversion
 
+January 1–30, 1900 corresponds to days 1–30 of the twelfth lunar month of 1899. January 31 is the first day of lunar year 1900.
+
 ::: info Tip
 The lunar calendar, also known as the Chinese calendar, is referred to as the "Lunar Calendar" in this project.
 :::
 
 ::: info Special Notes
-1. `2057-09-28` corresponds to the Lunar Calendar date: Ding Chou (Ox) Year, Eighth Month, Thirtieth Day;
+1. `2057-09-28` corresponds to the Lunar Calendar date: Ding Chou (Ox) Year, Ninth Month, First Day;
 2. `2097-08-07` corresponds to the Lunar Calendar date: Ding Si (Snake) Year, Seventh Month, First Day.
 :::
 
@@ -20,14 +22,14 @@ console.log(getLunarDate('2057-09-28'));
 // {
 //   date: "2057-09-28",
 //   lunarYear: 2057,
-//   lunarMon: 8,
-//   lunarDay: 30,
+//   lunarMon: 9,
+//   lunarDay: 1,
 //   isLeap: false,
-//   lunarDayCN: "三十",
-//   lunarMonCN: "八月",
+//   lunarDayCN: "初一",
+//   lunarMonCN: "九月",
 //   lunarYearCN: "二零五七",
 //   yearCyl: "丁丑",
-//   monCyl: "己酉",
+//   monCyl: "庚戌",
 //   dayCyl: "戊子",
 //   zodiac: "牛"
 // }

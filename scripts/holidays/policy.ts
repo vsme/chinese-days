@@ -40,7 +40,14 @@ export function holidayPolicy(year: number) {
   ) as Record<StandardHoliday, number>;
   const consecutive = (start: string, count: number) =>
     Array.from({ length: count }, (_, offset) => shift(start, offset));
-  const firstDay = getSolarDateFromLunar(`${year}-01-01`).date;
+  const regularLunarDate = (monthDay: string) => {
+    const lunarDate = `${year}-${monthDay}`;
+    const { date, isLeap } = getSolarDateFromLunar(lunarDate);
+    if (!date || isLeap)
+      throw new Error(`Missing regular lunar holiday date: ${lunarDate}`);
+    return date;
+  };
+  const firstDay = regularLunarDate('01-01');
   const statutory: Record<StandardHoliday, string[]> = {
     ny: consecutive(`${year}-01-01`, standardDays.ny),
     s: consecutive(shift(firstDay, expanded ? -1 : 0), standardDays.s),
@@ -49,9 +56,9 @@ export function holidayPolicy(year: number) {
       standardDays.t
     ),
     l: consecutive(`${year}-05-01`, standardDays.l),
-    d: consecutive(getSolarDateFromLunar(`${year}-05-05`).date, standardDays.d),
+    d: consecutive(regularLunarDate('05-05'), standardDays.d),
     n: consecutive(`${year}-10-01`, standardDays.n),
-    m: consecutive(getSolarDateFromLunar(`${year}-08-15`).date, standardDays.m),
+    m: consecutive(regularLunarDate('08-15'), standardDays.m),
   };
   return {
     effectiveFrom: expanded ? '2025-01-01' : '2014-01-01',

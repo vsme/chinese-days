@@ -44,6 +44,8 @@ For English: [https://cdn.jsdelivr.net/npm/chinese-days/dist/holidays.en.ics](ht
 
 ## 贡献代码
 
+修改农历或节气数据后，运行 `npm run check:calendars` 逐日核对紫金山天文台和香港天文台历表。[核对范围、港表已知差异及基准更新方法](scripts/calendar-audit/README.md)
+
 1. Fork + Clone 项目到本地；
 2. 节假日: 修改 [节假日定义](https://github.com/vsme/chinese-days/blob/main/src/holidays/generate.ts)；
 3. 农历定义: 修改 [农历定义](https://github.com/vsme/chinese-days/blob/main/src/solar_lunar/constants.ts)；
