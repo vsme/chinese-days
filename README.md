@@ -14,7 +14,7 @@
 
 配置格式保持 `.r()`、`.w()`、`.i()`，详细流程及自动校验规则见[贡献指南](docs/zh/guide/contributing.md#自动生成新年份)。
 
-参考PR：[#31 自动更新 2025 年假期配置](https://github.com/vsme/chinese-days/pull/31)
+2027 年节假日更新 PR 列出了官方公告原文，并逐个节日说明了补假、补班和调休日的判定依据。[查看自动生成的 PR #50](https://github.com/vsme/chinese-days/pull/50)
 
 ## 文档
 

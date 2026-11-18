@@ -10,6 +10,8 @@ This project provides a series of functions for querying Chinese holidays, adjus
 
 Automation only appends the year after the latest recorded year; existing years are skipped. AI extracts official notice facts and proposes in-lieu dates with explanations. Statutory dates, compensatory rest and calendar conflicts are validated automatically, with correction retries before creating a regular PR. No per-year manual rules or in-lieu confirmation step is required. Email is sent only when the PR changes. The existing `.r()`, `.w()`, and `.i()` format is preserved. Merging a production holiday PR into `main` automatically increments the patch version, creates a version tag and publishes to npm. Test PRs do not trigger a release.
 
+The 2027 holiday update quotes the official notice and explains how compensatory days off, makeup workdays and days off in lieu were identified for each holiday. [View the automatically generated PR #50](https://github.com/vsme/chinese-days/pull/50)
+
 ## Documentation
 
 To check out docs, visit [chinese-days.yaavi.me](https://chinese-days.yaavi.me/en/).
