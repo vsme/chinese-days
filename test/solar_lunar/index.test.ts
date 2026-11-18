@@ -8,6 +8,80 @@ import {
 } from '../../src';
 
 describe('solar_lunar', () => {
+  test('1900 年春节前的三十天逐日双向转换，春节当天进入庚子年正月', () => {
+    const january = getLunarDatesInRange('1900-01-01', '1900-01-31');
+    expect(january).toHaveLength(31);
+    expect(monthDays(1899, 12)).toBe(30);
+    for (let day = 1; day <= 30; day++) {
+      const dd = String(day).padStart(2, '0');
+      expect(january[day - 1]).toMatchObject({
+        date: `1900-01-${dd}`,
+        lunarYear: 1899,
+        lunarMon: 12,
+        lunarDay: day,
+        isLeap: false,
+        yearCyl: '己亥',
+        monCyl: '丁丑',
+        lunarMonCN: '腊月',
+      });
+      expect(getSolarDateFromLunar(`1899-12-${dd}`)).toStrictEqual({
+        date: `1900-01-${dd}`,
+        isLeap: false,
+        leapMonthDate: undefined,
+      });
+    }
+    expect(january[0]).toMatchObject({ dayCyl: '甲戌', lunarDayCN: '初一' });
+    expect(january[29]).toMatchObject({ dayCyl: '癸卯', lunarDayCN: '三十' });
+    expect(january[30]).toMatchObject({
+      lunarYear: 1900,
+      lunarMon: 1,
+      lunarDay: 1,
+      dayCyl: '甲辰',
+    });
+    expect(getSolarDateFromLunar('1900-01-01').date).toBe('1900-01-31');
+    for (const invalid of ['1899-11-30', '1899-12-00', '1899-12-31']) {
+      expect(getSolarDateFromLunar(invalid)).toStrictEqual({
+        date: undefined,
+        isLeap: false,
+        leapMonthDate: undefined,
+      });
+    }
+  });
+
+  // 香港天文台年历中的月界，同时检查发生偏移的月份和下一月。
+  test.each([
+    ['1933-07-23', '1933-06-01'],
+    ['1933-08-21', '1933-07-01'],
+    ['1996-07-16', '1996-06-01'],
+    ['1996-08-14', '1996-07-01'],
+    ['1996-09-13', '1996-08-01'],
+    ['1996-10-12', '1996-09-01'],
+    ['2057-09-28', '2057-09-01'],
+    ['2057-10-28', '2057-10-01'],
+    ['2060-04-30', '2060-04-01'],
+    ['2060-05-30', '2060-05-01'],
+  ])('公历 %s 与农历 %s 双向转换', (solar, lunar) => {
+    const [lunarYear, lunarMon, lunarDay] = lunar.split('-').map(Number);
+    expect(getLunarDate(solar)).toMatchObject({
+      lunarYear,
+      lunarMon,
+      lunarDay,
+      isLeap: false,
+    });
+    expect(getSolarDateFromLunar(lunar).date).toBe(solar);
+  });
+
+  test('1933 年六月前一天为闰五月三十', () => {
+    expect(getLunarDate('1933-07-22')).toMatchObject({
+      lunarMon: 5,
+      lunarDay: 30,
+      isLeap: true,
+    });
+    expect(getSolarDateFromLunar('1933-05-30').leapMonthDate).toBe(
+      '1933-07-22'
+    );
+  });
+
   describe('getLunarDate', () => {
     const testCases = [
       {
@@ -29,19 +103,19 @@ describe('solar_lunar', () => {
         },
       },
       {
-        solarDate: '2057-09-28', // 案例：普通日期，某月第30天
-        desc: '2057年八月三十日（普通日期）',
+        solarDate: '2057-09-28', // 案例：普通日期，九月初一
+        desc: '2057年九月初一日（普通日期）',
         expected: {
           date: '2057-09-28',
           lunarYear: 2057,
-          lunarMon: 8,
-          lunarDay: 30,
+          lunarMon: 9,
+          lunarDay: 1,
           isLeap: false,
-          lunarDayCN: '三十',
-          lunarMonCN: '八月',
+          lunarDayCN: '初一',
+          lunarMonCN: '九月',
           lunarYearCN: '二零五七',
           yearCyl: '丁丑',
-          monCyl: '己酉',
+          monCyl: '庚戌',
           dayCyl: '戊子',
           zodiac: '牛',
         },
@@ -195,26 +269,74 @@ describe('solar_lunar', () => {
   });
 
   describe('getSolarDateFromLunar', () => {
+    test.each<[string, string | undefined, string | undefined, boolean]>([
+      ['1901-02-29', '1901-04-17', undefined, false],
+      ['1901-2-30', '1901-04-18', undefined, false],
+      ['1901/02/30', '1901-04-18', undefined, false],
+      ['1909-02-29', '1909-03-20', '1909-04-19', false],
+      ['1906-04-30', '1906-06-21', '1906-06-21', true],
+      ['1911-06-30', '1911-07-25', undefined, false],
+      ['1902-02-30', undefined, undefined, false],
+      ['1901-02-00', undefined, undefined, false],
+      ['1901-13-01', undefined, undefined, false],
+    ])(
+      '农历 %s 只返回实际存在的普通月和闰月日期',
+      (input, date, leapMonthDate, isLeap) => {
+        expect(getSolarDateFromLunar(input)).toStrictEqual({
+          date,
+          leapMonthDate,
+          isLeap,
+        });
+      }
+    );
+
+    test('Date 和时间戳仍按本地年月日反查', () => {
+      const date = new Date(2001, 3, 5);
+      for (const input of [date, date.getTime()]) {
+        expect(getSolarDateFromLunar(input)).toEqual({
+          date: '2001-04-27',
+          isLeap: false,
+          leapMonthDate: '2001-05-27',
+        });
+      }
+    });
+
     const testCases = [
       {
         lunarDate: '2001-03-05', // 查询非闰月，且该年此月份不是闰月
         desc: '2001年非闰三月（该年有闰四月）',
-        expected: { date: '2001-03-29', leapMonthDate: undefined },
+        expected: {
+          date: '2001-03-29',
+          isLeap: false,
+          leapMonthDate: undefined,
+        },
       },
       {
         lunarDate: '2001-04-05', // 查询某月，且该年此月份恰好是闰月
         desc: '查询本身是闰月的月份，2001年（闰四月）',
-        expected: { date: '2001-04-27', leapMonthDate: '2001-05-27' }, // date 是普通四月的日期，leapMonthDate 是闰四月的日期
+        expected: {
+          date: '2001-04-27',
+          isLeap: false,
+          leapMonthDate: '2001-05-27',
+        }, // date 是普通四月的日期，leapMonthDate 是闰四月的日期
       },
       {
         lunarDate: '2020-05-01',
         desc: '查询本身是闰月的月份，2020年（闰四月）- 针对 line 239',
-        expected: { date: '2020-06-21', leapMonthDate: undefined },
+        expected: {
+          date: '2020-06-21',
+          isLeap: false,
+          leapMonthDate: undefined,
+        },
       },
       {
         lunarDate: '2022-02-15', // 2022年无闰月
         desc: '查询某月，2022年（无闰月）',
-        expected: { date: '2022-03-17', leapMonthDate: undefined },
+        expected: {
+          date: '2022-03-17',
+          isLeap: false,
+          leapMonthDate: undefined,
+        },
       },
     ];
     test.each(testCases)(

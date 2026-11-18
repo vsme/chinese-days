@@ -2,6 +2,12 @@ import { getLunarFestivals } from '../../src';
 import dayjs from '../../src/utils/dayjs';
 
 describe('lunarFestivals', () => {
+  test('1996 年中秋节为 9 月 27 日', () => {
+    expect(getLunarFestivals('1996-09-26', '1996-09-27')).toEqual([
+      { date: '1996-09-27', name: ['中秋节'] },
+    ]);
+  });
+
   test('getLunarFestivals should return fixed lunar festivals', () => {
     // 测试常规固定节日
     const result = getLunarFestivals('2025-01-29');

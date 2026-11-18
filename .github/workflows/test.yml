@@ -29,6 +29,9 @@ jobs:
       - name: Check automation scripts
         run: npm run check:scripts
 
+      - name: Verify lunar dates and solar terms against observatory calendars
+        run: npm run check:calendars
+
       - name: Run tests
         run: npm test
 
